@@ -5,7 +5,7 @@ const teamMembers = [
     name: "Perjési Szabolcs",
     study: "SZTE - Programtervező informatikus",
     role: "Tech Lead Developer",
-    image: "/placeholder.svg",
+    image: "/perjesi.jpg",
   },
   {
     name: "Lengyel Patrik Gábor",
