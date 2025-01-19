@@ -1,4 +1,3 @@
-import './App.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import ProjectDescription from "./components/ProjectDescription.jsx";
 import TeamMembers from "./components/TeamMembers.jsx";
