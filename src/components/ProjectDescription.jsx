@@ -4,7 +4,7 @@ import { TreeDeciduous } from 'lucide-react';
 
 const ProjectDescription = () => {
     return (
-        <div className="max-w-4xl mx-auto p-8 bg-white">
+        <div className="max-w-4xl mx-auto p-8 bg-white full-screen">
             <h1 className="text-3xl font-bold mb-8 text-center">A Projektről</h1>
 
             <div className="space-y-6">

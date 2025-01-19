@@ -1,61 +1,68 @@
-.hero {
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    color: #fff;
-    text-align: center;
-    font-size: 2rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
-    background-color: #10202d;
-}
+/*.hero {*/
+/*    height: 100vh;*/
+/*    display: flex;*/
+/*    justify-content: center;*/
+/*    align-items: center;*/
+/*    flex-direction: column;*/
+/*    color: #fff;*/
+/*    text-align: center;*/
+/*    font-size: 2rem;*/
+/*    font-weight: 700;*/
+/*    text-transform: uppercase;*/
+/*    letter-spacing: 2px;*/
+/*    text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);*/
+/*    background-color: #10202d;*/
+/*}*/
 
-.hero-image {
-    justify-content: center;
-    align-self: center;
-    display: flex;
-}
+/*.hero-image {*/
+/*    justify-content: center;*/
+/*    align-self: center;*/
+/*    display: flex;*/
+/*}*/
 
-.hero-image img {
-    width: 30%;
-    object-fit: cover;
-    object-position: center;
-}
+/*.hero-image img {*/
+/*    width: 30%;*/
+/*    object-fit: cover;*/
+/*    object-position: center;*/
+/*}*/
 
-.hero-text h2 {
-    font-size: 1.5rem;
-    font-weight: 400;
-    margin: 1rem 0;
-}
+/*.hero-text h2 {*/
+/*    font-size: 1.5rem;*/
+/*    font-weight: 400;*/
+/*    margin: 1rem 0;*/
+/*}*/
 
-.hero-buttons button {
-    margin: 0.5rem;
-    font-weight: 700;
-    font-size: 1rem;
-    padding: 0.5rem 1rem;
-    cursor: pointer;
-    transition: background-color 0.3s;
-    border-radius: 5px;
-    text-transform: uppercase;
-    color: #fff;
-}
+/*.hero-buttons button {*/
+/*    margin: 0.5rem;*/
+/*    font-weight: 700;*/
+/*    font-size: 1rem;*/
+/*    padding: 0.5rem 1rem;*/
+/*    cursor: pointer;*/
+/*    transition: background-color 0.3s;*/
+/*    border-radius: 5px;*/
+/*    text-transform: uppercase;*/
+/*    color: #fff;*/
+/*}*/
 
-.hero-buttons button:first-child {
-    background-color: #bc485d;
-    border: none;
-}
+/*.hero-buttons button:first-child {*/
+/*    background-color: #bc485d;*/
+/*    border: none;*/
+/*}*/
 
-.hero-buttons button.team {
-    border-width: 2px;
-    border-style: solid !important;
-    border-color: #bc485d !important;
-    background-color: transparent;
-}
+/*.hero-buttons button.team {*/
+/*    border-width: 2px;*/
+/*    border-style: solid !important;*/
+/*    border-color: #bc485d !important;*/
+/*    background-color: transparent;*/
+/*}*/
 
-.hero-buttons button:hover {
-    background-color: #f38399;
-}
+/*.hero-buttons button:hover {*/
+/*    background-color: #f38399;*/
+/*}*/
+
+/*.full-screen {*/
+/*    height: 100vh;*/
+/*    display: flex;*/
+/*    justify-content: center;*/
+/*    flex-direction: column;*/
+/*}*/
