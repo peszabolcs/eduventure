@@ -24,6 +24,11 @@ export default function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
         >
+          <img
+            src="/logo.png"
+            alt="EduVenture Logo"
+            className="w-48 h-48 sm:w-52 sm:h-52 md:w-64 md:h-64 mx-auto object-contain"
+          />
           <h1 className="text-4xl sm:text-5xl md:text-7xl font-extrabold mb-4 sm:mb-6 bg-clip-text text-transparent bg-gradient-to-r from-white to-purple-200">
             EduVenture
           </h1>

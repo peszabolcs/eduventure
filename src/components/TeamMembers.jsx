@@ -17,7 +17,7 @@ const teamMembers = [
     name: "Gellén Zalán",
     study: "BCE - Nemzetközi gazdálkodás",
     role: "Marketing vezető",
-    image: "/placeholder.svg",
+    image: "/zazi.jpg",
   },
   {
     name: "Báló Dávid Levente",
