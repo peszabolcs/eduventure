@@ -14,16 +14,16 @@ const teamMembers = [
     image: "/placeholder.svg",
   },
   {
+    name: "Báló Dávid Levente",
+    study: "BCE - Nemzetközi gazdálkodás",
+    role: "Műszaki termékfejlesztő",
+    image: "/balo.jpg",
+  },
+  {
     name: "Gellén Zalán",
     study: "BCE - Nemzetközi gazdálkodás",
     role: "Marketing vezető",
     image: "/zazi.jpg",
-  },
-  {
-    name: "Báló Dávid Levente",
-    study: "BCE - Nemzetközi gazdálkodás",
-    role: "Műszaki termékfejlesztő",
-    image: "/placeholder.svg",
   },
 ];
 
