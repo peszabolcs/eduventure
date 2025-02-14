@@ -47,18 +47,6 @@ export default function Hero() {
           transition={{ duration: 0.8, delay: 0.4 }}
           className="space-y-4 sm:space-y-0 space-x-4"
         >
-          {/*<button*/}
-          {/*  onClick={() => scrollToSection("project-details")}*/}
-          {/*  className="w-auto sm:w-auto px-6 py-2 bg-white text-purple-900 rounded-full font-semibold hover:bg-purple-100 transition-colors duration-300 mb-4 sm:mb-0"*/}
-          {/*>*/}
-          {/*  Tudj meg többet*/}
-          {/*</button>*/}
-          {/*<button*/}
-          {/*  onClick={() => scrollToSection("team-section")}*/}
-          {/*  className="w-auto sm:w-auto px-6 py-2 bg-transparent border border-white text-white rounded-full font-semibold hover:bg-white hover:text-purple-900 transition-colors duration-300"*/}
-          {/*>*/}
-          {/*  Csapatunk*/}
-          {/*</button>*/}
         </motion.div>
       </div>
 

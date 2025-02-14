@@ -85,7 +85,7 @@ export default function TeamSection() {
 
       </div>
 
-      <style jsx global>{`
+      <style jsx="true" global="true">{`
         @keyframes blob {
           0% {
             transform: translate(0px, 0px) scale(1);
