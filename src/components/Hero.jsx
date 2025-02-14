@@ -39,27 +39,26 @@ export default function Hero() {
           transition={{ duration: 0.8, delay: 0.2 }}
           className="text-lg sm:text-xl md:text-2xl text-purple-100 mb-8 sm:mb-12 max-w-3xl mx-auto px-4"
         >
-          Fedezd fel a különböző szakmákat és találd meg a hozzád legjobban illő
-          karrierutat!
+            Fedezd fel a különböző szakmákat és találd meg a hozzád legjobban illő karrierutat egy innovatív, interaktív platformon!
         </motion.p>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
-          className="space-y-4 sm:space-y-0 sm:space-x-4"
+          className="space-y-4 sm:space-y-0 space-x-4"
         >
-          <button
-            onClick={() => scrollToSection("project-details")}
-            className="w-full sm:w-auto px-6 py-2 bg-white text-purple-900 rounded-full font-semibold hover:bg-purple-100 transition-colors duration-300 mb-4 sm:mb-0"
-          >
-            Tudj meg többet
-          </button>
-          <button
-            onClick={() => scrollToSection("team-section")}
-            className="w-full sm:w-auto px-6 py-2 bg-transparent border border-white text-white rounded-full font-semibold hover:bg-white hover:text-purple-900 transition-colors duration-300"
-          >
-            Csapatunk
-          </button>
+          {/*<button*/}
+          {/*  onClick={() => scrollToSection("project-details")}*/}
+          {/*  className="w-auto sm:w-auto px-6 py-2 bg-white text-purple-900 rounded-full font-semibold hover:bg-purple-100 transition-colors duration-300 mb-4 sm:mb-0"*/}
+          {/*>*/}
+          {/*  Tudj meg többet*/}
+          {/*</button>*/}
+          {/*<button*/}
+          {/*  onClick={() => scrollToSection("team-section")}*/}
+          {/*  className="w-auto sm:w-auto px-6 py-2 bg-transparent border border-white text-white rounded-full font-semibold hover:bg-white hover:text-purple-900 transition-colors duration-300"*/}
+          {/*>*/}
+          {/*  Csapatunk*/}
+          {/*</button>*/}
         </motion.div>
       </div>
 

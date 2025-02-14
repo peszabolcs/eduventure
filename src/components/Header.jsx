@@ -1,0 +1,86 @@
+"use client"
+
+import { useState } from "react"
+import {Link, Element} from 'react-scroll';
+// import { useNavigate } from "react-router-dom";
+import { Menu, X } from "lucide-react"
+
+const menuItems = [
+    { name: "Főoldal", href: "/" },
+    { name: "Projekt", href: "/#project-details" },
+    { name: "Csapat", href: "/#team-section" },
+    { name: "Csatlakozz", href: "/join" },
+]
+
+export default function Header() {
+    const [isOpen, setIsOpen] = useState(false)
+    // const pathname = useNavigate()
+
+    const isActive = (href) => {
+        // if (href === "/") {
+        //     return pathname === href
+        // }
+        // return pathname.startsWith(href)
+    }
+
+    return (
+        <header className="absolute top-4 left-0 right-0 z-50 flex justify-center">
+            <nav className="bg-white/90 backdrop-blur-sm rounded-full shadow-lg px-2 py-1.5 mx-4">
+                {/* Desktop menu */}
+                <div className="hidden md:block">
+                    <div className="flex items-center space-x-1">
+                        {menuItems.map((item) => (
+                            <Link
+                                key={item.name}
+                                href={item.href}
+                                className={`px-4 py-1.5 text-sm font-medium transition-all duration-200 rounded-full ${
+                                    isActive(item.href)
+                                        ? "text-white bg-purple-600 shadow-sm"
+                                        : "text-gray-600 hover:text-purple-600 hover:bg-purple-50"
+                                }`}
+                            >
+                                {item.name}
+                            </Link>
+                        ))}
+                    </div>
+                </div>
+
+                {/* Mobile menu button */}
+                <div className="md:hidden flex items-center">
+                    <button
+                        onClick={() => setIsOpen(!isOpen)}
+                        className="p-2 rounded-full text-gray-600 hover:text-purple-600 hover:bg-purple-50 transition-colors duration-200"
+                    >
+                        <span className="sr-only">Menü megnyitása</span>
+                        {isOpen ? <X className="h-5 w-5" aria-hidden="true" /> : <Menu className="h-5 w-5" aria-hidden="true" />}
+                    </button>
+                </div>
+            </nav>
+
+            {/* Mobile menu dropdown */}
+            {isOpen && (
+                <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 w-screen max-w-sm md:hidden">
+                    <div className="bg-white rounded-2xl shadow-lg ring-1 ring-black ring-opacity-5 overflow-hidden mx-4">
+                        <div className="space-y-1 p-2">
+                            {menuItems.map((item) => (
+                                <Link
+                                    key={item.name}
+                                    href={item.href}
+                                    className={`block px-4 py-2 text-sm font-medium rounded-xl transition-colors duration-200 ${
+                                        isActive(item.href)
+                                            ? "text-white bg-purple-600"
+                                            : "text-gray-600 hover:text-purple-600 hover:bg-purple-50"
+                                    }`}
+                                    onClick={() => setIsOpen(false)}
+                                >
+                                    {item.name}
+                                </Link>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            )}
+        </header>
+    )
+}
+
