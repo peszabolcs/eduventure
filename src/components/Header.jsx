@@ -54,10 +54,10 @@ export default function Header() {
                 <div className="md:hidden flex items-center">
                     <button
                         onClick={() => setIsOpen(!isOpen)}
-                        className="p-2 rounded-full text-gray-600 hover:text-purple-600 hover:bg-purple-50 transition-colors duration-200"
+                        className="p-4 rounded-full text-gray-600 hover:text-purple-600 hover:bg-purple-50 transition-colors duration-200"
                     >
                         <span className="sr-only">Menü megnyitása</span>
-                        {isOpen ? <X className="h-5 w-5" aria-hidden="true" /> : <Menu className="h-5 w-5" aria-hidden="true" />}
+                        {isOpen ? <X className="h-8 w-8" aria-hidden="true" /> : <Menu className="h-5 w-5" aria-hidden="true" />}
                     </button>
                 </div>
             </nav>
@@ -71,12 +71,16 @@ export default function Header() {
                                 <Link
                                     key={item.name}
                                     href={item.href}
+                                    to={item.to}
+                                    smooth={true}
+                                    duration={100}
+                                    spy={true}
                                     className={`block px-4 py-2 text-sm font-medium rounded-xl transition-colors duration-200 ${
-                                        isActive(item.href)
+                                        item.to === "hero-section"
                                             ? "text-white bg-purple-600"
                                             : "text-gray-600 hover:text-purple-600 hover:bg-purple-50"
                                     }`}
-                                    onClick={() => setIsOpen(false)}
+                                    onClick={() => handleClick(item)}
                                 >
                                     {item.name}
                                 </Link>
