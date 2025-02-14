@@ -8,18 +8,18 @@ const menuItems = [
     { name: "Főoldal", to: "hero-section" },
     { name: "Projekt", to: "project-description" },
     { name: "Csapat", to: "team-section" },
-    { name: "Csatlakozz", to: "join-section" },
+    { name: "Kérdőív", to: "form-section", href: "https://forms.gle/hewV8BhLbWoBoLsLA" },
 ]
 
 export default function Header() {
     const [isOpen, setIsOpen] = useState(false)
-    // const pathname = useNavigate()
-    //
-    const isActive = (href) => {
-        // if (href === "/") {
-        //     return pathname === href
-        // }
-        // return pathname.startsWith(href)
+
+    const handleClick = (item) => {
+        if(item.href) {
+            window.location.href = item.href;
+        } else {
+            setIsOpen(false);
+        }
     }
 
     return (
@@ -33,11 +33,11 @@ export default function Header() {
                                 key={item.name}
                                 to={item.to}
                                 smooth={true}
-                                duration={600}
+                                duration={100}
                                 spy={true}
                                 activeClass="text-white bg-purple-600 shadow-sm"
                                 // onClick={console.log(item.to)}
-                                onClick={() => setIsOpen(false)}
+                                onClick={() => handleClick(item)}
                                 className={`px-4 py-1.5 text-sm font-medium transition-all duration-200 rounded-full no-underline ${
                                     item.to === "hero-section"
                                         ? "text-white bg-purple-600 shadow-sm"
