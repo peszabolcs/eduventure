@@ -1,7 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import ProjectDescription from "./components/ProjectDescription.jsx";
 import TeamMembers from "./components/TeamMembers.jsx";
-import {Link, Element} from 'react-scroll';
+import {Element} from 'react-scroll';
 import Hero from "./components/Hero.jsx";
 import Header from "./components/Header.jsx";
 
@@ -10,15 +10,18 @@ function App() {
       <div className="min-h-screen flex flex-col bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900">
           <Header/>
           <main className="flex-grow">
-              <Hero/>
-              <ProjectDescription/>
-              <TeamMembers/>
+              <Element name="hero-section">
+                  <Hero/>
+              </Element>
+              <Element name="project-description">
+                <ProjectDescription/>
+              </Element>
+              <Element name="team-section">
+                <TeamMembers/>
+              </Element>
           </main>
 
-        <Element name="project-description"/>
 
-
-        <Element name="team-members"/>
 
 
         {/*<FormSection/>*/}

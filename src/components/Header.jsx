@@ -1,21 +1,20 @@
 "use client"
 
 import { useState } from "react"
-import {Link, Element} from 'react-scroll';
-// import { useNavigate } from "react-router-dom";
+import {Link} from 'react-scroll';
 import { Menu, X } from "lucide-react"
 
 const menuItems = [
-    { name: "Főoldal", href: "/" },
-    { name: "Projekt", href: "/#project-details" },
-    { name: "Csapat", href: "/#team-section" },
-    { name: "Csatlakozz", href: "/join" },
+    { name: "Főoldal", to: "hero-section" },
+    { name: "Projekt", to: "project-description" },
+    { name: "Csapat", to: "team-section" },
+    { name: "Csatlakozz", to: "join-section" },
 ]
 
 export default function Header() {
     const [isOpen, setIsOpen] = useState(false)
     // const pathname = useNavigate()
-
+    //
     const isActive = (href) => {
         // if (href === "/") {
         //     return pathname === href
@@ -32,9 +31,15 @@ export default function Header() {
                         {menuItems.map((item) => (
                             <Link
                                 key={item.name}
-                                href={item.href}
-                                className={`px-4 py-1.5 text-sm font-medium transition-all duration-200 rounded-full ${
-                                    isActive(item.href)
+                                to={item.to}
+                                smooth={true}
+                                duration={600}
+                                spy={true}
+                                activeClass="text-white bg-purple-600 shadow-sm"
+                                // onClick={console.log(item.to)}
+                                onClick={() => setIsOpen(false)}
+                                className={`px-4 py-1.5 text-sm font-medium transition-all duration-200 rounded-full no-underline ${
+                                    item.to === "hero-section"
                                         ? "text-white bg-purple-600 shadow-sm"
                                         : "text-gray-600 hover:text-purple-600 hover:bg-purple-50"
                                 }`}
