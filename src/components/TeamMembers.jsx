@@ -11,7 +11,7 @@ const teamMembers = [
     name: "Lengyel Patrik Gábor",
     study: "SZTE - Pénzügy és számvitel",
     role: "Pénzügyi elemző",
-    image: "/placeholder.svg",
+    image: "/patrik.jpg",
   },
   {
     name: "Báló Dávid Levente",
@@ -82,9 +82,7 @@ export default function TeamSection() {
           ))}
         </div>
 
-        <div className="mt-12 sm:mt-16 md:mt-24 text-center text-xs sm:text-sm text-white/60">
-          © {new Date().getFullYear()} Perjési Szabolcs. Minden jog fenntartva.
-        </div>
+
       </div>
 
       <style jsx global>{`
