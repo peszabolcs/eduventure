@@ -3,6 +3,7 @@
 import { useState } from "react"
 import {Link} from 'react-scroll';
 import { Menu, X } from "lucide-react"
+import { motion, AnimatePresence} from "framer-motion";
 
 const menuItems = [
     { name: "Főoldal", to: "hero-section" },
@@ -23,10 +24,10 @@ export default function Header() {
     }
 
     return (
-        <header className="absolute top-4 left-0 right-0 z-50 flex justify-center">
-            <nav className="bg-white/90 backdrop-blur-sm rounded-full shadow-lg px-2 py-1.5 mx-4">
+        <header className="relative top-4 left-0 right-0 z-50 flex justify-center">
+            <nav className="relative bg-white/90 backdrop-blur-sm rounded-full shadow-lg px-2 py-1.5 mx-4">
                 {/* Desktop menu */}
-                <div className="hidden md:block">
+                <div className="hidden md:flex">
                     <div className="flex items-center space-x-1">
                         {menuItems.map((item) => (
                             <Link
@@ -51,21 +52,29 @@ export default function Header() {
                 </div>
 
                 {/* Mobile menu button */}
-                <div className="md:hidden flex items-center">
+                <div className="md:hidden absolute top-0 right-0 p-4">
                     <button
                         onClick={() => setIsOpen(!isOpen)}
-                        className="p-4 rounded-full text-gray-600 hover:text-purple-600 hover:bg-purple-50 transition-colors duration-200"
+                        className="p-1.5 rounded-full bg-purple-100 text-purple-600 hover:bg-purple-200 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
                     >
                         <span className="sr-only">Menü megnyitása</span>
-                        {isOpen ? <X className="h-8 w-8" aria-hidden="true" /> : <Menu className="h-5 w-5" aria-hidden="true" />}
+                        {isOpen ? <X className="h-5 w-5" aria-hidden="true"/> :
+                            <Menu className="h-5 w-5" aria-hidden="true"/>}
                     </button>
                 </div>
             </nav>
 
             {/* Mobile menu dropdown */}
+            <AnimatePresence>
             {isOpen && (
-                <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 w-screen max-w-sm md:hidden">
-                    <div className="bg-white rounded-2xl shadow-lg ring-1 ring-black ring-opacity-5 overflow-hidden mx-4">
+                <motion.div initial={{ opacity: 0, y: -10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -10 }}
+                            transition={{ duration: 0.2 }}
+                            className="absolute top-full mt-2 w-screen md:hidden">
+                {/*<div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 w-screen max-w-sm md:hidden">*/}
+                    <div
+                        className="bg-white rounded-2xl shadow-lg ring-1 ring-black ring-opacity-5 overflow-hidden mx-4">
                         <div className="space-y-1 p-2">
                             {menuItems.map((item) => (
                                 <Link
@@ -87,8 +96,9 @@ export default function Header() {
                             ))}
                         </div>
                     </div>
-                </div>
+                </motion.div>
             )}
+            </AnimatePresence>
         </header>
     )
 }
