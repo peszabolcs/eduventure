@@ -7,9 +7,9 @@ import Header from "./components/Header.jsx";
 
 function App() {
   return (
-      <div className="min-h-screen flex flex-col bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900">
+      <div className="bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900">
           <Header/>
-          <main className="flex-grow">
+          <main>
               <Element name="hero-section">
                   <Hero/>
               </Element>
