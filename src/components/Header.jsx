@@ -24,11 +24,12 @@ export default function Header() {
     }
 
     return (
-        <header className="relative top-4 left-0 right-0 z-50 flex justify-center">
-            <nav className="relative bg-white/90 backdrop-blur-sm rounded-full shadow-lg px-2 py-1.5 mx-4">
+        <header className="absolute top-0 left-0 right-0 z-50 h-16">
+            <nav className="hidden md:block">
                 {/* Desktop menu */}
-                <div className="hidden md:flex">
-                    <div className="flex items-center space-x-1">
+                <div className="flex justify-center">
+                    <div className="bg-white/90 backdrop-blur-sm rounded-full shadow-lg px-2 py-1.5">
+                        <div className="flex items-center space-x-1">
                         {menuItems.map((item) => (
                             <Link
                                 key={item.name}
@@ -48,22 +49,22 @@ export default function Header() {
                                 {item.name}
                             </Link>
                         ))}
+                        </div>
                     </div>
-                </div>
-
-                {/* Mobile menu button */}
-                <div className="md:hidden absolute top-0 right-0 p-4">
-                    <button
-                        onClick={() => setIsOpen(!isOpen)}
-                        className="p-1.5 rounded-full bg-purple-100 text-purple-600 hover:bg-purple-200 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
-                    >
-                        <span className="sr-only">Menü megnyitása</span>
-                        {isOpen ? <X className="h-5 w-5" aria-hidden="true"/> :
-                            <Menu className="h-5 w-5" aria-hidden="true"/>}
-                    </button>
                 </div>
             </nav>
 
+            {/* Mobile menu button */}
+            <div className="md:hidden absolute top-4 left-4">
+                <button
+                    onClick={() => setIsOpen(!isOpen)}
+                    className="p-1.5 rounded-full bg-purple-100 text-purple-600 hover:bg-purple-200 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
+                >
+                    <span className="sr-only">Menü megnyitása</span>
+                    {isOpen ? <X className="h-5 w-5" aria-hidden="true"/> :
+                        <Menu className="h-5 w-5" aria-hidden="true"/>}
+                </button>
+            </div>
             {/* Mobile menu dropdown */}
             <AnimatePresence>
             {isOpen && (
