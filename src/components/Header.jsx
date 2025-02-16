@@ -28,7 +28,7 @@ export default function Header() {
             <nav className="hidden md:block">
                 {/* Desktop menu */}
                 <div className="flex justify-center">
-                    <div className="bg-white/90 backdrop-blur-sm rounded-full shadow-lg px-2 py-1.5">
+                    <div className="bg-white/90 backdrop-blur-sm rounded-full shadow-lg px-2 py-1.5 cursor-pointer">
                         <div className="flex items-center space-x-1">
                         {menuItems.map((item) => (
                             <Link
@@ -58,11 +58,11 @@ export default function Header() {
             <div className="md:hidden absolute top-4 left-4">
                 <button
                     onClick={() => setIsOpen(!isOpen)}
-                    className="p-1.5 rounded-full bg-purple-100 text-purple-600 hover:bg-purple-200 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
+                    className="p-3 rounded-full bg-purple-100 text-purple-600 hover:bg-purple-200 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
                 >
                     <span className="sr-only">Menü megnyitása</span>
-                    {isOpen ? <X className="h-5 w-5" aria-hidden="true"/> :
-                        <Menu className="h-5 w-5" aria-hidden="true"/>}
+                    {isOpen ? <X className="h-6 w-6" aria-hidden="true"/> :
+                        <Menu className="h-6 w-6" aria-hidden="true"/>}
                 </button>
             </div>
             {/* Mobile menu dropdown */}
@@ -75,7 +75,7 @@ export default function Header() {
                             className="absolute top-full mt-2 w-screen md:hidden">
                 {/*<div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 w-screen max-w-sm md:hidden">*/}
                     <div
-                        className="bg-white rounded-2xl shadow-lg ring-1 ring-black ring-opacity-5 overflow-hidden mx-4">
+                        className="bg-white rounded-2xl shadow-lg ring-1 ring-black ring-opacity-5 overflow-hidden mx-4 cursor-pointer">
                         <div className="space-y-1 p-2">
                             {menuItems.map((item) => (
                                 <Link
@@ -85,7 +85,7 @@ export default function Header() {
                                     smooth={true}
                                     duration={100}
                                     spy={true}
-                                    className={`block px-4 py-2 text-sm font-medium rounded-xl transition-colors duration-200 ${
+                                    className={`block px-4 py-2 text-sm font-medium rounded-xl no-underline transition-colors duration-200 ${
                                         item.to === "hero-section"
                                             ? "text-white bg-purple-600"
                                             : "text-gray-600 hover:text-purple-600 hover:bg-purple-50"
