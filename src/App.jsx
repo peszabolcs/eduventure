@@ -4,31 +4,27 @@ import TeamMembers from "./components/TeamMembers.jsx";
 import {Element} from 'react-scroll';
 import Hero from "./components/Hero.jsx";
 import Header from "./components/Header.jsx";
+import Footer from "./components/Footer.jsx";
 
 function App() {
   return (
-      <div className="bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900">
+      <div className="bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 min-h-screen flex flex-col">
           <Header/>
-          <main>
+          <main className="flex-grow relative">
               <Element name="hero-section">
                   <Hero/>
               </Element>
               <Element name="project-description">
-                <ProjectDescription/>
+                  <ProjectDescription/>
               </Element>
               <Element name="team-section">
-                <TeamMembers/>
+                  <TeamMembers/>
               </Element>
           </main>
-
-
-
-
-        {/*<FormSection/>*/}
-        <div className="text-center text-xs sm:text-sm text-white/60">
-            © {new Date().getFullYear()} Perjési Szabolcs. Minden jog fenntartva.
-        </div>
+          <Footer/>
       </div>
+
+
   )
 }
 
