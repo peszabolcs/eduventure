@@ -77,38 +77,47 @@ export default function Header() {
             {/* Mobile menu dropdown */}
             <AnimatePresence>
             {isOpen && (
-                <motion.div initial={{ opacity: 0, y: -10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -10 }}
-                            transition={{ duration: 0.2 }}
-                            className="absolute top-full mt-2 w-screen md:hidden">
-                    <div
-                        className="bg-white rounded-2xl shadow-lg ring-1 ring-black ring-opacity-5 overflow-hidden mx-4 cursor-pointer">
-                        <div className="space-y-1 p-2">
-                            {menuItems.map((item) => (
-                                item.href && !item.href.startsWith("http") ? (
-                                    <NavLink
-                                        key={item.name}
-                                        to={item.href}
-                                        className="block px-4 py-2 text-sm font-medium rounded-xl no-underline transition-colors duration-200 text-gray-600 hover:text-purple-600 hover:bg-purple-50"
-                                    >
-                                        {item.name}
-                                    </NavLink>
-                                ) : (
-                                    <Link
-                                        key={item.name}
-                                        to={item.to}
-                                        smooth={true}
-                                        duration={100}
-                                        spy={true}
-                                        className="block px-4 py-2 text-sm font-medium rounded-xl no-underline transition-colors duration-200 text-gray-600 hover:text-purple-600 hover:bg-purple-50"
-                                        onClick={() => handleClick(item)}
-                                    >
-                                        {item.name}
-                                    </Link>
-                                )
-                            ))}
-                        </div>
+                <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.2 }}
+                    className="fixed top-0 left-0 w-full h-full bg-purple-900/95 z-50 flex flex-col items-center justify-center"
+                >
+                    <button
+                        onClick={() => setIsOpen(false)}
+                        className="absolute top-6 right-6 p-3 rounded-full bg-purple-200 text-purple-700 hover:bg-purple-300 transition-colors duration-200"
+                    >
+                        <X className="h-8 w-8" aria-hidden="true" />
+                    </button>
+
+                    <div className="space-y-6 text-xl font-semibold text-gray-200">
+                        {menuItems.map((item) =>
+                            item.href && !item.href.startsWith("http") ? (
+                                <NavLink
+                                    key={item.name}
+                                    to={item.href}
+                                    className="block text-xl py-4 px-6 rounded-lg bg-purple-700 text-purple-200 hover:bg-purple-800 transition-colors duration-200 no-underline"
+                                >
+                                    {item.name}
+                                </NavLink>
+                            ) : (
+                                <Link
+                                    key={item.name}
+                                    to={item.to}
+                                    smooth={true}
+                                    duration={100}
+                                    spy={true}
+                                    className="block text-xl py-4 px-6 rounded-lg bg-purple-700 text-purple-200 hover:bg-purple-800 transition-colors duration-200 no-underline"
+                                    onClick={() => {
+                                        handleClick(item);
+                                        setIsOpen(false);
+                                    }}
+                                >
+                                    {item.name}
+                                </Link>
+                            )
+                        )}
                     </div>
                 </motion.div>
             )}
