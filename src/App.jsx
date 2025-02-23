@@ -7,6 +7,7 @@ import Header from "./components/Header.jsx";
 import Footer from "./components/Footer.jsx";
 import {BrowserRouter as Router, Routes, Route} from "react-router-dom";
 import Register from "./components/Register.jsx";
+import Login from "./components/Login.jsx";
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
                       </>
                   } />
                   <Route path="/register" element={<Register />} /> {/* 🔹 Új regisztrációs oldal */}
+                  <Route path="/login" element={<Login />} /> {/* 🔹 Új bejelentkezési oldal */}
               </Routes>
           </main>
           <Footer/>

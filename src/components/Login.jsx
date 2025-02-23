@@ -1,37 +1,18 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { Eye, EyeOff, XCircle, User, Mail, Lock } from "lucide-react"
+import { Eye, EyeOff, XCircle, Mail, Lock } from "lucide-react"
 
-
-export default function RegisterPage() {
+export default function LoginPage() {
     const [formData, setFormData] = useState({
-        username: "",
         email: "",
         password: "",
-        confirmPassword: "",
     })
 
     const [errors, setErrors] = useState({})
     const [showPassword, setShowPassword] = useState(false)
-    const [showConfirmPassword, setShowConfirmPassword] = useState(false)
     const [isSubmitting, setIsSubmitting] = useState(false)
-    const [passwordStrength, setPasswordStrength] = useState(0)
-
-    useEffect(() => {
-        const strength = calculatePasswordStrength(formData.password)
-        setPasswordStrength(strength)
-    }, [formData.password])
-
-    const calculatePasswordStrength = (password) => {
-        let strength = 0
-        if (password.length >= 8) strength += 1
-        if (password.match(/[a-z]/) && password.match(/[A-Z]/)) strength += 1
-        if (password.match(/\d/)) strength += 1
-        if (password.match(/[^a-zA-Z\d]/)) strength += 1
-        return strength
-    }
 
     const handleChange = (e) => {
         const { name, value } = e.target
@@ -46,14 +27,9 @@ export default function RegisterPage() {
 
     const validateForm = () => {
         const newErrors = {}
-        if (!formData.username) newErrors.username = "Felhasználónév kötelező"
         if (!formData.email) newErrors.email = "Email cím kötelező"
         else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = "Érvénytelen email cím"
         if (!formData.password) newErrors.password = "Jelszó kötelező"
-        else if (formData.password.length < 8) newErrors.password = "A jelszónak legalább 8 karakter hosszúnak kell lennie"
-        if (formData.password !== formData.confirmPassword) {
-            newErrors.confirmPassword = "A jelszavak nem egyeznek"
-        }
         return newErrors
     }
 
@@ -62,8 +38,9 @@ export default function RegisterPage() {
         const newErrors = validateForm()
         if (Object.keys(newErrors).length === 0) {
             setIsSubmitting(true)
+            // Itt lenne a tényleges bejelentkezési logika
             await new Promise((resolve) => setTimeout(resolve, 1500))
-            console.log("Form submitted:", formData)
+            console.log("Login submitted:", formData)
             setIsSubmitting(false)
         } else {
             setErrors(newErrors)
@@ -86,33 +63,8 @@ export default function RegisterPage() {
                 transition={{ duration: 0.5 }}
                 className="bg-white/10 backdrop-blur-md rounded-xl p-8 w-full max-w-md"
             >
-                <h2 className="text-3xl font-bold text-white mb-6 text-center">Regisztráció</h2>
+                <h2 className="text-3xl font-bold text-white mb-6 text-center">Bejelentkezés</h2>
                 <form onSubmit={handleSubmit} className="space-y-4">
-                    <div className="relative">
-                        <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/50" size={20} />
-                        <motion.input
-                            name="username"
-                            value={formData.username}
-                            onChange={handleChange}
-                            type="text"
-                            placeholder="Felhasználónév"
-                            className={inputClasses}
-                            whileFocus={{ scale: 1.02 }}
-                        />
-                        <AnimatePresence>
-                            {errors.username && (
-                                <motion.p
-                                    initial={{ opacity: 0, y: -10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0, y: -10 }}
-                                    className="mt-1 text-red-400 text-sm flex items-center"
-                                >
-                                    <XCircle className="inline mr-1" size={16} /> {errors.username}
-                                </motion.p>
-                            )}
-                        </AnimatePresence>
-                    </div>
-
                     <div className="relative">
                         <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/50" size={20} />
                         <motion.input
@@ -170,60 +122,6 @@ export default function RegisterPage() {
                         </AnimatePresence>
                     </div>
 
-                    <div className="relative">
-                        <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/50" size={20} />
-                        <motion.input
-                            name="confirmPassword"
-                            value={formData.confirmPassword}
-                            onChange={handleChange}
-                            type={showConfirmPassword ? "text" : "password"}
-                            placeholder="Jelszó megerősítése"
-                            className={inputClasses}
-                            whileFocus={{ scale: 1.02 }}
-                        />
-                        <button
-                            type="button"
-                            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white/50 hover:text-white"
-                        >
-                            {showConfirmPassword ? <Eye size={20} /> : <EyeOff size={20} />}
-                        </button>
-                        <AnimatePresence>
-                            {errors.confirmPassword && (
-                                <motion.p
-                                    initial={{ opacity: 0, y: -10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0, y: -10 }}
-                                    className="mt-1 text-red-400 text-sm flex items-center"
-                                >
-                                    <XCircle className="inline mr-1" size={16} /> {errors.confirmPassword}
-                                </motion.p>
-                            )}
-                        </AnimatePresence>
-                    </div>
-
-                    {/* Password Strength Indicator */}
-                    <div className="mt-2">
-                        <div className="flex justify-between mb-1">
-                            <span className="text-xs text-white/70">Jelszó erőssége:</span>
-                            <span className="text-xs text-white/70">
-                {passwordStrength === 0 && "Gyenge"}
-                                {passwordStrength === 1 && "Közepes"}
-                                {passwordStrength === 2 && "Jó"}
-                                {passwordStrength === 3 && "Erős"}
-                                {passwordStrength === 4 && "Nagyon erős"}
-              </span>
-                        </div>
-                        <div className="w-full bg-white/20 rounded-full h-2.5">
-                            <motion.div
-                                className="bg-green-500 h-2.5 rounded-full"
-                                initial={{ width: 0 }}
-                                animate={{ width: `${(passwordStrength / 4) * 100}%` }}
-                                transition={{ duration: 0.3 }}
-                            />
-                        </div>
-                    </div>
-
                     <motion.button
                         whileHover={{ scale: 1.03 }}
                         whileTap={{ scale: 0.98 }}
@@ -242,42 +140,29 @@ export default function RegisterPage() {
                                 animate={{ opacity: 1 }}
                             >
                                 <div className="w-5 h-5 border-t-2 border-purple-700 border-solid rounded-full animate-spin mr-2"></div>
-                                Regisztráció...
+                                Bejelentkezés...
                             </motion.div>
                         ) : (
-                            "Regisztráció"
+                            "Bejelentkezés"
                         )}
                     </motion.button>
                 </form>
 
-                <p className="mt-6 text-white/80 text-center">
-                    Már van fiókod?{" "}
-                    <a href="/login" className="text-white underline hover:text-white/90 transition duration-300">
-                        Jelentkezz be!
-                    </a>
-                </p>
+                <div className="mt-6 text-white/80 text-center space-y-2">
+                    <p>
+                        <a href="#" className="text-white underline hover:text-white/90 transition duration-300">
+                            Elfelejtett jelszó?
+                        </a>
+                    </p>
+                    <p>
+                        Még nincs fiókod?{" "}
+                        <a href="/register" className="text-white underline hover:text-white/90 transition duration-300">
+                            Regisztrálj!
+                        </a>
+                    </p>
+                </div>
             </motion.div>
-
-            <style>{`
-                @keyframes blob {
-                    0% { transform: translate(0px, 0px) scale(1); }
-                    33% { transform: translate(30px, -50px) scale(1.1); }
-                    66% { transform: translate(-20px, 20px) scale(0.9); }
-                    100% { transform: translate(0px, 0px) scale(1); }
-                }
-                .animate-blob {
-                    animation: blob 7s infinite;
-                }
-                .animation-delay-2000 {
-                    animation-delay: 2s;
-                }
-                .animation-delay-4000 {
-                    animation-delay: 4s;
-                }
-            `}</style>
         </div>
-
-
     )
 }
 
