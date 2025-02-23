@@ -34,7 +34,7 @@ export default function ProjectDetails() {
   return (
     <section
       id="project-details"
-      className="py-12 sm:py-16 md:py-24 bg-gradient-to-br from-indigo-100 to-purple-100"
+      className="py-12 sm:py-16 md:py-24 bg-gradient-to-br from-indigo-100 to-purple-100 min-h-screen"
     >
       <div className="container mx-auto px-4 sm:px-6">
         <motion.h2
