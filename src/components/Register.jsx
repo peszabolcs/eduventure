@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Eye, EyeOff, XCircle, User, Mail, Lock } from "lucide-react"
+import { useNavigate } from "react-router-dom"
 
 
 export default function RegisterPage() {
@@ -12,6 +13,8 @@ export default function RegisterPage() {
         password: "",
         confirmPassword: "",
     })
+
+    const navigate = useNavigate();
 
     const [errors, setErrors] = useState({})
     const [showPassword, setShowPassword] = useState(false)
@@ -252,7 +255,7 @@ export default function RegisterPage() {
 
                 <p className="mt-6 text-white/80 text-center">
                     Már van fiókod?{" "}
-                    <a href="/login" className="text-white underline hover:text-white/90 transition duration-300">
+                    <a onClick={() => navigate("/login")} className="text-white underline hover:text-white/90 transition duration-300 cursor-pointer">
                         Jelentkezz be!
                     </a>
                 </p>

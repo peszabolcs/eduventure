@@ -3,12 +3,15 @@
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Eye, EyeOff, XCircle, Mail, Lock } from "lucide-react"
+import { useNavigate } from "react-router-dom"
 
 export default function LoginPage() {
     const [formData, setFormData] = useState({
         email: "",
         password: "",
     })
+
+    const navigate = useNavigate();
 
     const [errors, setErrors] = useState({})
     const [showPassword, setShowPassword] = useState(false)
@@ -156,7 +159,7 @@ export default function LoginPage() {
                     </p>
                     <p>
                         Még nincs fiókod?{" "}
-                        <a href="/register" className="text-white underline hover:text-white/90 transition duration-300">
+                        <a onClick={() => navigate("/register")} className="text-white underline hover:text-white/90 transition duration-300 cursor-pointer">
                             Regisztrálj!
                         </a>
                     </p>
