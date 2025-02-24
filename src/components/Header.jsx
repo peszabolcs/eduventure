@@ -1,10 +1,10 @@
 "use client"
 
-import { useState } from "react"
+import {useEffect, useState} from "react"
 import {Link} from 'react-scroll';
 import { Menu, X } from "lucide-react"
 import { motion, AnimatePresence} from "framer-motion";
-import { useNavigate, NavLink } from "react-router-dom";
+import {useNavigate, NavLink, useLocation} from "react-router-dom";
 
 const menuItems = [
     { name: "Főoldal", to: "hero-section", href: "/" },
@@ -17,14 +17,21 @@ const menuItems = [
 export default function Header() {
     const [isOpen, setIsOpen] = useState(false)
     const navigate = useNavigate();
+    const location = useLocation();
+
+    const isAuthPage = location.pathname === "/login" || location.pathname === "/register";
+
+    const filteredMenuItems = isAuthPage
+        ? menuItems.filter(item=> item.name === "Főoldal")
+        : menuItems;
 
     const handleClick = (item) => {
+        // console.log("item: ", item);
+        setIsOpen(false);
         if(item.href && item.href.startsWith("http")) {
             window.open(item.href, "_blank");
-        } else if(item.href) {
+        } else if(item.name) {
             navigate(item.href);
-        } else {
-            setIsOpen(false);
         }
     }
 
@@ -35,12 +42,12 @@ export default function Header() {
                 <div className="flex justify-center">
                     <div className="bg-white/90 backdrop-blur-sm rounded-full shadow-lg px-2 py-1.5 cursor-pointer">
                         <div className="flex items-center space-x-1">
-                        {menuItems.map((item) => (
+                        {filteredMenuItems.map((item) => (
                             item.href && !item.href.startsWith("http") ? (
                                 <NavLink
                                     key={item.name}
                                     to={item.href}
-                                    className="px-4 py-1.5 text-sm font-medium rounded-full text-gray-600 hover:text-purple-600 hover:bg-purple-50"
+                                    className="px-4 py-1.5 text-sm font-medium rounded-full text-gray-600 hover:text-purple-50 hover:bg-purple-500 no-underline"
                                 >
                                     {item.name}
                                 </NavLink>
@@ -51,7 +58,7 @@ export default function Header() {
                                     smooth={true}
                                     duration={100}
                                     spy={true}
-                                    className="px-4 py-1.5 text-sm font-medium rounded-full text-gray-600 hover:text-purple-600 hover:bg-purple-50"
+                                    className="px-4 py-1.5 text-sm font-medium rounded-full text-gray-600 hover:text-purple-50 hover:bg-purple-500 no-underline"
                                     onClick={() => handleClick(item)}
                                 >
                                     {item.name}
@@ -92,12 +99,13 @@ export default function Header() {
                     </button>
 
                     <div className="space-y-6 text-xl font-semibold text-gray-200">
-                        {menuItems.map((item) =>
+                        {filteredMenuItems.map((item) =>
                             item.href && !item.href.startsWith("http") ? (
                                 <NavLink
                                     key={item.name}
                                     to={item.href}
                                     className="block text-xl py-4 px-6 rounded-lg bg-purple-700 text-purple-200 hover:bg-purple-800 transition-colors duration-200 no-underline"
+                                    onClick={() => setIsOpen(false)}
                                 >
                                     {item.name}
                                 </NavLink>
@@ -110,8 +118,8 @@ export default function Header() {
                                     spy={true}
                                     className="block text-xl py-4 px-6 rounded-lg bg-purple-700 text-purple-200 hover:bg-purple-800 transition-colors duration-200 no-underline"
                                     onClick={() => {
-                                        handleClick(item);
                                         setIsOpen(false);
+                                        handleClick(item);
                                     }}
                                 >
                                     {item.name}
