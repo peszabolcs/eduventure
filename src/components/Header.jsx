@@ -47,7 +47,7 @@ export default function Header() {
                                 <NavLink
                                     key={item.name}
                                     to={item.href}
-                                    className="px-4 py-1.5 text-sm font-medium rounded-full text-gray-600 hover:text-purple-50 hover:bg-purple-500 no-underline"
+                                    className="px-4 py-1.5 text-sm font-medium rounded-full text-gray-600 hover:text-purple-50 hover:bg-purple-500 transition duration-500 ease-in-out no-underline"
                                 >
                                     {item.name}
                                 </NavLink>
@@ -58,7 +58,7 @@ export default function Header() {
                                     smooth={true}
                                     duration={100}
                                     spy={true}
-                                    className="px-4 py-1.5 text-sm font-medium rounded-full text-gray-600 hover:text-purple-50 hover:bg-purple-500 no-underline"
+                                    className="px-4 py-1.5 text-sm font-medium rounded-full text-gray-600 hover:text-purple-50 hover:bg-purple-500 transition duration-500 ease-in-out no-underline"
                                     onClick={() => handleClick(item)}
                                 >
                                     {item.name}
