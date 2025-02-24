@@ -1,32 +1,56 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Lightbulb, Users, Building, Sprout } from "lucide-react";
+import {Lightbulb, Users, Building, Sprout, BookOpen, Search, Layers, Globe} from "lucide-react";
 
 const features = [
   {
     icon: Lightbulb,
     title: "Szakértői Tanácsadás",
     description:
-      "Tapasztalt szakemberek osztják meg tudásukat és tapasztalataikat.",
+        "Tapasztalt szakemberek és mentorok segítenek eligazodni a különböző karrierutak között.",
   },
   {
     icon: Users,
     title: "Közösségi Támogatás",
     description:
-      "Csatlakozz hasonló érdeklődésű fiatalokhoz és építs kapcsolatokat.",
+        "Kapcsolódj hozzád hasonló érdeklődésű fiatalokhoz, osszátok meg tapasztalataitokat és tanuljatok egymástól.",
   },
   {
     icon: Building,
     title: "Virtuális Cégtúrák",
     description:
-      "Fedezd fel a különböző munkakörnyezeteket és vállalati kultúrákat.",
+        "Fedezd fel a különböző munkakörnyezeteket, és ismerd meg a vállalati kultúrákat valós példákon keresztül.",
+  },
+  {
+    icon: BookOpen,
+    title: "Oktatási Anyagok",
+    description:
+        "Szakirány-specifikus tananyagok és útmutatók segítik a döntésed megalapozását.",
+  },
+  {
+    icon: Search,
+    title: "Személyre Szabott Pályaválasztás",
+    description:
+        "AI-alapú útmutató, amely személyiségtesztek és preferenciák alapján ajánl szakmákat és lehetőségeket.",
+  },
+  {
+    icon: Layers,
+    title: "Gyakorlati Tapasztalat",
+    description:
+        "Gyakornoki lehetőségek, esettanulmányok és valós projektek segítik a felkészülésedet a munka világára.",
+  },
+  {
+    icon: Globe,
+    title: "Nemzetközi Perspektíva",
+    description:
+        "Nemzetközi tapasztalatok és külföldi lehetőségek bemutatása azok számára, akik globálisan gondolkodnak.",
   },
   {
     icon: Sprout,
     title: "Fenntarthatóság",
     description:
-      "Minden interakció után egy fát ültetünk a bolygónk védelmében.",
+        "Minden interakció után egy fát ültetünk a bolygónk védelmében, hogy a tanulás pozitív hatással legyen a környezetre is.",
   },
 ];
 
@@ -71,10 +95,8 @@ export default function ProjectDetails() {
           className="mt-12 sm:mt-16 text-center"
         >
           <p className="text-lg sm:text-xl text-indigo-800 max-w-3xl mx-auto px-4">
-            Platformunk célja, hogy segítse a pályaválasztás előtt álló
-            fiatalokat átfogó képet nyújtva a különböző szakmákról és
-            karrierlehetőségekről. Csatlakozz hozzánk, és fedezd fel a benned
-            rejlő potenciált!
+            Platformunk célja, hogy segítse a pályaválasztás előtt álló fiatalokat átfogó és hiteles információkkal,
+            gyakorlati tapasztalatokkal és közösségi támogatással. Csatlakozz hozzánk, és fedezd fel a lehetőségeid világát!
           </p>
         </motion.div>
       </div>
