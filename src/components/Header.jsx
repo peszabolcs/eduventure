@@ -5,25 +5,36 @@ import {Link} from 'react-scroll';
 import { Menu, X } from "lucide-react"
 import { motion, AnimatePresence} from "framer-motion";
 import {useNavigate, NavLink, useLocation} from "react-router-dom";
+import {useAuth} from "./AuthContext.jsx";
 
 const menuItems = [
     { name: "Főoldal", to: "hero-section", href: "/" },
     { name: "Projekt", to: "project-description" },
     { name: "Csapat", to: "team-section" },
     { name: "Kérdőív", to: "form-section", href: "https://forms.gle/hewV8BhLbWoBoLsLA" },
-    {name: "Regisztráció", href: "/register" },
+    // {name: "Regisztráció", href: "/register" },
 ]
 
 export default function Header() {
     const [isOpen, setIsOpen] = useState(false)
     const navigate = useNavigate();
     const location = useLocation();
+    const {user, logout } = useAuth();
 
     const isAuthPage = location.pathname === "/login" || location.pathname === "/register";
 
-    const filteredMenuItems = isAuthPage
-        ? menuItems.filter(item=> item.name === "Főoldal")
-        : menuItems;
+    const [filteredMenuItems, setFilteredMenuItems] = useState([]);
+    useEffect(() => {
+        if(user) {
+            setFilteredMenuItems([...menuItems, {name: "Profilom", href: "/profile"}]);
+        } else {
+            setFilteredMenuItems([...menuItems, {name: "Regisztráció", href: "/register"}, {name: "Bejelentkezés", href: "/login"}]);
+        }
+    }, [user]);
+
+    // const filteredMenuItems = isAuthPage
+    //     ? menuItems.filter(item=> item.name === "Főoldal")
+    //     : menuItems;
 
     const handleClick = (item) => {
         // console.log("item: ", item);
@@ -65,6 +76,12 @@ export default function Header() {
                                 </Link>
                             )
                         ))}
+                            {user && (
+                            <button onClick={logout}
+                                    className="px-4 py-1.5 text-sm font-medium rounded-full text-gray-600 hover:text-purple-50 hover:bg-purple-500 transition duration-500 ease-in-out no-underline">
+                                Kijelentkezés
+                            </button>
+                                )}
                         </div>
                     </div>
                 </div>
@@ -125,6 +142,12 @@ export default function Header() {
                                     {item.name}
                                 </Link>
                             )
+                        )}
+                        {user && (
+                            <button onClick={logout}
+                                    className="block text-xl py-4 px-6 rounded-lg bg-purple-700 text-purple-200 hover:bg-purple-800 transition-colors duration-200 no-underline">
+                                Kijelentkezés
+                            </button>
                         )}
                     </div>
                 </motion.div>

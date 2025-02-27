@@ -4,6 +4,7 @@ import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Eye, EyeOff, XCircle, Mail, Lock } from "lucide-react"
 import { useNavigate } from "react-router-dom"
+import {useAuth} from "./AuthContext.jsx";
 
 export default function LoginPage() {
     const [formData, setFormData] = useState({
@@ -12,6 +13,7 @@ export default function LoginPage() {
     })
 
     const navigate = useNavigate();
+    const { setUser} = useAuth();
 
     const [errors, setErrors] = useState({})
     const [showPassword, setShowPassword] = useState(false)
@@ -42,6 +44,7 @@ export default function LoginPage() {
         if (Object.keys(newErrors).length === 0) {
             setIsSubmitting(true)
             try {
+                console.log("Login submitted:", formData)
                 const response = await fetch("https://edu-venture.hu/backend/login.php", {
                     method: "POST",
                     headers: {
@@ -51,12 +54,15 @@ export default function LoginPage() {
                         email: formData.email,
                         password: formData.password,
                     }),
+                    credentials: "include"
                 });
                 const result = await response.json();
                 if (result.error) {
                     setErrors({api: result.error});
                 } else {
                     console.log("Login successful:", result);
+                    localStorage.setItem("user", JSON.stringify(result.user));
+                    setUser(result.user);
                     navigate("/");
                 }
             } catch (error) {
