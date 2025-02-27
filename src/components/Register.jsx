@@ -66,6 +66,7 @@ export default function RegisterPage() {
         if (Object.keys(newErrors).length === 0) {
             setIsSubmitting(true)
             try {
+                //https://edu-venture.hu/backend/register.php
                 const response = await fetch('https://edu-venture.hu/backend/register.php', {
                     method: 'POST',
                     headers: {

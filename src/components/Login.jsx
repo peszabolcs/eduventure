@@ -41,10 +41,33 @@ export default function LoginPage() {
         const newErrors = validateForm()
         if (Object.keys(newErrors).length === 0) {
             setIsSubmitting(true)
-            // Itt lenne a tényleges bejelentkezési logika
-            await new Promise((resolve) => setTimeout(resolve, 1500))
-            console.log("Login submitted:", formData)
-            setIsSubmitting(false)
+            try {
+                const response = await fetch("https://edu-venture.hu/backend/login.php", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        email: formData.email,
+                        password: formData.password,
+                    }),
+                });
+                const result = await response.json();
+                if (result.error) {
+                    setErrors({api: result.error});
+                } else {
+                    console.log("Login successful:", result);
+                    navigate("/");
+                }
+            } catch (error) {
+                console.error("Login failed:", error);
+                setErrors({api: "Hiba történt a bejelentkezés során"});
+            } finally {
+                setIsSubmitting(false);
+            }
+            // await new Promise((resolve) => setTimeout(resolve, 1500))
+            // console.log("Login submitted:", formData)
+            // setIsSubmitting(false)
         } else {
             setErrors(newErrors)
         }
@@ -150,6 +173,18 @@ export default function LoginPage() {
                         )}
                     </motion.button>
                 </form>
+
+                {errors.api && (
+                    <motion.p
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        className="mt-4 text-red-400 text-sm flex items-center"
+                    >
+                        <XCircle className="inline mr-1" size={16} /> {errors.api}
+                    </motion.p>
+                )
+                }
 
                 <div className="mt-6 text-white/80 text-center space-y-2">
                     <p>
