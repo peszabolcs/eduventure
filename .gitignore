@@ -11,6 +11,11 @@ node_modules
 dist
 dist-ssr
 *.local
+.phpunit.result.cache
+composer.lock
+phpunit.xml
+vendor
+
 
 # Editor directories and files
 .vscode/*
