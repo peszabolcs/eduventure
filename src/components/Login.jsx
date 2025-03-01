@@ -14,6 +14,7 @@ export default function LoginPage() {
 
     const navigate = useNavigate();
     const { setUser} = useAuth();
+    const API_URL = import.meta.env.VITE_API_URL;
 
     const [errors, setErrors] = useState({})
     const [showPassword, setShowPassword] = useState(false)
@@ -44,9 +45,10 @@ export default function LoginPage() {
         if (Object.keys(newErrors).length === 0) {
             setIsSubmitting(true)
             try {
-                console.log("Login submitted:", formData)
-                const response = await fetch("https://edu-venture.hu/backend/login.php", {
+                console.log("Login submitted")
+                const response = await fetch(`${API_URL}/backend/login.php`, {
                     method: "POST",
+                    mode: "cors",
                     headers: {
                         "Content-Type": "application/json",
                     },

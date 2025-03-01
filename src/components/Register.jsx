@@ -15,6 +15,7 @@ export default function RegisterPage() {
     })
 
     const navigate = useNavigate();
+    const API_URL = import.meta.env.VITE_API_URL;
 
     const [errors, setErrors] = useState({})
     const [showPassword, setShowPassword] = useState(false)
@@ -67,7 +68,7 @@ export default function RegisterPage() {
             setIsSubmitting(true)
             try {
                 //https://edu-venture.hu/backend/register.php
-                const response = await fetch('https://edu-venture.hu/backend/register.php', {
+                const response = await fetch(`${API_URL}/backend/register.php`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'

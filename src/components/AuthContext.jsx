@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect } from "react";
 
 const AuthContext = createContext();
+const API_URL = import.meta.env.VITE_API_URL;
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
@@ -8,7 +9,7 @@ export const AuthProvider = ({ children }) => {
     useEffect(() => {
         const fetchSession = async () => {
             try {
-                const response = await fetch("https://edu-venture.hu/backend/check_session.php", {
+                const response = await fetch(`${API_URL}/backend/check_session.php`, {
                     credentials: "include"
                 });
                 const result = await response.json();
@@ -28,7 +29,7 @@ export const AuthProvider = ({ children }) => {
     }, []);
 
     const logout = async () => {
-        await fetch("https://edu-venture.hu/backend/logout.php", {
+        await fetch(`${API_URL}/backend/logout.php`, {
             method: "POST",
             credentials: "include"
         });

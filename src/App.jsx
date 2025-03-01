@@ -8,6 +8,7 @@ import Footer from "./components/Footer.jsx";
 import {BrowserRouter as Router, Routes, Route, useLocation} from "react-router-dom";
 import Register from "./components/Register.jsx";
 import Login from "./components/Login.jsx";
+import ProfilePage from "./components/ProfilePage.jsx";
 
 function App() {
 
@@ -32,6 +33,7 @@ function App() {
                   } />
                   <Route path="/register" element={<Register />} />
                   <Route path="/login" element={<Login />} />
+                  <Route path="/profile" element={<ProfilePage />} />
               </Routes>
           </main>
           <Footer/>

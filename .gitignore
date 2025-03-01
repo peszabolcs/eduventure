@@ -30,3 +30,4 @@ vendor
 
 #secret file
 .env
+.env.development

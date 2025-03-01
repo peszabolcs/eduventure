@@ -9,8 +9,8 @@ import {useAuth} from "./AuthContext.jsx";
 
 const menuItems = [
     { name: "Főoldal", to: "hero-section", href: "/" },
-    { name: "Projekt", to: "project-description" },
-    { name: "Csapat", to: "team-section" },
+    // { name: "Projekt", to: "project-description" },
+    // { name: "Csapat", to: "team-section" },
     { name: "Kérdőív", to: "form-section", href: "https://forms.gle/hewV8BhLbWoBoLsLA" },
     // {name: "Regisztráció", href: "/register" },
 ]
