@@ -57,7 +57,7 @@ $email = $data["email"];
 $password = $data["password"];
 
 // SQL lekérdezés előkészítése
-$query = $conn->prepare("SELECT id, username, password FROM users WHERE email = ?");
+$query = $conn->prepare("SELECT id, fullname, username, email, password, role, created_at FROM users WHERE email = ?");
 $query->bind_param("s", $email);
 $query->execute();
 $result = $query->get_result();
@@ -69,12 +69,19 @@ if ($result->num_rows > 0) {
         $_SESSION["email"] = $email;
         $_SESSION["user_name"] = $row["username"];
         $_SESSION["id"] = $row["id"];
+        $_SESSION["role"] = $row["role"];
+        $_SESSION["created_at"] = $row["created_at"];
+        $_SESSION["fullname"] = $row["fullname"];
 
         echo json_encode([
             "success" => "Sikeres bejelentkezés",
             "user" => [
+                "id" => $row["id"],
+                "fullname" => $row["fullname"],
                 "email" => $email,
-                "username" => $row["username"]
+                "username" => $row["username"],
+                "role" => $row["role"],
+                "created_at" => $row["created_at"]
             ]
         ]);
     } else {

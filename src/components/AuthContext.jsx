@@ -16,6 +16,7 @@ export const AuthProvider = ({ children }) => {
                 if (result.logged_in) {
                     setUser(result.user);
                     localStorage.setItem("user", JSON.stringify(result.user));
+                    console.log(user);
                 } else {
                     setUser(null);
                     localStorage.removeItem("user");

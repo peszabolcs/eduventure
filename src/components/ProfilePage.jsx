@@ -1,7 +1,9 @@
 "use client"
 
 import { useState, useRef, useEffect } from "react"
+import { useAuth } from "../components/AuthContext"
 import { User, Edit2, Mail, Lock, Shield, LogOut, Camera, Check, X, AlertTriangle } from "lucide-react"
+import { motion } from "framer-motion"
 import { Button } from "../components/ui/button"
 import { Input } from "../components/ui/input"
 import { Label } from "../components/ui/label"
@@ -30,17 +32,18 @@ import {
     AlertDialogTrigger,
 } from "../components/ui/alert-dialog"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs"
+import {useNavigate} from "react-router-dom";
 
 export default function ProfilePage() {
-    const [profile, setProfile] = useState({
-        username: "eduuser",
-        fullName: "Minta Felhasználó",
-        email: "felhasznalo@example.com",
-        status: "Aktív",
-        avatarUrl: "/placeholder.svg?height=100&width=100",
-        joinDate: "2023. január 15.",
-        lastActive: "2 órája",
-    })
+    // const [profile, setProfile] = useState({
+    //     username: "eduuser",
+    //     fullName: "Minta Felhasználó",
+    //     email: "felhasznalo@example.com",
+    //     status: "Aktív",
+    //     avatarUrl: "/placeholder.svg?height=100&width=100",
+    //     joinDate: "2023. január 15.",
+    //     lastActive: "2 órája",
+    // })
 
     const [newEmail, setNewEmail] = useState("")
     const [currentPassword, setCurrentPassword] = useState("")
@@ -51,6 +54,16 @@ export default function ProfilePage() {
     const fileInputRef = useRef(null)
     const [avatarHover, setAvatarHover] = useState(false)
     const [notification, setNotification] = useState(null)
+    const {user, logout} = useAuth();
+    const API_URL = import.meta.env.VITE_API_URL;
+    const navigate = useNavigate();
+    const [profile, setProfile] = useState({
+        username: "",
+        fullName: "",
+        email: "",
+        created_at: "",
+    });
+    const [isEmailDialogOpen, setIsEmailDialogOpen] = useState(false);
 
     useEffect(() => {
         // Simple password strength calculator
@@ -67,6 +80,20 @@ export default function ProfilePage() {
 
         setPasswordStrength(strength)
     }, [newPassword])
+
+    useEffect(() => {
+        if(user) {
+            setProfile({
+                username: user.username,
+                fullName: user.fullname,
+                email: user.email,
+                // : user.status,
+                // avatarUrl: user.avatarUrl || "/placeholder.svg?height=100&width=100",
+                joinDate: user.created_at,
+                // lastActive: user.lastActive,
+            });
+        }
+    }, [user]);
 
     // Custom notification function to replace toast
     const showNotification = (title, message, type = "success") => {
@@ -88,15 +115,34 @@ export default function ProfilePage() {
         }
     }
 
-    const handleEmailChange = () => {
+    const handleEmailChange = async () => {
         setIsLoading(true)
-        // Simulate API call
-        setTimeout(() => {
-            setProfile({ ...profile, email: newEmail })
-            setNewEmail("")
-            setIsLoading(false)
-            showNotification("Email cím frissítve", "Az email címed sikeresen frissítve lett.")
-        }, 1000)
+
+        try {
+            const response = await fetch(`${API_URL}/backend/update_profile.php`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ email: newEmail }),
+                credentials: "include",
+            });
+            const result = await response.json();
+            if (result.success) {
+                setProfile({ ...profile, email: newEmail })
+                setNewEmail("")
+                setIsLoading(false)
+                showNotification("Email cím frissítve", "Az email címed sikeresen frissítve lett.")
+                setIsEmailDialogOpen(false)
+            } else {
+                showNotification("Hiba", "Az email cím frissítése közben hiba történt.", "error")
+            }
+        } catch (error) {
+            console.error("Email update failed:", error);
+            showNotification("Hiba", "Az email cím frissítése közben hiba történt.", "error");
+        } finally {
+            setIsLoading(false);
+        }
     }
 
     const handlePasswordChange = () => {
@@ -125,22 +171,62 @@ export default function ProfilePage() {
         }, 1000)
     }
 
-    const handleDeleteProfile = () => {
-        // In a real implementation, you would call an API to delete the profile
-        showNotification("Profil törölve", "A profilod sikeresen törölve lett.")
+    const handleDeleteProfile = async () => {
+        try {
+            const response = await fetch(`${API_URL}/backend/delete_profile.php`, {
+                method: "POST",
+                credentials: "include",
+            });
+            const result = await response.json();
+            if (result.success) {
+                showNotification("Profil törölve", "A profilod sikeresen törölve lett.")
+                navigate("/");
+                logout();
+            } else {
+                showNotification("Hiba", "A profil törlése közben hiba történt.", "error");
+            }
+        } catch (error) {
+                console.error("Profile deletion failed:", error);
+                showNotification("Hiba", "A profil törlése közben hiba történt.", "error");
+            }
         // Redirect to home page or login page
     }
 
-    const handleFullNameChange = (e) => {
-        setProfile({ ...profile, fullName: e.target.value })
+    const handleFullNameChange = async (e) => {
+        const fullName = e.target.value;
+        setProfile({ ...profile, fullName });
+        try {
+            const response = await fetch(`${API_URL}/backend/update_profile.php`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ fullName: e.target.value }),
+                credentials: "include",
+            });
+            const result = await response.json();
+            if (result.success) {
+                setProfile({ ...profile, fullName: e.target.value })
+                showNotification("Név frissítve", "A neved sikeresen frissítve lett.")
+            } else {
+                showNotification("Hiba", "A név frissítése közben hiba történt.", "error")
+            }
+        }catch (error) {
+            console.error("Full name update failed:", error);
+            showNotification("Hiba", "A név frissítése közben hiba történt.", "error");
+        }
     }
 
     const handleFullNameBlur = () => {
         showNotification("Név frissítve", "A neved sikeresen frissítve lett.")
     }
 
+    if (!profile) {
+        return <div>Betöltés...</div>;
+    }
+
     return (
-        <div className="min-h-screen bg-gradient-to-br from-indigo-950 via-purple-900 to-indigo-900 text-white">
+        <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 text-white">
             {/* Custom notification */}
             {notification && (
                 <div
@@ -167,30 +253,12 @@ export default function ProfilePage() {
                 </div>
             )}
 
-            <div className="absolute inset-0 bg-[url('/placeholder.svg?height=500&width=500')] opacity-5 bg-repeat"></div>
-
-            <header className="container mx-auto py-8 relative z-10">
-                <div className="flex justify-center mb-6">
-                    <div className="relative">
-                        <img
-                            src="/placeholder.svg?height=80&width=80"
-                            alt="EduVenture Logo"
-                            width={80}
-                            height={80}
-                            className="rounded-full border-2 border-purple-400/30 shadow-lg shadow-purple-500/20"
-                        />
-                        <div className="absolute -bottom-1 -right-1 bg-green-500 w-4 h-4 rounded-full border-2 border-indigo-950"></div>
-                    </div>
-                </div>
-                <h1 className="text-4xl font-bold text-center mb-2 bg-clip-text text-transparent bg-gradient-to-r from-purple-300 to-indigo-300">
-                    Profilom
-                </h1>
-                <p className="text-center text-purple-200/80 mb-8 max-w-md mx-auto">
-                    Itt kezelheted a személyes adataidat és beállításaidat
-                </p>
-            </header>
-
-            <main className="container mx-auto px-4 pb-16 relative z-10">
+            <main className="container mx-auto px-4 pb-16 relative z-10 mt-20">
+                <motion.div
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8 }}
+                >
                 <div className="max-w-4xl mx-auto">
                     <div className="grid md:grid-cols-[300px_1fr] gap-6">
                         {/* Profile Summary Card */}
@@ -213,7 +281,7 @@ export default function ProfilePage() {
                                             onMouseLeave={() => setAvatarHover(false)}
                                         >
                                             <Avatar className="h-24 w-24 border-4 border-indigo-950 shadow-xl transition-all duration-300">
-                                                <AvatarImage src={profile.avatarUrl} alt={profile.fullName} className="object-cover" />
+                                                {/*<AvatarImage src={profile.avatarUrl} alt={profile.fullName} className="object-cover" />*/}
                                                 <AvatarFallback className="bg-gradient-to-br from-purple-600 to-indigo-600 text-xl">
                                                     {profile.fullName
                                                         .split(" ")
@@ -241,7 +309,7 @@ export default function ProfilePage() {
                                         <h2 className="text-xl font-semibold mt-3">{profile.fullName}</h2>
                                         <p className="text-purple-300/80">@{profile.username}</p>
                                         <Badge className="mt-2 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 border-0">
-                                            {profile.status}
+                                            {/*{profile.status}*/}
                                         </Badge>
                                     </div>
 
@@ -267,16 +335,16 @@ export default function ProfilePage() {
                                                 <p>{profile.joinDate}</p>
                                             </div>
                                         </div>
-
-                                        <div className="flex items-center text-sm">
-                                            <div className="w-8 h-8 rounded-full bg-purple-500/10 flex items-center justify-center mr-3">
-                                                <Shield className="h-4 w-4 text-purple-300" />
-                                            </div>
-                                            <div>
-                                                <p className="text-purple-200/70 text-xs">Utoljára aktív</p>
-                                                <p>{profile.lastActive}</p>
-                                            </div>
-                                        </div>
+                                        {/*TODO last active*/}
+                                        {/*<div className="flex items-center text-sm">*/}
+                                        {/*    <div className="w-8 h-8 rounded-full bg-purple-500/10 flex items-center justify-center mr-3">*/}
+                                        {/*        <Shield className="h-4 w-4 text-purple-300" />*/}
+                                        {/*    </div>*/}
+                                        {/*    <div>*/}
+                                        {/*        /!*<p className="text-purple-200/70 text-xs">Utoljára aktív</p>*!/*/}
+                                        {/*        /!*<p>{profile.lastActive}</p>*!/*/}
+                                        {/*    </div>*/}
+                                        {/*</div>*/}
                                     </div>
 
                                     <Separator className="bg-purple-500/20 my-4" />
@@ -302,7 +370,7 @@ export default function ProfilePage() {
                                                 <AlertDialogCancel className="border-purple-500/50 hover:bg-purple-700/30">
                                                     Mégsem
                                                 </AlertDialogCancel>
-                                                <AlertDialogAction className="bg-purple-600 hover:bg-purple-700">
+                                                <AlertDialogAction className="bg-purple-600 hover:bg-purple-700" onClick={logout}>
                                                     Kijelentkezés
                                                 </AlertDialogAction>
                                             </AlertDialogFooter>
@@ -376,7 +444,7 @@ export default function ProfilePage() {
                                                             <Label htmlFor="email" className="text-purple-200">
                                                                 Email cím
                                                             </Label>
-                                                            <Dialog>
+                                                            <Dialog open={isEmailDialogOpen} onOpenChange={setIsEmailDialogOpen}>
                                                                 <DialogTrigger asChild>
                                                                     <Button
                                                                         variant="ghost"
@@ -651,6 +719,7 @@ export default function ProfilePage() {
                         </div>
                     </div>
                 </div>
+                </motion.div>
             </main>
         </div>
     )

@@ -9,6 +9,7 @@ import {BrowserRouter as Router, Routes, Route, useLocation} from "react-router-
 import Register from "./components/Register.jsx";
 import Login from "./components/Login.jsx";
 import ProfilePage from "./components/ProfilePage.jsx";
+import ProtectedRoute from "./components/ProtectedRoute.jsx";
 
 function App() {
 
@@ -33,7 +34,7 @@ function App() {
                   } />
                   <Route path="/register" element={<Register />} />
                   <Route path="/login" element={<Login />} />
-                  <Route path="/profile" element={<ProfilePage />} />
+                  <Route path="/profile" element={<ProtectedRoute element={<ProfilePage />} />} />
               </Routes>
           </main>
           <Footer/>

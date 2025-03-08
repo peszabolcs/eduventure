@@ -34,10 +34,11 @@ if (!$data) {
 }
 
 // Ellenőrizzük, hogy minden adat megvan-e
-if (!isset($data["username"], $data["email"], $data["password"])) {
+if (!isset($data["username"], $data["email"], $data["password"], $data["fullname"])) {
     die(json_encode(["error" => "Minden mező kitöltése kötelező!"]));
 }
 
+$fullname = $data["fullname"];
 $username = $data["username"];
 $email = $data["email"];
 $password = password_hash($data["password"], PASSWORD_BCRYPT); // Jelszó hash-elése
@@ -48,14 +49,25 @@ $check_query->bind_param("s", $email);
 $check_query->execute();
 $check_query->store_result();
 
+//Ellenőrizzük, hogy a felhasználónév már létezik-e
+$check_query_username = $conn->prepare("SELECT id FROM users WHERE username = ?");
+$check_query_username->bind_param("s", $username);
+$check_query_username->execute();
+$check_query_username->store_result();
+
+
 if ($check_query->num_rows > 0) {
     die(json_encode(["error" => "Ez az email már létezik!"]));
+}
+
+if ($check_query_username->num_rows > 0) {
+    die(json_encode(["error" => "Ez a felhasználónév már létezik!"]));
 }
 $check_query->close();
 
 // Felhasználó hozzáadása
-$insert_query = $conn->prepare("INSERT INTO users (username, email, password) VALUES (?, ?, ?)");
-$insert_query->bind_param("sss", $username, $email, $password);
+$insert_query = $conn->prepare("INSERT INTO users (fullname, username, email, password) VALUES (?, ?, ?, ?)");
+$insert_query->bind_param("ssss", $fullname, $username, $email, $password);
 
 if ($insert_query->execute()) {
     echo json_encode(["success" => "Sikeres regisztráció!"]);

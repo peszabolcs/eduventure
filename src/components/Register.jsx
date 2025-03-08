@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom"
 export default function RegisterPage() {
     const [formData, setFormData] = useState({
         username: "",
+        fullname: "",
         email: "",
         password: "",
         confirmPassword: "",
@@ -74,6 +75,7 @@ export default function RegisterPage() {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
+                        fullname: formData.fullname,
                         username: formData.username,
                         email: formData.email,
                         password: formData.password,
@@ -118,6 +120,30 @@ export default function RegisterPage() {
             >
                 <h2 className="text-3xl font-bold text-white mb-6 text-center">Regisztráció</h2>
                 <form onSubmit={handleSubmit} className="space-y-4">
+                    <div className="relative">
+                        <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/50" size={20} />
+                        <motion.input
+                            name="fullname"
+                            value={formData.fullname}
+                            onChange={handleChange}
+                            type="text"
+                            placeholder="Teljes név"
+                            className={inputClasses}
+                            whileFocus={{ scale: 1.02 }}
+                        />
+                        <AnimatePresence>
+                            {errors.fullname && (
+                                <motion.p
+                                    initial={{ opacity: 0, y: -10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -10 }}
+                                    className="mt-1 text-red-400 text-sm flex items-center"
+                                >
+                                    <XCircle className="inline mr-1" size={16} /> {errors.fullname}
+                                </motion.p>
+                            )}
+                        </AnimatePresence>
+                    </div>
                     <div className="relative">
                         <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/50" size={20} />
                         <motion.input
