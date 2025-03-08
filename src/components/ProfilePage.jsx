@@ -148,7 +148,7 @@ export default function ProfilePage() {
         }
     }
 
-    const handlePasswordChange = () => {
+    const handlePasswordChange = async () => {
         if (newPassword !== confirmPassword) {
             showNotification("Hiba", "Az új jelszavak nem egyeznek!", "error")
             return
@@ -164,14 +164,36 @@ export default function ProfilePage() {
         }
 
         setIsLoading(true)
-        // Simulate API call
-        setTimeout(() => {
-            setCurrentPassword("")
-            setNewPassword("")
-            setConfirmPassword("")
-            setIsLoading(false)
-            showNotification("Jelszó módosítva", "A jelszavad sikeresen módosítva lett.")
-        }, 1000)
+
+        try {
+            const response = await fetch(`${API_URL}/backend/update_profile.php`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    password: newPassword,
+                    currentPassword: currentPassword
+                }),
+                credentials: "include",
+            });
+            const result = await response.json();
+            if (result.success) {
+                setCurrentPassword("")
+                setNewPassword("")
+                setConfirmPassword("")
+                setIsLoading(false)
+                showNotification("Jelszó módosítva", "A jelszavad sikeresen módosítva lett.")
+            } else {
+                const errorMessage = result.error || "A jelszó módosítása közben hiba történt."
+                showNotification("Hiba", errorMessage, "error")
+            }
+        } catch (error) {
+            console.error("Password update failed:", error);
+            showNotification("Hiba", "A jelszó módosítása közben hiba történt.", "error");
+        } finally {
+            setIsLoading(false);
+        }
     }
 
     const handleDeleteProfile = async () => {
@@ -195,7 +217,7 @@ export default function ProfilePage() {
         // Redirect to home page or login page
     }
 
-    const handleFullNameChange = async (e) => {
+    const handleFullNameChange = async () => {
         setIsLoading(true);
 
         try {
@@ -224,9 +246,9 @@ export default function ProfilePage() {
         }
     }
 
-    const handleFullNameBlur = () => {
-        showNotification("Név frissítve", "A neved sikeresen frissítve lett.")
-    }
+    // const handleFullNameBlur = () => {
+    //     showNotification("Név frissítve", "A neved sikeresen frissítve lett.")
+    // }
 
     if (!profile) {
         return <div>Betöltés...</div>;
@@ -374,7 +396,7 @@ export default function ProfilePage() {
                                                 </AlertDialogDescription>
                                             </AlertDialogHeader>
                                             <AlertDialogFooter>
-                                                <AlertDialogCancel className="border-purple-500/50 hover:bg-purple-700/30">
+                                                <AlertDialogCancel className="border-purple-500/50 hover:bg-purple-700/30 text-black mt-0">
                                                     Mégsem
                                                 </AlertDialogCancel>
                                                 <AlertDialogAction className="bg-purple-600 hover:bg-purple-700" onClick={logout}>
@@ -476,7 +498,7 @@ export default function ProfilePage() {
                                                                 </div>
                                                                 <DialogFooter>
                                                                     <DialogClose asChild>
-                                                                        <Button variant="outline" className="border-purple-500/50 hover:bg-purple-700/30">
+                                                                        <Button variant="outline" className="border-purple-500/50 hover:bg-purple-700/30 text-black">
                                                                             Mégsem
                                                                         </Button>
                                                                     </DialogClose>
@@ -569,7 +591,7 @@ export default function ProfilePage() {
                                                                     </div>
                                                                     <DialogFooter>
                                                                         <DialogClose asChild>
-                                                                            <Button variant="outline" className="border-purple-500/50 hover:bg-purple-700/30">
+                                                                            <Button variant="outline" className="border-purple-500/50 hover:bg-purple-700/30 text-black">
                                                                                 Mégsem
                                                                             </Button>
                                                                         </DialogClose>
@@ -789,7 +811,7 @@ export default function ProfilePage() {
                                                             </AlertDialogDescription>
                                                         </AlertDialogHeader>
                                                         <AlertDialogFooter>
-                                                            <AlertDialogCancel className="border-purple-500/50 hover:bg-purple-700/30">
+                                                            <AlertDialogCancel className="border-purple-500/50 hover:bg-purple-700/30 text-black">
                                                                 Mégsem
                                                             </AlertDialogCancel>
                                                             <AlertDialogAction onClick={handleDeleteProfile} className="bg-red-600 hover:bg-red-700">

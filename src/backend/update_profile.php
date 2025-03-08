@@ -23,8 +23,14 @@ if (isset($_SERVER['HTTP_ORIGIN']) && in_array($_SERVER['HTTP_ORIGIN'], $allowed
 
 // Ha a böngésző `OPTIONS` preflight kérést küld, azonnal válaszoljunk
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(200);
-    exit();
+    if(isset($_SERVER['HTTP_ORIGIN']) && in_array($_SERVER['HTTP_ORIGIN'], $allowed_origins)) {
+        header("Access-Control-Allow-Origin: " . $_SERVER['HTTP_ORIGIN']);
+        header("Access-Control-Allow-Credentials: true");
+        header("Access-Control-Allow-Methods: POST, OPTIONS");
+        header("Access-Control-Allow-Headers: Content-Type, Authorization");
+        http_response_code(200);
+        exit();
+    }
 }
 
 try {
@@ -67,6 +73,21 @@ if (!empty($data['email'])) {
     $SESSION['email'] = $data['email'];
 }
 if (!empty($data['password'])) {
+    if (empty($data['currentPassword'])) {
+        echo json_encode(["error" => "Current password is required"]);
+        exit();
+    }
+
+    $stmt = $pdo->prepare("SELECT password FROM users WHERE id = ?");
+    $stmt->execute([$userid]);
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!password_verify($data['currentPassword'], $user['password'])) {
+        echo json_encode(["error" => "A jelenlegi jelszó helytelen"]);
+        http_response_code(400);
+        exit();
+    }
+
     $hashed_password = password_hash($data['password'], PASSWORD_DEFAULT);
     $update_fields[] = "password = ?";
     $params[] = $hashed_password;
