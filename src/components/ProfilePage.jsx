@@ -92,6 +92,7 @@ export default function ProfilePage() {
                 // : user.status,
                 // avatarUrl: user.avatarUrl || "/placeholder.svg?height=100&width=100",
                 joinDate: user.created_at,
+                role: user.role,
                 // lastActive: user.lastActive,
             });
         }
@@ -315,7 +316,7 @@ export default function ProfilePage() {
                                         <h2 className="text-xl font-semibold mt-3">{profile.fullName}</h2>
                                         <p className="text-purple-300/80">@{profile.username}</p>
                                         <Badge className="mt-2 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 border-0">
-                                            {/*{profile.status}*/}
+                                            {profile.role}
                                         </Badge>
                                     </div>
 
