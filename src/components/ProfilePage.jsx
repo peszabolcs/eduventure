@@ -64,6 +64,8 @@ export default function ProfilePage() {
         created_at: "",
     });
     const [isEmailDialogOpen, setIsEmailDialogOpen] = useState(false);
+    const [newFullName, setNewFullName] = useState("");
+    const [isFullNameDialogOpen, setIsFullNameDialogOpen] = useState(false);
 
     useEffect(() => {
         // Simple password strength calculator
@@ -193,27 +195,31 @@ export default function ProfilePage() {
     }
 
     const handleFullNameChange = async (e) => {
-        const fullName = e.target.value;
-        setProfile({ ...profile, fullName });
+        setIsLoading(true);
+
         try {
             const response = await fetch(`${API_URL}/backend/update_profile.php`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ fullName: e.target.value }),
+                body: JSON.stringify({ fullname: newFullName }),
                 credentials: "include",
             });
             const result = await response.json();
             if (result.success) {
-                setProfile({ ...profile, fullName: e.target.value })
+                setProfile({ ...profile, fullName: newFullName });
+                setNewFullName("");
                 showNotification("Név frissítve", "A neved sikeresen frissítve lett.")
+                setIsFullNameDialogOpen(false);
             } else {
                 showNotification("Hiba", "A név frissítése közben hiba történt.", "error")
             }
         }catch (error) {
             console.error("Full name update failed:", error);
             showNotification("Hiba", "A név frissítése közben hiba történt.", "error");
+        } finally {
+            setIsLoading(false);
         }
     }
 
@@ -359,7 +365,7 @@ export default function ProfilePage() {
                                                 Kijelentkezés
                                             </Button>
                                         </AlertDialogTrigger>
-                                        <AlertDialogContent className="bg-indigo-950 border-purple-500/50 text-white">
+                                        <AlertDialogContent className="bg-indigo-950 border-purple-500/50 text-white" aria-describedby="logout-dialog">
                                             <AlertDialogHeader>
                                                 <AlertDialogTitle>Biztosan ki szeretnél jelentkezni?</AlertDialogTitle>
                                                 <AlertDialogDescription className="text-purple-200">
@@ -427,18 +433,98 @@ export default function ProfilePage() {
                                                     </div>
 
                                                     <div className="space-y-2">
+                                                        <div className="flex justify-between items-center">
                                                         <Label htmlFor="fullName" className="text-purple-200">
                                                             Teljes Név
                                                         </Label>
+                                                        <Dialog open={isFullNameDialogOpen} onOpenChange={setIsFullNameDialogOpen}>
+                                                            <DialogTrigger asChild>
+                                                                <Button
+                                                                    variant="ghost"
+                                                                    size="sm"
+                                                                    className="h-8 text-purple-300 hover:text-white hover:bg-purple-700/50"
+                                                                >
+                                                                    <Edit2 className="h-3.5 w-3.5 mr-1" />
+                                                                    Módosítás
+                                                                </Button>
+                                                            </DialogTrigger>
+                                                            <DialogContent className="bg-indigo-950 border-purple-500/50 text-white" aria-describedby="full-name-dialog">
+                                                                <DialogHeader>
+                                                                    <DialogTitle>Teljes név módosítása</DialogTitle>
+                                                                </DialogHeader>
+                                                                <div className="space-y-4 py-4">
+                                                                    <div className="space-y-2">
+                                                                        <Label htmlFor="current-fullname">Jelenlegi teljes név</Label>
+                                                                        <Input
+                                                                            id="current-fullname"
+                                                                            value={profile.fullName}
+                                                                            readOnly
+                                                                            className="bg-white/5 border-purple-500/30"
+                                                                        />
+                                                                    </div>
+                                                                    <div className="space-y-2">
+                                                                        <Label htmlFor="new-fullname">Új teljes név</Label>
+                                                                        <Input
+                                                                            id="new-fullname"
+                                                                            type="text"
+                                                                            value={newFullName}
+                                                                            onChange={(e) => setNewFullName(e.target.value)}
+                                                                            className="bg-white/5 border-purple-500/30 focus-visible:ring-purple-500"
+                                                                        />
+                                                                    </div>
+                                                                </div>
+                                                                <DialogFooter>
+                                                                    <DialogClose asChild>
+                                                                        <Button variant="outline" className="border-purple-500/50 hover:bg-purple-700/30">
+                                                                            Mégsem
+                                                                        </Button>
+                                                                    </DialogClose>
+                                                                    <Button
+                                                                        onClick={handleFullNameChange}
+                                                                        disabled={!newFullName || isLoading}
+                                                                        className="bg-purple-600 hover:bg-purple-700"
+                                                                    >
+                                                                        {isLoading ? (
+                                                                            <>
+                                                                                <svg
+                                                                                    className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                                                                                    xmlns="http://www.w3.org/2000/svg"
+                                                                                    fill="none"
+                                                                                    viewBox="0 0 24 24"
+                                                                                >
+                                                                                    <circle
+                                                                                        className="opacity-25"
+                                                                                        cx="12"
+                                                                                        cy="12"
+                                                                                        r="10"
+                                                                                        stroke="currentColor"
+                                                                                        strokeWidth="4"
+                                                                                    ></circle>
+                                                                                    <path
+                                                                                        className="opacity-75"
+                                                                                        fill="currentColor"
+                                                                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                                                                                    ></path>
+                                                                                </svg>
+                                                                                Feldolgozás...
+                                                                            </>
+                                                                        ) : (
+                                                                            "Mentés"
+                                                                        )}
+                                                                    </Button>
+                                                                </DialogFooter>
+                                                            </DialogContent>
+                                                        </Dialog>
+                                                    </div>
+                                                    <div className="relative">
                                                         <Input
                                                             id="fullName"
                                                             value={profile.fullName}
-                                                            className="bg-white/5 border-purple-500/30 focus-visible:ring-purple-500 transition-all duration-200 hover:border-purple-400/50"
-                                                            onChange={handleFullNameChange}
-                                                            onBlur={handleFullNameBlur}
+                                                            readOnly
+                                                            className="bg-white/5 border-purple-500/30 pr-10"
                                                         />
                                                     </div>
-
+                                                </div>
                                                     <div className="space-y-2">
                                                         <div className="flex justify-between items-center">
                                                             <Label htmlFor="email" className="text-purple-200">
@@ -455,7 +541,7 @@ export default function ProfilePage() {
                                                                         Módosítás
                                                                     </Button>
                                                                 </DialogTrigger>
-                                                                <DialogContent className="bg-indigo-950 border-purple-500/50 text-white">
+                                                                <DialogContent className="bg-indigo-950 border-purple-500/50 text-white" aria-describedby="email-dialog">
                                                                     <DialogHeader>
                                                                         <DialogTitle>Email cím módosítása</DialogTitle>
                                                                     </DialogHeader>
@@ -693,7 +779,7 @@ export default function ProfilePage() {
                                                             Profilom törlése
                                                         </Button>
                                                     </AlertDialogTrigger>
-                                                    <AlertDialogContent className="bg-indigo-950 border-purple-500/50 text-white">
+                                                    <AlertDialogContent className="bg-indigo-950 border-purple-500/50 text-white" aria-describedby="delete-profile-dialog">
                                                         <AlertDialogHeader>
                                                             <AlertDialogTitle>Biztosan törölni szeretnéd a profilodat?</AlertDialogTitle>
                                                             <AlertDialogDescription className="text-purple-200">
