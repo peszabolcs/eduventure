@@ -20,7 +20,7 @@ if (isset($_SERVER['HTTP_ORIGIN']) && in_array($_SERVER['HTTP_ORIGIN'], $allowed
 
 // Ha a böngésző `OPTIONS` preflight kérést küld, azonnal válaszoljunk
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    if(isset($_SERVER['HTTP_ORIGIN']) && in_array($_SERVER['HTTP_ORIGIN'], $allowed_origins)) {
+    if (isset($_SERVER['HTTP_ORIGIN']) && in_array($_SERVER['HTTP_ORIGIN'], $allowed_origins)) {
         header("Access-Control-Allow-Origin: " . $_SERVER['HTTP_ORIGIN']);
         header("Access-Control-Allow-Credentials: true");
         header("Access-Control-Allow-Methods: POST, OPTIONS");
@@ -79,11 +79,7 @@ try {
         [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
     );
 
-    $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
-    $host = $_SERVER['HTTP_HOST'];
-    $base_url = $protocol . $host . "/backend/uploads/";
-    $cover_url = $base_url . $filename; // Abszolút URL
-
+    $cover_url = "/backend/uploads/" . $filename; // Relatív URL
     $stmt = $pdo->prepare("UPDATE users SET cover = ? WHERE id = ?");
     $stmt->execute([$cover_url, $userid]);
 
@@ -91,4 +87,3 @@ try {
 } catch (PDOException $e) {
     echo json_encode(["error" => "Database update failed"]);
 }
-?>

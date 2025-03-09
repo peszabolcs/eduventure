@@ -132,7 +132,7 @@ export default function ProfilePage() {
       });
       const result = await response.json();
       if (result.success) {
-        setProfile({ ...profile, coverUrl: result.coverUrl });
+        setProfile({ ...profile, coverUrl: `${API_URL}${result.cover_url}` });
         showNotification(
           "Háttérkép frissítve",
           "A háttérképed sikeresen frissítve lett."
