@@ -59,7 +59,7 @@ export default function ProfilePage() {
   const [passwordStrength, setPasswordStrength] = useState(0);
   const [avatarHover, setAvatarHover] = useState(false);
   const [notification, setNotification] = useState(null);
-  const { user, logout } = useAuth();
+  const { user, logout, setUser } = useAuth();
   const API_URL = import.meta.env.VITE_API_URL;
   const navigate = useNavigate();
   const [profile, setProfile] = useState({
@@ -93,20 +93,34 @@ export default function ProfilePage() {
   }, [newPassword]);
 
   useEffect(() => {
-    if (user) {
-      setProfile({
-        username: user.username,
-        fullName: user.fullname,
-        email: user.email,
-        avatarUrl: user.avatarUrl
-          ? `${API_URL}${user.avatarUrl}`
-          : "/placeholder.svg?height=100&width=100",
-        coverUrl: user.coverUrl ? `${API_URL}${user.coverUrl}` : "NULL",
-        joinDate: user.created_at,
-        role: user.role,
-      });
-    }
-  }, [user]);
+    const fetchUserData = async () => {
+      try {
+        const response = await fetch(`${API_URL}/backend/get_user_data.php`, {
+          credentials: "include",
+        });
+        const userData = await response.json();
+        if (userData.success) {
+          setProfile({
+            username: userData.user.username,
+            fullName: userData.user.fullname,
+            email: userData.user.email,
+            avatarUrl: userData.user.avatar
+              ? `${API_URL}${userData.user.avatar}`
+              : null,
+            coverUrl: userData.user.cover
+              ? `${API_URL}${userData.user.cover}`
+              : null,
+            joinDate: userData.user.created_at,
+            role: userData.user.role,
+          });
+        }
+      } catch (error) {
+        console.error("Failed to fetch user data:", error);
+      }
+    };
+
+    fetchUserData();
+  }, []); // Csak egyszer fut le, amikor az oldal betöltődik
 
   // Custom notification function to replace toast
   const showNotification = (title, message, type = "success") => {
@@ -132,7 +146,8 @@ export default function ProfilePage() {
       });
       const result = await response.json();
       if (result.success) {
-        setProfile({ ...profile, coverUrl: `${API_URL}${result.cover_url}` });
+        const newCoverUrl = `${API_URL}${result.cover_url}`;
+        setProfile({ ...profile, coverUrl: newCoverUrl });
         showNotification(
           "Háttérkép frissítve",
           "A háttérképed sikeresen frissítve lett."
@@ -168,7 +183,8 @@ export default function ProfilePage() {
       });
       const result = await response.json();
       if (result.success) {
-        setProfile({ ...profile, avatarUrl: `${API_URL}${result.avatar_url}` });
+        const newAvatarUrl = `${API_URL}${result.avatar_url}`;
+        setProfile({ ...profile, avatarUrl: newAvatarUrl });
         showNotification(
           "Profilkép frissítve",
           "A profilképed sikeresen frissítve lett."
@@ -438,7 +454,11 @@ export default function ProfilePage() {
                       >
                         <Avatar className="h-24 w-24 border-4 border-indigo-950 shadow-xl transition-all duration-300">
                           <AvatarImage
-                            src={profile.avatarUrl || "/default-avatar.png"}
+                            src={
+                              profile.avatarUrl !== "NULL"
+                                ? profile.avatarUrl
+                                : undefined
+                            }
                             alt={profile.fullName}
                             className="object-cover"
                           />

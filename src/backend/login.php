@@ -2,6 +2,16 @@
 require 'vendor/autoload.php';
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
+setcookie("wordpress_test_cookie", "", time() - 3600, "/");
+setcookie("wordpress_logged_in_0719db475a6c68e3b3bc04eaaccbb6d4", "", time() - 3600, "/");
+
+
+
+// Session beállítások
+ini_set('session.cookie_secure', 1);
+ini_set('session.cookie_httponly', 1);
+ini_set('session.cookie_samesite', 'None');
+session_start();
 
 // .env betöltése
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
@@ -29,8 +39,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 // Válasz JSON formátumban
 header("Content-Type: application/json");
-
-session_start();
 
 // Adatbázis kapcsolat
 $host = $_ENV['DB_HOST'];
@@ -66,12 +74,22 @@ if ($result->num_rows > 0) {
     $row = $result->fetch_assoc();
 
     if (password_verify($password, $row["password"])) {
-        $_SESSION["email"] = $email;
-        $_SESSION["user_name"] = $row["username"];
-        $_SESSION["id"] = $row["id"];
-        $_SESSION["role"] = $row["role"];
-        $_SESSION["created_at"] = $row["created_at"];
-        $_SESSION["fullname"] = $row["fullname"];
+        // Generáljunk egy egyedi session tokent
+        $sessionToken = bin2hex(random_bytes(32));
+
+        // Session adatok beállítása
+        $_SESSION = array(
+            "token" => $sessionToken,
+            "id" => $row["id"],
+            "email" => $email,
+            "user_name" => $row["username"],
+            "fullname" => $row["fullname"],
+            "role" => $row["role"],
+            "created_at" => $row["created_at"]
+        );
+
+        // Session mentése
+        session_write_close();
 
         echo json_encode([
             "success" => "Sikeres bejelentkezés",
@@ -82,7 +100,8 @@ if ($result->num_rows > 0) {
                 "username" => $row["username"],
                 "role" => $row["role"],
                 "created_at" => $row["created_at"]
-            ]
+            ],
+            "token" => $sessionToken
         ]);
     } else {
         echo json_encode(["error" => "Hibás felhasználónév vagy jelszó"]);
@@ -92,4 +111,3 @@ if ($result->num_rows > 0) {
 }
 
 $conn->close();
-?>
