@@ -1,11 +1,10 @@
 <?php
 session_start();
 
-// header("Access-Control-Allow-Origin: https://www.edu-venture.hu");
 // Engedélyezett origin-ek listája
 $allowed_origins = [
     "http://localhost:5173",
-    "https://www.edu-venture.hu"
+    "https://edu-venture.hu"
 ];
 
 // Ellenőrizzük az aktuális kérés origin-jét

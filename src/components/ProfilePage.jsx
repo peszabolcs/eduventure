@@ -35,15 +35,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs"
 import {useNavigate} from "react-router-dom";
 
 export default function ProfilePage() {
-    // const [profile, setProfile] = useState({
-    //     username: "eduuser",
-    //     fullName: "Minta Felhasználó",
-    //     email: "felhasznalo@example.com",
-    //     status: "Aktív",
-    //     avatarUrl: "/placeholder.svg?height=100&width=100",
-    //     joinDate: "2023. január 15.",
-    //     lastActive: "2 órája",
-    // })
 
     const [newEmail, setNewEmail] = useState("")
     const [currentPassword, setCurrentPassword] = useState("")
@@ -51,7 +42,6 @@ export default function ProfilePage() {
     const [confirmPassword, setConfirmPassword] = useState("")
     const [isLoading, setIsLoading] = useState(false)
     const [passwordStrength, setPasswordStrength] = useState(0)
-    const fileInputRef = useRef(null)
     const [avatarHover, setAvatarHover] = useState(false)
     const [notification, setNotification] = useState(null)
     const {user, logout} = useAuth();
@@ -62,10 +52,15 @@ export default function ProfilePage() {
         fullName: "",
         email: "",
         created_at: "",
+        avatarUrl: "",
+        coverUrl: ""
     });
     const [isEmailDialogOpen, setIsEmailDialogOpen] = useState(false);
     const [newFullName, setNewFullName] = useState("");
     const [isFullNameDialogOpen, setIsFullNameDialogOpen] = useState(false);
+    const fileInputCoverRef = useRef(null);
+    const fileInputAvatarRef = useRef(null);
+
 
     useEffect(() => {
         // Simple password strength calculator
@@ -90,7 +85,8 @@ export default function ProfilePage() {
                 fullName: user.fullname,
                 email: user.email,
                 // : user.status,
-                // avatarUrl: user.avatarUrl || "/placeholder.svg?height=100&width=100",
+                avatarUrl: user.avatarUrl || "/placeholder.svg?height=100&width=100",
+                coverUrl: user.coverUrl || "NULL",
                 joinDate: user.created_at,
                 role: user.role,
                 // lastActive: user.lastActive,
@@ -108,13 +104,53 @@ export default function ProfilePage() {
         }, 3000)
     }
 
-    const handleAvatarUpload = (event) => {
-        const file = event.target.files?.[0]
-        if (file) {
-            // In a real implementation, you would upload the file to a server
-            const imageUrl = URL.createObjectURL(file)
-            setProfile({ ...profile, avatarUrl: imageUrl })
-            showNotification("Profilkép frissítve", "A profilképed sikeresen frissítve lett.")
+    const handleCoverUpload = async (event) => {
+        const file = event.target.files?.[0];
+        if (!file) return;
+        const formData = new FormData();
+        formData.append("cover", file);
+
+        try {
+            const response = await fetch(`${API_URL}/backend/update_background.php`, {
+                method: "POST",
+                body: formData,
+                credentials: "include",
+            });
+            const result = await response.json();
+            if (result.success) {
+                setProfile({ ...profile, coverUrl: result.coverUrl });
+                showNotification("Háttérkép frissítve", "A háttérképed sikeresen frissítve lett.");
+            } else {
+                showNotification("Hiba", result.error || "A háttérkép frissítése közben hiba történt.", "error");
+            }
+        } catch (error) {
+            console.error("Cover upload failed:", error);
+            showNotification("Hiba", "A háttérkép frissítése közben hiba történt.", "error");
+        }
+    }
+
+    const handleAvatarUpload = async (event) => {
+        const file = event.target.files?.[0];
+        if (!file) return;
+        const formData = new FormData();
+        formData.append("avatar", file);
+
+        try {
+            const response = await fetch(`${API_URL}/backend/update_avatar.php`, {
+                method: "POST",
+                body: formData,
+                credentials: "include",
+            });
+            const result = await response.json();
+            if (result.success) {
+                setProfile({ ...profile, avatarUrl: result.avatarUrl });
+                showNotification("Profilkép frissítve", "A profilképed sikeresen frissítve lett.");
+            } else {
+                showNotification("Hiba", result.error || "A profilkép frissítése közben hiba történt.", "error");
+            }
+        } catch (error) {
+            console.error("Avatar upload failed:", error);
+            showNotification("Hiba", "A profilkép frissítése közben hiba történt.", "error");
         }
     }
 
@@ -246,10 +282,6 @@ export default function ProfilePage() {
         }
     }
 
-    // const handleFullNameBlur = () => {
-    //     showNotification("Név frissítve", "A neved sikeresen frissítve lett.")
-    // }
-
     if (!profile) {
         return <div>Betöltés...</div>;
     }
@@ -293,15 +325,31 @@ export default function ProfilePage() {
                         {/* Profile Summary Card */}
                         <div className="space-y-6">
                             <Card className="bg-white/5 backdrop-blur-sm border-purple-500/20 text-white overflow-hidden">
-                                <div className="relative h-24 bg-gradient-to-r from-purple-600 to-indigo-600">
+                                    {profile.coverUrl && profile.coverUrl !== "NULL" ? (
+                                        <img
+                                            src={profile.coverUrl}
+                                            alt="Borítókép"
+                                            className="w-full h-full object-cover"
+                                        />
+                                    ) : (
+                                        <div className="relative h-24 bg-gradient-to-r from-purple-600 to-indigo-600"></div>
+                                    )}
                                     <Button
                                         variant="ghost"
                                         size="icon"
                                         className="absolute top-2 right-2 bg-black/20 hover:bg-black/40 text-white rounded-full h-8 w-8"
+                                        onClick={() => fileInputCoverRef.current?.click()}
                                     >
                                         <Edit2 className="h-4 w-4" />
                                     </Button>
-                                </div>
+                                    <Input
+                                        ref={fileInputCoverRef}
+                                        type="file"
+                                        accept="image/*"
+                                        className="hidden"
+                                        onChange={handleCoverUpload}
+                                    />
+
                                 <CardContent className="pt-0 p-6">
                                     <div className="flex flex-col items-center -mt-12 mb-4">
                                         <div
@@ -310,7 +358,7 @@ export default function ProfilePage() {
                                             onMouseLeave={() => setAvatarHover(false)}
                                         >
                                             <Avatar className="h-24 w-24 border-4 border-indigo-950 shadow-xl transition-all duration-300">
-                                                {/*<AvatarImage src={profile.avatarUrl} alt={profile.fullName} className="object-cover" />*/}
+                                                <AvatarImage src={profile.avatarUrl || "/default-avatar.png"} alt={profile.fullName} className="object-cover" />
                                                 <AvatarFallback className="bg-gradient-to-br from-purple-600 to-indigo-600 text-xl">
                                                     {profile.fullName
                                                         .split(" ")
@@ -322,12 +370,12 @@ export default function ProfilePage() {
                                                 className={`absolute inset-0 bg-black/60 rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer ${
                                                     avatarHover ? "opacity-100" : "opacity-0"
                                                 }`}
-                                                onClick={() => fileInputRef.current?.click()}
+                                                onClick={() => fileInputAvatarRef.current?.click()}
                                             >
                                                 <Camera className="h-6 w-6" />
                                             </div>
                                             <Input
-                                                ref={fileInputRef}
+                                                ref={fileInputAvatarRef}
                                                 type="file"
                                                 accept="image/*"
                                                 className="hidden"
@@ -415,13 +463,13 @@ export default function ProfilePage() {
                                 <TabsList className="bg-white/5 border-b border-purple-500/20 w-full rounded-t-lg rounded-b-none h-auto p-0 mb-6">
                                     <TabsTrigger
                                         value="personal"
-                                        className="rounded-none data-[state=active]:bg-purple-500/10 data-[state=active]:border-b-2 data-[state=active]:border-purple-400 data-[state=active]:shadow-none py-3 px-4 flex-1"
+                                        className="rounded-none data-[state=active]:bg-purple-500/10 data-[state=active]:border-b-2 data-[state=active]:border-purple-400 data-[state=active]:shadow-none py-3 px-4 flex-1 data-[state=active]:text-white"
                                     >
                                         Személyes adatok
                                     </TabsTrigger>
                                     <TabsTrigger
                                         value="security"
-                                        className="rounded-none data-[state=active]:bg-purple-500/10 data-[state=active]:border-b-2 data-[state=active]:border-purple-400 data-[state=active]:shadow-none py-3 px-4 flex-1"
+                                        className="rounded-none data-[state=active]:bg-purple-500/10 data-[state=active]:border-b-2 data-[state=active]:border-purple-400 data-[state=active]:shadow-none py-3 px-4 flex-1 data-[state=active]:text-white"
                                     >
                                         Biztonság
                                     </TabsTrigger>
@@ -811,7 +859,7 @@ export default function ProfilePage() {
                                                             </AlertDialogDescription>
                                                         </AlertDialogHeader>
                                                         <AlertDialogFooter>
-                                                            <AlertDialogCancel className="border-purple-500/50 hover:bg-purple-700/30 text-black">
+                                                            <AlertDialogCancel className="border-purple-500/50 hover:bg-purple-700/30 text-black m-0">
                                                                 Mégsem
                                                             </AlertDialogCancel>
                                                             <AlertDialogAction onClick={handleDeleteProfile} className="bg-red-600 hover:bg-red-700">

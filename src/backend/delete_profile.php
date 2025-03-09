@@ -11,7 +11,7 @@ $dotenv->load();
 // Engedélyezett origin-ek listája
 $allowed_origins = [
     "http://localhost:5173",
-    "https://www.edu-venture.hu"
+    "https://edu-venture.hu"
 ];
 
 if (isset($_SERVER['HTTP_ORIGIN']) && in_array($_SERVER['HTTP_ORIGIN'], $allowed_origins)) {
