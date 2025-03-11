@@ -9,17 +9,6 @@ ini_set('session.cookie_httponly', 1);
 ini_set('session.cookie_samesite', 'None');
 session_start();
 
-//debug
-// echo "<pre>";
-// print_r($_SESSION);
-// echo "</pre>";
-//
-// error_log("SESSION ID: " . session_id());
-// error_log("SESSION TOKEN: " . ($_SESSION["token"] ?? "Nincs session token"));
-// error_log("RECEIVED TOKEN: " . ($token ?? "Nincs received token"));
-// error_log("SESSION USER ID: " . ($_SESSION["id"] ?? "Nincs session ID"));
-
-
 header('Content-Type: application/json');
 
 // CORS headers
