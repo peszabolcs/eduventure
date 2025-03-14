@@ -1,9 +1,9 @@
 "use client";
 
 import { motion } from "framer-motion";
+import PersonalityTestButton from "./ui/personality-test-button";
 
 export default function Hero() {
-
   return (
     <section className="relative min-h-screen flex md:flex-col items-center justify-center overflow-hidden bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 px-4">
       <div className="absolute inset-0 overflow-hidden">
@@ -33,15 +33,16 @@ export default function Hero() {
           transition={{ duration: 0.8, delay: 0.2 }}
           className="text-lg sm:text-xl md:text-2xl text-purple-100 mb-8 sm:mb-12 max-w-3xl mx-auto px-4"
         >
-            Fedezd fel a különböző szakmákat és találd meg a hozzád legjobban illő karrierutat egy innovatív, interaktív platformon!
+          Fedezd fel a különböző szakmákat és találd meg a hozzád legjobban illő
+          karrierutat egy innovatív, interaktív platformon!
         </motion.p>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
           className="space-y-4 sm:space-y-0 space-x-4"
-        >
-        </motion.div>
+        ></motion.div>
+        <PersonalityTestButton />
       </div>
 
       <motion.div

@@ -11,6 +11,7 @@ import Login from "./components/Login.jsx";
 import ProfilePage from "./components/ProfilePage.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import { AuthProvider, useAuth } from "./components/AuthContext.jsx";
+import ComingSoonPage from "./components/coming-soon-page.jsx";
 
 // Új komponens a loading állapot kezelésére
 const AppContent = () => {
@@ -55,6 +56,7 @@ const AppContent = () => {
             path="/profile"
             element={<ProtectedRoute element={<ProfilePage />} />}
           />
+          <Route path="/szemelyisegteszt" element={<ComingSoonPage />} />
         </Routes>
       </main>
       <Footer />
