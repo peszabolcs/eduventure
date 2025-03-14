@@ -19,58 +19,49 @@ const AppContent = () => {
 
   if (loading) {
     return (
-      <div className="bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 min-h-screen flex flex-col">
-        <Header />
-        <main className="flex-grow flex items-center justify-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-white"></div>
-        </main>
-        <Footer />
+      <div className="flex-grow flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-white"></div>
       </div>
     );
   }
 
   return (
-    <div className="bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 min-h-screen flex flex-col">
-      <Header />
-      <main className="flex-grow relative">
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <>
-                <Element name="hero-section">
-                  <Hero />
-                </Element>
-                <Element name="project-description">
-                  <ProjectDescription />
-                </Element>
-                <Element name="team-section">
-                  <TeamMembers />
-                </Element>
-              </>
-            }
-          />
-          <Route path="/register" element={<Register />} />
-          <Route path="/login" element={<Login />} />
-          <Route
-            path="/profile"
-            element={<ProtectedRoute element={<ProfilePage />} />}
-          />
-          <Route path="/szemelyisegteszt" element={<ComingSoonPage />} />
-        </Routes>
-      </main>
-      <Footer />
-    </div>
+    <>
+      <Element name="hero-section">
+        <Hero />
+      </Element>
+      <Element name="project-description">
+        <ProjectDescription />
+      </Element>
+      <Element name="team-section">
+        <TeamMembers />
+      </Element>
+    </>
   );
 };
 
 function App() {
   return (
-    <AuthProvider>
-      <Router>
-        <AppContent />
-      </Router>
-    </AuthProvider>
+    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 flex flex-col">
+      <AuthProvider>
+        <Router>
+          <Header />
+          <main className="flex-grow relative">
+            <Routes>
+              <Route path="/" element={<AppContent />} />
+              <Route path="/szemelyisegteszt" element={<ComingSoonPage />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route
+                path="/profile"
+                element={<ProtectedRoute element={<ProfilePage />} />}
+              />
+            </Routes>
+          </main>
+          <Footer />
+        </Router>
+      </AuthProvider>
+    </div>
   );
 }
 
