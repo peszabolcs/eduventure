@@ -1,8 +1,19 @@
-import { Navigate } from "react-router-dom";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "./AuthContext.jsx";
 
-const ProtectedRoute = ({ element }) => {
+function ProtectedRoute({ children, allowedRoles }) {
   const { user, loading } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (
+      !loading &&
+      (!user || (allowedRoles && !allowedRoles.includes(user.role)))
+    ) {
+      navigate("/unauthorized", { replace: true });
+    }
+  }, [user, loading, allowedRoles, navigate]);
 
   if (loading) {
     return (
@@ -12,11 +23,11 @@ const ProtectedRoute = ({ element }) => {
     );
   }
 
-  if (!user) {
-    return <Navigate to="/login" replace />;
+  if (!user || (allowedRoles && !allowedRoles.includes(user.role))) {
+    return null;
   }
 
-  return element;
-};
+  return children;
+}
 
 export default ProtectedRoute;

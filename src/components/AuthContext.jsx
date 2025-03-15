@@ -1,84 +1,40 @@
+"use client";
+
 import { createContext, useContext, useState, useEffect } from "react";
 
-const AuthContext = createContext(null);
+const AuthContext = createContext();
 const API_URL = import.meta.env.VITE_API_URL;
 
-export const AuthProvider = ({ children }) => {
+export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const checkAuth = async () => {
-      const token = localStorage.getItem("authToken");
-      const storedUser = localStorage.getItem("user");
-
-      console.log("Stored token:", token);
-      console.log("Stored user:", storedUser);
-
-      if (token && storedUser) {
-        try {
-          const headers = new Headers();
-          headers.append("Authorization", `Bearer ${token}`);
-          headers.append("Content-Type", "application/json");
-
-          const response = await fetch(`${API_URL}/backend/check_auth.php`, {
-            method: "GET",
-            credentials: "include",
-            headers: headers,
-            mode: "cors",
-          });
-
-          console.log(
-            "Request headers:",
-            Object.fromEntries(headers.entries())
-          );
-          console.log("Auth check response:", response.status);
-
-          const data = await response.json();
-          console.log("Auth check data:", data);
-
-          if (response.ok) {
-            setUser(data.user);
-          } else {
-            console.log("Auth check failed:", data);
-            localStorage.removeItem("authToken");
-            localStorage.removeItem("user");
-            setUser(null);
-          }
-        } catch (error) {
-          console.error("Auth check failed:", error);
-          localStorage.removeItem("authToken");
-          localStorage.removeItem("user");
-          setUser(null);
-        }
-      } else {
-        setUser(null);
-      }
-      setLoading(false);
-    };
-
-    checkAuth();
+    // Ellenőrizzük, hogy van-e mentett felhasználói adat
+    const savedUser = localStorage.getItem("user");
+    if (savedUser) {
+      setUser(JSON.parse(savedUser));
+    }
+    setLoading(false);
   }, []);
 
-  const logout = async () => {
-    try {
-      await fetch(`${API_URL}/backend/logout.php`, {
-        method: "POST",
-        credentials: "include",
-      });
-    } catch (error) {
-      console.error("Logout failed:", error);
-    }
+  const login = (userData) => {
+    setUser(userData);
+    localStorage.setItem("user", JSON.stringify(userData));
+  };
+
+  const logout = () => {
     setUser(null);
-    localStorage.removeItem("authToken");
     localStorage.removeItem("user");
   };
 
   return (
-    <AuthContext.Provider value={{ user, setUser, logout, loading }}>
+    <AuthContext.Provider value={{ user, login, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );
-};
+}
 
-export const useAuth = () => useContext(AuthContext);
+export function useAuth() {
+  return useContext(AuthContext);
+}

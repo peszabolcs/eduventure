@@ -1,17 +1,25 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "./AuthContext.jsx";
 import { getAllArticles, deleteArticle } from "../services/blogService";
 import { Plus, Pencil, Trash2, Eye, Search } from "lucide-react";
 
 function BlogAdmin() {
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [articles, setArticles] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    if (!user || user.role !== "CTO") {
+      navigate("/unauthorized");
+      return;
+    }
+
     const fetchArticles = async () => {
       setIsLoading(true);
       try {
@@ -28,7 +36,7 @@ function BlogAdmin() {
     };
 
     fetchArticles();
-  }, []);
+  }, [user, navigate]);
 
   const handleDelete = async (id) => {
     try {
@@ -54,8 +62,8 @@ function BlogAdmin() {
   }
 
   return (
-    <div className="min-h-screen relative">
-      <div className="container mx-auto px-4 py-8 pt-20 relative z-10">
+    <div className="min-h-screen pt-24">
+      <div className="container mx-auto px-4">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold text-white">Blog Adminisztráció</h1>
           <Link

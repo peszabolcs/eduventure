@@ -64,7 +64,7 @@ function Blog() {
   };
 
   return (
-    <div className="min-h-screen relative">
+    <div className="min-h-screen pt-24">
       <div className="container mx-auto px-4 py-8 pt-20 relative z-10">
         <div className="flex flex-col md:flex-row gap-6 mb-8">
           <div className="w-full md:w-1/4">

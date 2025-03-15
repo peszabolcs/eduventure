@@ -65,8 +65,8 @@ function BlogDetail() {
   }
 
   return (
-    <div className="min-h-screen relative">
-      <div className="container mx-auto px-4 py-8 pt-20 relative z-10">
+    <div className="min-h-screen pt-24">
+      <div className="container mx-auto px-4">
         <Link
           to="/blog"
           className="inline-flex items-center text-purple-300 hover:text-white mb-6 no-underline"

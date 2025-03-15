@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Link } from "react-scroll";
+import { Link as ScrollLink } from "react-scroll";
+import { Link as RouterLink, useNavigate, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useNavigate, NavLink, useLocation } from "react-router-dom";
 import { useAuth } from "./AuthContext.jsx";
 
 const menuItems = [
@@ -17,11 +17,12 @@ const menuItems = [
     href: "https://forms.gle/hewV8BhLbWoBoLsLA",
   },
   // {name: "Regisztráció", href: "/register" },
-  { name: "Blog", to: "blog-section", href: "/blog" },
+  { name: "Blog", href: "/blog" },
 ];
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const { user, logout } = useAuth();
@@ -32,10 +33,12 @@ export default function Header() {
   const [filteredMenuItems, setFilteredMenuItems] = useState([]);
   useEffect(() => {
     if (user) {
-      setFilteredMenuItems([
-        ...menuItems,
-        { name: "Profilom", href: "/profile" },
-      ]);
+      const items = [...menuItems, { name: "Profilom", href: "/profile" }];
+      // Ha a felhasználó CTO, hozzáadjuk a Blog Admin menüpontot
+      if (user.role === "CTO") {
+        items.push({ name: "Blog Admin", href: "/blog/admin" });
+      }
+      setFilteredMenuItems(items);
     } else {
       setFilteredMenuItems([
         ...menuItems,
@@ -45,130 +48,154 @@ export default function Header() {
     }
   }, [user]);
 
-  // const filteredMenuItems = isAuthPage
-  //     ? menuItems.filter(item=> item.name === "Főoldal")
-  //     : menuItems;
-
   const handleClick = (item) => {
-    // console.log("item: ", item);
     setIsOpen(false);
     if (item.href && item.href.startsWith("http")) {
       window.open(item.href, "_blank");
-    } else if (item.name) {
+    } else if (item.href) {
       navigate(item.href);
     }
   };
 
+  const handleLogout = () => {
+    logout();
+    navigate("/");
+  };
+
   return (
-    <header className="absolute top-0 left-0 right-0 z-50 h-16 py-2.5">
-      <nav className="hidden md:block">
-        {/* Desktop menu */}
-        <div className="flex justify-center">
-          <div className="bg-white/90 backdrop-blur-sm rounded-full shadow-lg px-2 py-1.5 cursor-pointer">
-            <div className="flex items-center space-x-1">
-              {filteredMenuItems.map((item) =>
-                item.href && !item.href.startsWith("http") ? (
-                  <NavLink
-                    key={item.name}
-                    to={item.href}
-                    className="px-4 py-1.5 text-sm font-medium rounded-full text-gray-600 hover:text-purple-50 hover:bg-purple-500 transition duration-500 ease-in-out no-underline"
-                  >
-                    {item.name}
-                  </NavLink>
-                ) : (
-                  <Link
-                    key={item.name}
-                    to={item.to}
-                    smooth={true}
-                    duration={100}
-                    spy={true}
-                    className="px-4 py-1.5 text-sm font-medium rounded-full text-gray-600 hover:text-purple-50 hover:bg-purple-500 transition duration-500 ease-in-out no-underline"
-                    onClick={() => handleClick(item)}
-                  >
-                    {item.name}
-                  </Link>
-                )
-              )}
-              {/*{user && (*/}
-              {/*<button onClick={logout}*/}
-              {/*        className="px-4 py-1.5 text-sm font-medium rounded-full text-gray-600 hover:text-purple-50 hover:bg-purple-500 transition duration-500 ease-in-out no-underline">*/}
-              {/*    Kijelentkezés*/}
-              {/*</button>*/}
-              {/*    )}*/}
-            </div>
-          </div>
-        </div>
-      </nav>
+    <header className="fixed top-0 left-0 right-0 z-50">
+      <div className="absolute inset-0 bg-gradient-to-r from-purple-900/90 via-indigo-900/90 to-purple-900/90 backdrop-blur-md border-b border-white/10"></div>
 
-      {/* Mobile menu button */}
-      <div className="md:hidden absolute top-4 left-4">
-        <button
-          onClick={() => setIsOpen(!isOpen)}
-          className="p-3 rounded-full bg-purple-100 text-purple-600 hover:bg-purple-200 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
-        >
-          <span className="sr-only">Menü megnyitása</span>
-          {isOpen ? (
-            <X className="h-6 w-6" aria-hidden="true" />
-          ) : (
-            <Menu className="h-6 w-6" aria-hidden="true" />
-          )}
-        </button>
-      </div>
-      {/* Mobile menu dropdown */}
-      <AnimatePresence>
-        {isOpen && (
+      <nav className="container mx-auto px-6 py-4 relative">
+        <div className="flex items-center justify-between">
           <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.2 }}
-            className="fixed top-0 left-0 w-full h-full bg-purple-900/95 z-50 flex flex-col items-center justify-center"
+            className="text-white font-bold text-xl cursor-pointer no-underline relative"
+            onClick={() => navigate("/")}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
           >
-            <button
-              onClick={() => setIsOpen(false)}
-              className="absolute top-6 right-6 p-3 rounded-full bg-purple-200 text-purple-700 hover:bg-purple-300 transition-colors duration-200"
-            >
-              <X className="h-8 w-8" aria-hidden="true" />
-            </button>
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-white to-purple-200">
+              EduVenture
+            </span>
+          </motion.div>
 
-            <div className="space-y-6 text-xl font-semibold text-gray-200">
-              {filteredMenuItems.map((item) =>
-                item.href && !item.href.startsWith("http") ? (
-                  <NavLink
-                    key={item.name}
+          <div className="hidden md:flex items-center space-x-8">
+            {filteredMenuItems.map((item) => (
+              <motion.div
+                key={item.name}
+                className="relative"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                {item.to ? (
+                  <ScrollLink
+                    to={item.to}
+                    spy={true}
+                    smooth={true}
+                    offset={-100}
+                    duration={500}
+                    className="text-white/90 hover:text-white cursor-pointer no-underline transition-colors relative group"
+                    onClick={() => item.href && handleClick(item)}
+                  >
+                    {item.name}
+                    <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-white/70 group-hover:w-full transition-all duration-300"></span>
+                  </ScrollLink>
+                ) : (
+                  <RouterLink
                     to={item.href}
-                    className="block text-xl py-4 px-6 rounded-lg bg-purple-700 text-purple-200 hover:bg-purple-800 transition-colors duration-200 no-underline"
+                    className="text-white/90 hover:text-white cursor-pointer no-underline transition-colors relative group"
                     onClick={() => setIsOpen(false)}
                   >
                     {item.name}
-                  </NavLink>
-                ) : (
-                  <Link
+                    <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-white/70 group-hover:w-full transition-all duration-300"></span>
+                  </RouterLink>
+                )}
+              </motion.div>
+            ))}
+            {user && (
+              <motion.button
+                onClick={handleLogout}
+                className="text-white/90 hover:text-white no-underline transition-colors px-4 py-1.5 rounded-full border border-white/20 hover:border-white/40 bg-white/5 hover:bg-white/10"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                Kijelentkezés
+              </motion.button>
+            )}
+          </div>
+
+          <div className="md:hidden flex items-center">
+            <motion.button
+              onClick={() => setIsOpen(!isOpen)}
+              className="text-white/90 hover:text-white focus:outline-none transition-colors"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+            >
+              {isOpen ? <X /> : <Menu />}
+            </motion.button>
+          </div>
+        </div>
+
+        <AnimatePresence>
+          {isOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              className="md:hidden mt-4"
+            >
+              <div className="bg-white/5 backdrop-blur-lg rounded-lg border border-white/10 overflow-hidden">
+                {filteredMenuItems.map((item) => (
+                  <motion.div
                     key={item.name}
-                    to={item.to}
-                    smooth={true}
-                    duration={100}
-                    spy={true}
-                    className="block text-xl py-4 px-6 rounded-lg bg-purple-700 text-purple-200 hover:bg-purple-800 transition-colors duration-200 no-underline"
+                    className="border-b border-white/10 last:border-none"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    {item.to ? (
+                      <ScrollLink
+                        to={item.to}
+                        spy={true}
+                        smooth={true}
+                        offset={-100}
+                        duration={500}
+                        className="text-white/90 hover:text-white block px-4 py-3 no-underline transition-colors hover:bg-white/5"
+                        onClick={() => {
+                          setIsOpen(false);
+                          item.href && handleClick(item);
+                        }}
+                      >
+                        {item.name}
+                      </ScrollLink>
+                    ) : (
+                      <RouterLink
+                        to={item.href}
+                        className="text-white/90 hover:text-white block px-4 py-3 no-underline transition-colors hover:bg-white/5"
+                        onClick={() => setIsOpen(false)}
+                      >
+                        {item.name}
+                      </RouterLink>
+                    )}
+                  </motion.div>
+                ))}
+                {user && (
+                  <motion.button
                     onClick={() => {
                       setIsOpen(false);
-                      handleClick(item);
+                      handleLogout();
                     }}
+                    className="text-white/90 hover:text-white w-full px-4 py-3 text-left no-underline transition-colors hover:bg-white/5"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
                   >
-                    {item.name}
-                  </Link>
-                )
-              )}
-              {/*{user && (*/}
-              {/*    <button onClick={logout}*/}
-              {/*            className="block text-xl py-4 px-6 rounded-lg bg-purple-700 text-purple-200 hover:bg-purple-800 transition-colors duration-200 no-underline">*/}
-              {/*        Kijelentkezés*/}
-              {/*    </button>*/}
-              {/*)}*/}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+                    Kijelentkezés
+                  </motion.button>
+                )}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </nav>
     </header>
   );
 }

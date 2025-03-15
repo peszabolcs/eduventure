@@ -144,8 +144,8 @@ function BlogEditor() {
   }
 
   return (
-    <div className="min-h-screen relative">
-      <div className="container mx-auto px-4 py-8 pt-20 relative z-10">
+    <div className="min-h-screen pt-24">
+      <div className="container mx-auto px-4">
         <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-lg p-6 md:p-8">
           <h1 className="text-3xl font-bold text-white mb-8">
             {isEditMode ? "Cikk szerkesztése" : "Új cikk létrehozása"}

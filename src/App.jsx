@@ -9,7 +9,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Register from "./components/Register.jsx";
 import Login from "./components/Login.jsx";
 import ProfilePage from "./components/ProfilePage.jsx";
-import ProtectedRoute from "./components/ProtectedRoute.jsx";
+import ProtectedRoute from "./components/ProtectedRoute";
 import { AuthProvider, useAuth } from "./components/AuthContext.jsx";
 import ComingSoonPage from "./components/coming-soon-page.jsx";
 // Blog komponensek importálása
@@ -17,6 +17,7 @@ import Blog from "./components/Blog.jsx";
 import BlogDetail from "./components/BlogDetail.jsx";
 import BlogAdmin from "./components/BlogAdmin.jsx";
 import BlogEditor from "./components/BlogEditor.jsx";
+import Unauthorized from "./components/Unauthorized";
 
 // Új komponens a loading állapot kezelésére
 const AppContent = () => {
@@ -66,13 +67,39 @@ function App() {
               <Route path="/register" element={<Register />} />
               <Route
                 path="/profile"
-                element={<ProtectedRoute element={<ProfilePage />} />}
+                element={
+                  <ProtectedRoute allowedRoles={["user", "CTO", "admin"]}>
+                    <ProfilePage />
+                  </ProtectedRoute>
+                }
               />
               <Route path="/blog" element={<Blog />} />
               <Route path="/blog/:id" element={<BlogDetail />} />
-              <Route path="/blog/admin" element={<BlogAdmin />} />
-              <Route path="/blog/admin/new" element={<BlogEditor />} />
-              <Route path="/blog/admin/edit/:id" element={<BlogEditor />} />
+              <Route
+                path="/blog/admin"
+                element={
+                  <ProtectedRoute allowedRoles={["CTO"]}>
+                    <BlogAdmin />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/blog/admin/new"
+                element={
+                  <ProtectedRoute allowedRoles={["CTO"]}>
+                    <BlogEditor />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/blog/admin/edit/:id"
+                element={
+                  <ProtectedRoute allowedRoles={["CTO"]}>
+                    <BlogEditor />
+                  </ProtectedRoute>
+                }
+              />
+              <Route path="/unauthorized" element={<Unauthorized />} />
             </Routes>
           </main>
           <Footer />
