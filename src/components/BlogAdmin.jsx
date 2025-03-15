@@ -9,15 +9,20 @@ function BlogAdmin() {
   const [articles, setArticles] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchArticles = async () => {
+      setIsLoading(true);
       try {
         const data = await getAllArticles();
         setArticles(data);
-        setIsLoading(false);
       } catch (error) {
         console.error("Error fetching articles:", error);
+        setError(
+          "Nem sikerült betölteni a cikkeket. Kérjük, próbálja újra később."
+        );
+      } finally {
         setIsLoading(false);
       }
     };
@@ -32,8 +37,21 @@ function BlogAdmin() {
       setDeleteConfirm(null);
     } catch (error) {
       console.error("Error deleting article:", error);
+      alert("Nem sikerült törölni a cikket. Kérjük, próbálja újra később.");
     }
   };
+
+  if (error) {
+    return (
+      <div className="min-h-screen relative">
+        <div className="container mx-auto px-4 py-8 pt-20 relative z-10">
+          <div className="bg-red-500 bg-opacity-10 backdrop-blur-sm rounded-lg p-6 text-center">
+            <p className="text-red-300 text-xl">{error}</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen relative">

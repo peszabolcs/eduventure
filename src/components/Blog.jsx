@@ -15,13 +15,15 @@ function Blog() {
 
   useEffect(() => {
     const fetchArticles = async () => {
+      setIsLoading(true);
       try {
         const data = await getAllArticles();
         setArticles(data);
         setFilteredArticles(data);
-        setIsLoading(false);
       } catch (error) {
         console.error("Error fetching articles:", error);
+        // Itt lehetne egy hibaüzenetet megjeleníteni a felhasználónak
+      } finally {
         setIsLoading(false);
       }
     };
