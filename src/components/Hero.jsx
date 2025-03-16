@@ -69,6 +69,9 @@ export default function Hero() {
         </svg>
       </motion.div>
 
+      {/* Subtle gradient transition at the bottom */}
+      <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-black/20 to-transparent"></div>
+
       <style>{`
                 @keyframes blob {
                     0% { transform: translate(0px, 0px) scale(1); }
