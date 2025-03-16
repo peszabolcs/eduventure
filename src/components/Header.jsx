@@ -35,7 +35,7 @@ export default function Header() {
     if (user) {
       const items = [...menuItems, { name: "Profilom", href: "/profile" }];
       // Ha a felhasználó CTO, hozzáadjuk a Blog Admin menüpontot
-      if (user.role === "CTO") {
+      if (user.role === "CTO" || user.role === "CPO") {
         items.push({ name: "Blog Admin", href: "/blog/admin" });
       }
       setFilteredMenuItems(items);
