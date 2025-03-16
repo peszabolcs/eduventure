@@ -18,6 +18,7 @@ import BlogDetail from "./components/BlogDetail.jsx";
 import BlogAdmin from "./components/BlogAdmin.jsx";
 import BlogEditor from "./components/BlogEditor.jsx";
 import Unauthorized from "./components/Unauthorized";
+import PrivacyPolicy from "./components/PrivacyPolicy.jsx";
 
 // Új komponens a loading állapot kezelésére
 const AppContent = () => {
@@ -63,6 +64,7 @@ function App() {
             <Routes>
               <Route path="/" element={<AppContent />} />
               <Route path="/szemelyisegteszt" element={<ComingSoonPage />} />
+              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route

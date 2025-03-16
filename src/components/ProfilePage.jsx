@@ -122,6 +122,22 @@ export default function ProfilePage() {
     fetchUserData();
   }, []); // Csak egyszer fut le, amikor az oldal betöltődik
 
+  useEffect(() => {
+    // Save the original background
+    const originalBackground = document.body.style.background;
+
+    // Set the background for the profile page
+    document.body.style.background =
+      "linear-gradient(to bottom right, #312e81, #581c87, #831843)";
+    document.body.style.backgroundAttachment = "fixed";
+
+    // Cleanup function to restore the original background when component unmounts
+    return () => {
+      document.body.style.background = originalBackground;
+      document.body.style.backgroundAttachment = "";
+    };
+  }, []);
+
   // Custom notification function to replace toast
   const showNotification = (title, message, type = "success") => {
     setNotification({ title, message, type });
@@ -377,7 +393,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen pt-24 bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 text-white">
+    <>
       {/* Custom notification */}
       {notification && (
         <div
@@ -409,7 +425,19 @@ export default function ProfilePage() {
         </div>
       )}
 
-      <main className="container mx-auto px-4 pb-16 relative z-10">
+      <style jsx global>{`
+        body {
+          background: linear-gradient(
+            to bottom right,
+            #312e81,
+            #581c87,
+            #831843
+          );
+          background-attachment: fixed;
+        }
+      `}</style>
+
+      <main className="container mx-auto px-4 pb-16 pt-24 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -1094,6 +1122,6 @@ export default function ProfilePage() {
           </div>
         </motion.div>
       </main>
-    </div>
+    </>
   );
 }
