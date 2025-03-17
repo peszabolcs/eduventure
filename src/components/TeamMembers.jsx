@@ -5,25 +5,25 @@ const teamMembers = [
     name: "Perjési Szabolcs",
     study: "SZTE - Programtervező informatikus",
     role: "Tech Lead Developer",
-    image: "/perjesi.jpg",
+    image: "/perjesi.webp",
   },
   {
     name: "Lengyel Patrik Gábor",
     study: "SZTE - Pénzügy és számvitel",
     role: "Pénzügyi elemző",
-    image: "/patrik.jpg",
+    image: "/patrik.webp",
   },
   {
     name: "Báló Dávid Levente",
     study: "BCE - Nemzetközi gazdálkodás",
     role: "Műszaki termékfejlesztő",
-    image: "/balo.jpg",
+    image: "/balo.webp",
   },
   {
     name: "Gellén Zalán",
     study: "BCE - Nemzetközi gazdálkodás",
     role: "Marketing vezető",
-    image: "/zazi.jpg",
+    image: "/zazi.webp",
   },
 ];
 

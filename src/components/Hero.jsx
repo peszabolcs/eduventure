@@ -19,7 +19,7 @@ export default function Hero() {
           transition={{ duration: 0.8 }}
         >
           <img
-            src="/logo.png"
+            src="/logo.webp"
             alt="EduVenture Logo"
             className="w-48 h-48 sm:w-52 sm:h-52 md:w-64 md:h-64 mx-auto object-contain"
           />
