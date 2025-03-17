@@ -13,59 +13,57 @@ import {
   Sparkles,
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useLanguage } from "./LanguageContext";
 
-const features = [
-  {
-    icon: Brain,
-    title: "AI-alapú pályaorientáció",
-    description:
-      "Személyre szabott karrierút-ajánlások érdeklődési köröd és képességeid alapján. Kapcsolatba léphetsz szakértőkkel one-on-one meetingeken vagy csoportos szemináriumokon.",
-    color: "from-violet-500 to-purple-600",
-    delay: 0.1,
-  },
-  {
-    icon: GraduationCap,
-    title: "Egyetemi statisztikák",
-    description:
-      "Összehasonlítható adatok és értékelések egyetemekről, szakokról. Valós visszajelzések korábbi hallgatóktól, hogy megalapozott döntést hozhass.",
-    color: "from-blue-500 to-cyan-600",
-    delay: 0.2,
-  },
-  {
-    icon: Building2,
-    title: "Virtuális cégtúrák",
-    description:
-      "Betekintés különböző munkakörök mindennapjaiba interaktív élményeken keresztül. Ismerd meg a szakmák valódi működését még a pályaválasztás előtt.",
-    color: "from-emerald-500 to-teal-600",
-    delay: 0.3,
-  },
-  {
-    icon: MessageCircle,
-    title: "Közösségi terek",
-    description:
-      "Csatlakozz hasonló érdeklődésű fiatalokhoz, ossz meg tapasztalatokat és építs kapcsolatokat. Tematikus fórumok különböző iparágakhoz kapcsolódóan.",
-    color: "from-orange-500 to-amber-600",
-    delay: 0.4,
-  },
-  {
-    icon: Briefcase,
-    title: "Gyakornoki programok",
-    description:
-      "Fedezd fel a szakodnak megfelelő gyakornoki lehetőségeket. Jelentkezz közvetlenül az oldalon keresztül, és szerezz értékes munkatapasztalatot.",
-    color: "from-pink-500 to-rose-600",
-    delay: 0.5,
-  },
-  {
-    icon: BookOpen,
-    title: "Blog és tudásbázis",
-    description:
-      "Naprakész cikkek, karriertippek és szakmai útmutatók. Bővítsd tudásod a különböző szakmákról és iparágakról hiteles forrásokból.",
-    color: "from-red-500 to-rose-600",
-    delay: 0.6,
-  },
-];
-
+// A feature objektumokat dinamikusan építjük fel a fordítási kulcsok alapján
 export default function ProjectDetails() {
+  const { t } = useLanguage();
+
+  const features = [
+    {
+      icon: Brain,
+      title: t("project.features.ai.title"),
+      description: t("project.features.ai.description"),
+      color: "from-violet-500 to-purple-600",
+      delay: 0.1,
+    },
+    {
+      icon: GraduationCap,
+      title: t("project.features.university.title"),
+      description: t("project.features.university.description"),
+      color: "from-blue-500 to-cyan-600",
+      delay: 0.2,
+    },
+    {
+      icon: Building2,
+      title: t("project.features.company.title"),
+      description: t("project.features.company.description"),
+      color: "from-emerald-500 to-teal-600",
+      delay: 0.3,
+    },
+    {
+      icon: MessageCircle,
+      title: t("project.features.community.title"),
+      description: t("project.features.community.description"),
+      color: "from-orange-500 to-amber-600",
+      delay: 0.4,
+    },
+    {
+      icon: Briefcase,
+      title: t("project.features.internship.title"),
+      description: t("project.features.internship.description"),
+      color: "from-pink-500 to-rose-600",
+      delay: 0.5,
+    },
+    {
+      icon: BookOpen,
+      title: t("project.features.blog.title"),
+      description: t("project.features.blog.description"),
+      color: "from-red-500 to-rose-600",
+      delay: 0.6,
+    },
+  ];
+
   return (
     <section
       id="project-details"
@@ -116,20 +114,16 @@ export default function ProjectDetails() {
             >
               <Sparkles className="w-5 h-5 text-yellow-300 mr-2" />
               <span className="text-white/90 text-sm font-medium">
-                Fedezd fel karriered jövőjét
+                {t("project.tagline")}
               </span>
             </motion.div>
           </div>
 
           <h2 className="text-4xl md:text-5xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-blue-300 via-purple-300 to-pink-300">
-            Fedezd fel a jövőd
+            {t("project.title")}
           </h2>
           <p className="text-lg text-white/80 leading-relaxed">
-            Az <span className="font-semibold text-white">EduVenture</span> egy
-            innovatív platform, amely segíti a pályaválasztás előtt álló
-            középiskolásokat és egyetemistákat a karrierutak megismerésében.
-            Célunk, hogy interaktív, informatív és értékalapú segítséget
-            nyújtsunk, miközben közösséget építünk a fiatalok számára.
+            {t("project.description")}
           </p>
         </motion.div>
 
@@ -169,13 +163,10 @@ export default function ProjectDetails() {
           <div className="grid md:grid-cols-2 gap-8 items-center">
             <div>
               <h3 className="text-2xl md:text-3xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-purple-300">
-                Miért válaszd az EduVenture-t?
+                {t("project.whyUs.title")}
               </h3>
               <p className="mb-6 leading-relaxed text-white/80">
-                Platformunk egyedülálló módon ötvözi a mesterséges
-                intelligenciát, a közösségi élményt és a valós szakmai
-                tapasztalatokat, hogy segítsen megtalálni a számodra
-                legmegfelelőbb karrierutat.
+                {t("project.whyUs.description")}
               </p>
               <ul className="space-y-3">
                 <li className="flex items-start">
@@ -183,7 +174,7 @@ export default function ProjectDetails() {
                     <BarChart3 className="w-3.5 h-3.5 text-blue-300" />
                   </div>
                   <span className="text-white/90">
-                    Adatvezérelt döntéstámogatás
+                    {t("project.whyUs.points.data")}
                   </span>
                 </li>
                 <li className="flex items-start">
@@ -191,7 +182,7 @@ export default function ProjectDetails() {
                     <Users className="w-3.5 h-3.5 text-purple-300" />
                   </div>
                   <span className="text-white/90">
-                    Valódi szakértőkkel való kapcsolat
+                    {t("project.whyUs.points.experts")}
                   </span>
                 </li>
                 <li className="flex items-start">
@@ -199,7 +190,7 @@ export default function ProjectDetails() {
                     <Building2 className="w-3.5 h-3.5 text-pink-300" />
                   </div>
                   <span className="text-white/90">
-                    Betekintés a munka világába
+                    {t("project.whyUs.points.insight")}
                   </span>
                 </li>
               </ul>
@@ -209,16 +200,14 @@ export default function ProjectDetails() {
               <div className="relative p-6 md:p-8 backdrop-blur-sm rounded-xl border border-white/10">
                 <div className="absolute -top-4 -right-4 w-20 h-20 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-full opacity-20 blur-xl"></div>
                 <h4 className="text-xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-indigo-300">
-                  Értesülj az indulásról!
+                  {t("project.newsletter.title")}
                 </h4>
                 <p className="mb-6 text-white/80">
-                  Iratkozz fel hírlevelünkre, hogy elsőként értesülj a platform
-                  indulásáról és a legfrissebb fejlesztésekről. Légy részese a
-                  kezdeteknek!
+                  {t("project.newsletter.description")}
                 </p>
                 <Link to="/szemelyisegteszt">
                   <button className="bg-gradient-to-r from-blue-400 to-indigo-500 text-white font-semibold py-3 px-6 rounded-lg hover:from-blue-500 hover:to-indigo-600 transition-all duration-300 shadow-lg transform hover:-translate-y-1 active:translate-y-0">
-                    Feliratkozás a hírlevélre
+                    {t("project.newsletter.button")}
                   </button>
                 </Link>
               </div>

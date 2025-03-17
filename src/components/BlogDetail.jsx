@@ -14,8 +14,10 @@ import { getArticleById } from "../services/blogService";
 import { formatDate } from "../utils/dateUtils";
 import RelatedArticles from "../components/blog/RelatedArticles";
 import SocialShare from "../components/blog/SocialShare";
+import { useLanguage } from "./LanguageContext";
 
 function BlogDetail() {
+  const { t } = useLanguage();
   const { id } = useParams();
   const [article, setArticle] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -29,13 +31,13 @@ function BlogDetail() {
         // Scroll to top when article loads
         window.scrollTo(0, 0);
       } catch (error) {
-        console.error("Error fetching article:", error);
+        console.error(t("blog.errors.articleFetchFailed"), error);
         setIsLoading(false);
       }
     };
 
     fetchArticle();
-  }, [id]);
+  }, [id, t]);
 
   if (isLoading) {
     return (
@@ -50,14 +52,14 @@ function BlogDetail() {
       <div className="min-h-screen flex justify-center items-center">
         <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-lg p-8 text-center">
           <h2 className="text-2xl font-bold text-white mb-4">
-            Cikk nem található
+            {t("blog.articleNotFound")}
           </h2>
           <Link
             to="/blog"
             className="text-purple-300 hover:text-white flex items-center justify-center no-underline"
           >
             <ChevronLeft className="h-5 w-5 mr-2" />
-            Vissza a bloghoz
+            {t("blog.backToBlog")}
           </Link>
         </div>
       </div>
@@ -72,7 +74,7 @@ function BlogDetail() {
           className="inline-flex items-center text-purple-300 hover:text-white mb-6 no-underline"
         >
           <ChevronLeft className="h-5 w-5 mr-2" />
-          Vissza a bloghoz
+          {t("blog.backToBlog")}
         </Link>
 
         <article className="bg-white bg-opacity-10 backdrop-blur-sm rounded-lg overflow-hidden">
@@ -111,8 +113,8 @@ function BlogDetail() {
               <div>
                 <p className="text-white font-medium">{article.author.name}</p>
                 <p className="text-purple-300 text-sm">
-                  {formatDate(article.publishDate)} • {article.readTime} perc
-                  olvasás
+                  {formatDate(article.publishDate)} • {article.readTime}{" "}
+                  {t("blog.readingTime")}
                 </p>
               </div>
             </div>

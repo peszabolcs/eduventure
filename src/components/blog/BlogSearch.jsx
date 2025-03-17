@@ -1,12 +1,15 @@
 import { Search } from "lucide-react";
+import { useLanguage } from "../LanguageContext";
 
 function BlogSearch({ onSearch }) {
+  const { t } = useLanguage();
+
   return (
     <div className="mb-6">
       <div className="relative">
         <input
           type="text"
-          placeholder="Keresés a cikkek között..."
+          placeholder={t("blog.searchPlaceholder")}
           onChange={(e) => onSearch(e.target.value)}
           className="w-full bg-white bg-opacity-10 border border-purple-600 rounded-lg pl-10 pr-4 py-2 text-white placeholder-purple-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
         />

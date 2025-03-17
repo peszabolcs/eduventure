@@ -49,8 +49,10 @@ import {
   TabsTrigger,
 } from "../components/ui/tabs";
 import { useNavigate } from "react-router-dom";
+import { useLanguage } from "./LanguageContext";
 
 export default function ProfilePage() {
+  const { t } = useLanguage();
   const [newEmail, setNewEmail] = useState("");
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -240,25 +242,25 @@ export default function ProfilePage() {
         setNewEmail("");
         setIsLoading(false);
         showNotification(
-          "Email cím frissítve",
+          t("profile.messages.updateSuccess"),
           "Az email címed sikeresen frissítve lett."
         );
         setIsEmailDialogOpen(false);
       } else {
         showNotification(
-          "Hiba",
-          "Az email cím frissítése közben hiba történt.",
+          t("common.error"),
+          t("profile.messages.updateError"),
           "error"
         );
+        setIsLoading(false);
       }
     } catch (error) {
       console.error("Email update failed:", error);
       showNotification(
-        "Hiba",
-        "Az email cím frissítése közben hiba történt.",
+        t("common.error"),
+        t("profile.messages.updateError"),
         "error"
       );
-    } finally {
       setIsLoading(false);
     }
   };

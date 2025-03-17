@@ -1,8 +1,10 @@
 "use client";
 import { useNavigate } from "react-router-dom";
+import { useLanguage } from "../LanguageContext";
 
 const PersonalityTestButton = () => {
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   const handleClick = () => {
     // analytics
@@ -21,7 +23,7 @@ const PersonalityTestButton = () => {
         onClick={handleClick}
         className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transform transition-all duration-300 hover:scale-105 flex items-center"
       >
-        <span className="mr-2">Személyiségteszt</span>
+        <span className="mr-2">{t("hero.ctaButton")}</span>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           className="h-5 w-5"

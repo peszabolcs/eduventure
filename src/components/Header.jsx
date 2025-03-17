@@ -6,19 +6,8 @@ import { Link as RouterLink, useNavigate, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "./AuthContext.jsx";
-
-const menuItems = [
-  { name: "Főoldal", to: "hero-section", href: "/" },
-  // { name: "Projekt", to: "project-description" },
-  // { name: "Csapat", to: "team-section" },
-  {
-    name: "Kérdőív",
-    to: "form-section",
-    href: "https://forms.gle/hewV8BhLbWoBoLsLA",
-  },
-  // {name: "Regisztráció", href: "/register" },
-  { name: "Blog", href: "/blog" },
-];
+import { useLanguage } from "./LanguageContext.jsx";
+import LanguageSwitcher from "./LanguageSwitcher.jsx";
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
@@ -26,27 +15,42 @@ export default function Header() {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, logout } = useAuth();
+  const { t } = useLanguage();
 
   const isAuthPage =
     location.pathname === "/login" || location.pathname === "/register";
 
+  // Menü elemek fordításokkal
+  const menuItems = [
+    { name: t("menu.home"), to: "hero-section", href: "/" },
+    {
+      name: t("menu.survey"),
+      to: "form-section",
+      href: "https://forms.gle/hewV8BhLbWoBoLsLA",
+    },
+    { name: t("menu.blog"), href: "/blog" },
+  ];
+
   const [filteredMenuItems, setFilteredMenuItems] = useState([]);
   useEffect(() => {
     if (user) {
-      const items = [...menuItems, { name: "Profilom", href: "/profile" }];
+      const items = [
+        ...menuItems,
+        { name: t("menu.profile"), href: "/profile" },
+      ];
       // Ha a felhasználó CTO, vagy CPO hozzáadjuk a Blog Admin menüpontot
       if (user.role === "CTO" || user.role === "CPO") {
-        items.push({ name: "Blog Admin", href: "/blog/admin" });
+        items.push({ name: t("menu.blogAdmin"), href: "/blog/admin" });
       }
       setFilteredMenuItems(items);
     } else {
       setFilteredMenuItems([
         ...menuItems,
-        { name: "Regisztráció", href: "/register" },
-        { name: "Bejelentkezés", href: "/login" },
+        { name: t("menu.register"), href: "/register" },
+        { name: t("menu.login"), href: "/login" },
       ]);
     }
-  }, [user]);
+  }, [user, t]);
 
   const handleClick = (item) => {
     setIsOpen(false);
@@ -79,7 +83,7 @@ export default function Header() {
             </span>
           </motion.div>
 
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden md:flex items-center space-x-4">
             {filteredMenuItems.map((item) => (
               <motion.div
                 key={item.name}
@@ -112,6 +116,10 @@ export default function Header() {
                 )}
               </motion.div>
             ))}
+
+            {/* Nyelvi váltás gomb */}
+            <LanguageSwitcher />
+
             {user && (
               <motion.button
                 onClick={handleLogout}
@@ -119,12 +127,15 @@ export default function Header() {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-                Kijelentkezés
+                {t("menu.logout")}
               </motion.button>
             )}
           </div>
 
-          <div className="md:hidden flex items-center">
+          <div className="md:hidden flex items-center space-x-2">
+            {/* Nyelvi váltás gomb mobilon */}
+            <LanguageSwitcher />
+
             <motion.button
               onClick={() => setIsOpen(!isOpen)}
               className="text-white/90 hover:text-white focus:outline-none transition-colors"
@@ -188,7 +199,7 @@ export default function Header() {
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                   >
-                    Kijelentkezés
+                    {t("menu.logout")}
                   </motion.button>
                 )}
               </div>

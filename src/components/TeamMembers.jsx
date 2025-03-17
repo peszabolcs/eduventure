@@ -1,33 +1,36 @@
 import { motion } from "framer-motion";
-
-const teamMembers = [
-  {
-    name: "Perjési Szabolcs",
-    study: "SZTE - Programtervező informatikus",
-    role: "Tech Lead Developer",
-    image: "/perjesi.jpg",
-  },
-  {
-    name: "Lengyel Patrik Gábor",
-    study: "SZTE - Pénzügy és számvitel",
-    role: "Pénzügyi elemző",
-    image: "/patrik.jpg",
-  },
-  {
-    name: "Báló Dávid Levente",
-    study: "BCE - Nemzetközi gazdálkodás",
-    role: "Műszaki termékfejlesztő",
-    image: "/balo.jpg",
-  },
-  {
-    name: "Gellén Zalán",
-    study: "BCE - Nemzetközi gazdálkodás",
-    role: "Marketing vezető",
-    image: "/zazi.jpg",
-  },
-];
+import { useLanguage } from "./LanguageContext";
 
 export default function TeamSection() {
+  const { t } = useLanguage();
+
+  const teamMembers = [
+    {
+      name: t("team.members.perjesi.name"),
+      study: t("team.members.perjesi.study"),
+      role: t("team.members.perjesi.role"),
+      image: "/perjesi.jpg",
+    },
+    {
+      name: t("team.members.patrik.name"),
+      study: t("team.members.patrik.study"),
+      role: t("team.members.patrik.role"),
+      image: "/patrik.jpg",
+    },
+    {
+      name: t("team.members.david.name"),
+      study: t("team.members.david.study"),
+      role: t("team.members.david.role"),
+      image: "/balo.jpg",
+    },
+    {
+      name: t("team.members.zalan.name"),
+      study: t("team.members.zalan.study"),
+      role: t("team.members.zalan.role"),
+      image: "/zazi.jpg",
+    },
+  ];
+
   return (
     <section id="team-section" className="relative py-16 md:py-24 min-h-screen">
       {/* Subtle gradient transition at the top */}
@@ -72,17 +75,15 @@ export default function TeamSection() {
               className="flex items-center justify-center p-2 bg-white/10 backdrop-blur-sm rounded-full mb-6 mx-auto"
             >
               <span className="text-white/90 text-sm font-medium">
-                A projekt mögött álló szakértők
+                {t("team.tagline")}
               </span>
             </motion.div>
           </div>
           <h2 className="text-4xl md:text-5xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-blue-300 via-purple-300 to-pink-300">
-            Csapatunk
+            {t("team.title")}
           </h2>
           <p className="text-lg text-white/80 leading-relaxed">
-            Ismerd meg a tehetséges szakembereket, akik az EduVenture platformot
-            létrehozták és fejlesztik, hogy segítsék a fiatalok
-            pályaválasztását.
+            {t("team.description")}
           </p>
         </motion.div>
 

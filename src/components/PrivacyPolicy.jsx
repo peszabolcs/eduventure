@@ -1,12 +1,22 @@
 import React from "react";
+import { useLanguage } from "./LanguageContext";
 
 const PrivacyPolicy = () => {
+  const { t, language } = useLanguage();
+
+  // Az utolsó frissítés dátuma
+  const lastUpdated = "2023-03-15";
+
   return (
     <div className="container mx-auto py-10 px-4 md:px-8 text-white pt-24">
       <div className="max-w-4xl mx-auto bg-gray-800 bg-opacity-70 rounded-lg shadow-xl p-6 md:p-10">
         <h1 className="text-3xl font-bold mb-6 text-center">
-          Adatkezelési Tájékoztató
+          {t("privacy.introduction")}
         </h1>
+
+        <p className="text-sm text-gray-400 mb-6 text-center">
+          {t("privacy.lastUpdated")} {lastUpdated}
+        </p>
 
         <p className="mb-6">
           Az EduVenture (a továbbiakban: Szolgáltató) elkötelezett a
@@ -29,12 +39,9 @@ const PrivacyPolicy = () => {
 
         <section className="mb-8">
           <h2 className="text-2xl font-semibold mb-4">
-            2. Az adatkezelés célja és jogalapja
+            2. {t("privacy.sections.dataCollection.title")}
           </h2>
-          <p className="mb-4">
-            A felhasználói fiók létrehozása és kezelése során a Szolgáltató az
-            alábbi személyes adatokat kezeli:
-          </p>
+          <p className="mb-4">{t("privacy.sections.dataCollection.content")}</p>
           <ul className="list-disc pl-6 space-y-1 mb-4">
             <li>Felhasználónév: A felhasználó azonosítása céljából.</li>
             <li>
@@ -56,27 +63,29 @@ const PrivacyPolicy = () => {
 
         <section className="mb-8">
           <h2 className="text-2xl font-semibold mb-4">
-            3. Az adatok tárolása és védelme
+            3. {t("privacy.sections.dataSecurity.title")}
           </h2>
           <p>
-            A megadott adatokat a Szolgáltató szerver oldali MySQL adatbázisában
-            tárolja. A jelszavak hashelve kerülnek mentésre a biztonság növelése
-            érdekében. A Szolgáltató megfelelő technikai és szervezési
-            intézkedésekkel biztosítja az adatok védelmét a jogosulatlan
-            hozzáférés, módosítás vagy törlés ellen.
+            {t("privacy.sections.dataSecurity.content")} A megadott adatokat a
+            Szolgáltató szerver oldali MySQL adatbázisában tárolja. A jelszavak
+            hashelve kerülnek mentésre a biztonság növelése érdekében. A
+            Szolgáltató megfelelő technikai és szervezési intézkedésekkel
+            biztosítja az adatok védelmét a jogosulatlan hozzáférés, módosítás
+            vagy törlés ellen.
           </p>
         </section>
 
         <section className="mb-8">
           <h2 className="text-2xl font-semibold mb-4">
-            4. Az adatok felhasználása
+            4. {t("privacy.sections.dataUse.title")}
           </h2>
           <p>
-            A Szolgáltató az adatokat kizárólag a felhasználói fiók kezelésére
-            és a felhasználóval történő kapcsolattartásra használja fel. Ezek
-            közé tartozik például a rendszerüzenetek, értesítések küldése. Az
-            adatokat harmadik fél számára a Szolgáltató nem továbbítja, kivéve,
-            ha azt jogszabály írja elő.
+            {t("privacy.sections.dataUse.content")} A Szolgáltató az adatokat
+            kizárólag a felhasználói fiók kezelésére és a felhasználóval történő
+            kapcsolattartásra használja fel. Ezek közé tartozik például a
+            rendszerüzenetek, értesítések küldése. Az adatokat harmadik fél
+            számára a Szolgáltató nem továbbítja, kivéve, ha azt jogszabály írja
+            elő.
           </p>
         </section>
 
@@ -93,9 +102,9 @@ const PrivacyPolicy = () => {
 
         <section className="mb-8">
           <h2 className="text-2xl font-semibold mb-4">
-            6. A felhasználó jogai
+            6. {t("privacy.sections.rights.title")}
           </h2>
-          <p className="mb-4">A felhasználó jogosult:</p>
+          <p className="mb-4">{t("privacy.sections.rights.content")}</p>
           <ul className="list-disc pl-6 space-y-1">
             <li>Tájékoztatást kérni személyes adatai kezeléséről.</li>
             <li>Hozzáférést kérni a kezelt adataihoz.</li>
@@ -142,21 +151,21 @@ const PrivacyPolicy = () => {
 
         <section className="mb-8">
           <h2 className="text-2xl font-semibold mb-4">
-            8. Az adatkezelési tájékoztató módosítása
+            8. {t("privacy.sections.cookies.title")}
           </h2>
           <p>
-            A Szolgáltató fenntartja a jogot, hogy jelen tájékoztatót módosítsa.
-            A módosításokról a felhasználókat megfelelő módon értesíti, például
-            e-mailben vagy a weboldalon keresztül.
+            {t("privacy.sections.cookies.content")} A Szolgáltató fenntartja a
+            jogot, hogy jelen tájékoztatót módosítsa. A módosításokról a
+            felhasználókat megfelelő módon értesíti, például e-mailben vagy a
+            weboldalon keresztül.
           </p>
         </section>
 
         <section className="mb-8">
-          <h2 className="text-2xl font-semibold mb-4">9. Kapcsolatfelvétel</h2>
-          <p className="mb-4">
-            Adatkezeléssel kapcsolatos kérdéseivel vagy észrevételeivel
-            forduljon hozzánk bizalommal az alábbi elérhetőségek egyikén:
-          </p>
+          <h2 className="text-2xl font-semibold mb-4">
+            9. {t("privacy.sections.contact.title")}
+          </h2>
+          <p className="mb-4">{t("privacy.sections.contact.content")}</p>
           <ul className="list-disc pl-6 space-y-1">
             <li>E-mail: info@eduventure.hu</li>
             <li>Telefonszám: -</li>

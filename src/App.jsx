@@ -11,6 +11,7 @@ import Login from "./components/Login.jsx";
 import ProfilePage from "./components/ProfilePage.jsx";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { AuthProvider, useAuth } from "./components/AuthContext.jsx";
+import { LanguageProvider } from "./components/LanguageContext.jsx";
 import ComingSoonPage from "./components/coming-soon-page.jsx";
 // Blog komponensek importálása
 import Blog from "./components/Blog.jsx";
@@ -57,56 +58,58 @@ function App() {
         <div className="absolute bottom-1/4 left-1/2 w-96 h-96 bg-pink-500 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-blob animation-delay-4000"></div>
       </div>
 
-      <AuthProvider>
-        <Router>
-          <Header />
-          <main className="flex-grow relative z-10">
-            <Routes>
-              <Route path="/" element={<AppContent />} />
-              <Route path="/szemelyisegteszt" element={<ComingSoonPage />} />
-              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route
-                path="/profile"
-                element={
-                  <ProtectedRoute allowedRoles={["user", "CTO", "admin"]}>
-                    <ProfilePage />
-                  </ProtectedRoute>
-                }
-              />
-              <Route path="/blog" element={<Blog />} />
-              <Route path="/blog/:id" element={<BlogDetail />} />
-              <Route
-                path="/blog/admin"
-                element={
-                  <ProtectedRoute allowedRoles={["CTO"]}>
-                    <BlogAdmin />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/blog/admin/new"
-                element={
-                  <ProtectedRoute allowedRoles={["CTO"]}>
-                    <BlogEditor />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/blog/admin/edit/:id"
-                element={
-                  <ProtectedRoute allowedRoles={["CTO"]}>
-                    <BlogEditor />
-                  </ProtectedRoute>
-                }
-              />
-              <Route path="/unauthorized" element={<Unauthorized />} />
-            </Routes>
-          </main>
-          <Footer />
-        </Router>
-      </AuthProvider>
+      <LanguageProvider>
+        <AuthProvider>
+          <Router>
+            <Header />
+            <main className="flex-grow relative z-10">
+              <Routes>
+                <Route path="/" element={<AppContent />} />
+                <Route path="/szemelyisegteszt" element={<ComingSoonPage />} />
+                <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route
+                  path="/profile"
+                  element={
+                    <ProtectedRoute allowedRoles={["user", "CTO", "admin"]}>
+                      <ProfilePage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route path="/blog" element={<Blog />} />
+                <Route path="/blog/:id" element={<BlogDetail />} />
+                <Route
+                  path="/blog/admin"
+                  element={
+                    <ProtectedRoute allowedRoles={["CTO"]}>
+                      <BlogAdmin />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/blog/admin/new"
+                  element={
+                    <ProtectedRoute allowedRoles={["CTO"]}>
+                      <BlogEditor />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/blog/admin/edit/:id"
+                  element={
+                    <ProtectedRoute allowedRoles={["CTO"]}>
+                      <BlogEditor />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route path="/unauthorized" element={<Unauthorized />} />
+              </Routes>
+            </main>
+            <Footer />
+          </Router>
+        </AuthProvider>
+      </LanguageProvider>
 
       {/* Add animation keyframes */}
       <style>{`

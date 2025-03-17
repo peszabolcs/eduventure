@@ -5,8 +5,10 @@ import BlogSearch from "../components/blog/BlogSearch";
 import BlogCategories from "../components/blog/BlogCategories";
 import BlogCard from "../components/blog/BlogCard";
 import { getAllArticles } from "../services/blogService";
+import { useLanguage } from "./LanguageContext";
 
 function Blog() {
+  const { t } = useLanguage();
   const [articles, setArticles] = useState([]);
   const [filteredArticles, setFilteredArticles] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -21,7 +23,7 @@ function Blog() {
         setArticles(data);
         setFilteredArticles(data);
       } catch (error) {
-        console.error("Error fetching articles:", error);
+        console.error(t("blog.errors.fetchFailed"), error);
         // Itt lehetne egy hibaüzenetet megjeleníteni a felhasználónak
       } finally {
         setIsLoading(false);
@@ -29,7 +31,7 @@ function Blog() {
     };
 
     fetchArticles();
-  }, []);
+  }, [t]);
 
   useEffect(() => {
     let result = articles;
@@ -90,9 +92,7 @@ function Blog() {
               </div>
             ) : (
               <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-lg p-8 text-center">
-                <p className="text-white text-xl">
-                  Nincs találat a keresési feltételeknek megfelelően.
-                </p>
+                <p className="text-white text-xl">{t("blog.noResults")}</p>
               </div>
             )}
           </div>

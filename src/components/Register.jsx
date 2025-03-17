@@ -4,8 +4,10 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Eye, EyeOff, XCircle, User, Mail, Lock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useLanguage } from "./LanguageContext";
 
 export default function RegisterPage() {
+  const { t } = useLanguage();
   const [formData, setFormData] = useState({
     username: "",
     fullname: "",
@@ -50,16 +52,17 @@ export default function RegisterPage() {
 
   const validateForm = () => {
     const newErrors = {};
-    if (!formData.username) newErrors.username = "Felhasználónév kötelező";
-    if (!formData.email) newErrors.email = "Email cím kötelező";
+    if (!formData.username)
+      newErrors.username = t("auth.validation.usernameRequired");
+    if (!formData.email) newErrors.email = t("auth.validation.emailRequired");
     else if (!/\S+@\S+\.\S+/.test(formData.email))
-      newErrors.email = "Érvénytelen email cím";
-    if (!formData.password) newErrors.password = "Jelszó kötelező";
+      newErrors.email = t("auth.validation.invalidEmail");
+    if (!formData.password)
+      newErrors.password = t("auth.validation.passwordRequired");
     else if (formData.password.length < 8)
-      newErrors.password =
-        "A jelszónak legalább 8 karakter hosszúnak kell lennie";
+      newErrors.password = t("auth.validation.passwordLength");
     if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = "A jelszavak nem egyeznek";
+      newErrors.confirmPassword = t("auth.validation.passwordMismatch");
     }
     return newErrors;
   };
@@ -70,7 +73,6 @@ export default function RegisterPage() {
     if (Object.keys(newErrors).length === 0) {
       setIsSubmitting(true);
       try {
-        //https://edu-venture.hu/backend/register.php
         const response = await fetch(`${API_URL}/backend/register.php`, {
           method: "POST",
           headers: {
@@ -87,18 +89,15 @@ export default function RegisterPage() {
         if (result.error) {
           setErrors({ api: result.error });
         } else {
-          console.log("Sikeres regisztráció:", result);
+          console.log(t("auth.messages.registerSuccess"), result);
           navigate("/login");
         }
       } catch (error) {
-        console.error("Hiba a regisztráció során:", error);
-        setErrors({ api: "Hiba a regisztráció során" });
+        console.error(t("auth.messages.registerError"), error);
+        setErrors({ api: t("auth.messages.registerError") });
       } finally {
         setIsSubmitting(false);
       }
-      // await new Promise((resolve) => setTimeout(resolve, 1500))
-      // console.log("Form submitted:", formData)
-      // setIsSubmitting(false)
     } else {
       setErrors(newErrors);
     }
@@ -122,7 +121,7 @@ export default function RegisterPage() {
           className="bg-white/10 backdrop-blur-md rounded-xl p-8 w-full max-w-md relative z-10"
         >
           <h2 className="text-3xl font-bold text-white mb-6 text-center">
-            Regisztráció
+            {t("auth.registerTitle")}
           </h2>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="relative">
@@ -135,7 +134,7 @@ export default function RegisterPage() {
                 value={formData.fullname}
                 onChange={handleChange}
                 type="text"
-                placeholder="Teljes név"
+                placeholder={t("auth.name")}
                 className={inputClasses}
                 whileFocus={{ scale: 1.02 }}
               />
@@ -163,7 +162,7 @@ export default function RegisterPage() {
                 value={formData.username}
                 onChange={handleChange}
                 type="text"
-                placeholder="Felhasználónév"
+                placeholder={t("auth.username")}
                 className={inputClasses}
                 whileFocus={{ scale: 1.02 }}
               />
@@ -192,7 +191,7 @@ export default function RegisterPage() {
                 value={formData.email}
                 onChange={handleChange}
                 type="email"
-                placeholder="Email cím"
+                placeholder={t("auth.email")}
                 className={inputClasses}
                 whileFocus={{ scale: 1.02 }}
               />
@@ -220,7 +219,7 @@ export default function RegisterPage() {
                 value={formData.password}
                 onChange={handleChange}
                 type={showPassword ? "text" : "password"}
-                placeholder="Jelszó"
+                placeholder={t("auth.password")}
                 className={inputClasses}
                 whileFocus={{ scale: 1.02 }}
               />
@@ -256,7 +255,7 @@ export default function RegisterPage() {
                 value={formData.confirmPassword}
                 onChange={handleChange}
                 type={showConfirmPassword ? "text" : "password"}
-                placeholder="Jelszó megerősítése"
+                placeholder={t("auth.confirmPassword")}
                 className={inputClasses}
                 whileFocus={{ scale: 1.02 }}
               />
@@ -282,63 +281,67 @@ export default function RegisterPage() {
               </AnimatePresence>
             </div>
 
-            {/* Password Strength Indicator */}
-            <div className="mt-2">
-              <div className="flex justify-between mb-1">
-                <span className="text-xs text-white/70">Jelszó erőssége:</span>
-                <span className="text-xs text-white/70">
-                  {passwordStrength === 0 && "Gyenge"}
-                  {passwordStrength === 1 && "Közepes"}
-                  {passwordStrength === 2 && "Jó"}
-                  {passwordStrength === 3 && "Erős"}
-                  {passwordStrength === 4 && "Nagyon erős"}
-                </span>
-              </div>
-              <div className="w-full bg-white/20 rounded-full h-2.5">
+            <AnimatePresence>
+              {errors.api && (
                 <motion.div
-                  className="bg-green-500 h-2.5 rounded-full"
-                  initial={{ width: 0 }}
-                  animate={{ width: `${(passwordStrength / 4) * 100}%` }}
-                  transition={{ duration: 0.3 }}
-                />
-              </div>
-            </div>
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className="p-3 rounded-lg bg-red-500/20 border border-red-500/50 text-white text-sm flex items-center"
+                >
+                  <XCircle className="inline mr-2 flex-shrink-0" size={18} />
+                  <span>{errors.api}</span>
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             <motion.button
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.98 }}
               type="submit"
               disabled={isSubmitting}
-              className={`w-full font-semibold py-3 px-6 rounded-lg transition duration-300 ${
-                isSubmitting
-                  ? "bg-white/50 text-purple-700 cursor-not-allowed"
-                  : "bg-white text-purple-700 hover:bg-white/90"
-              }`}
+              className="w-full py-3 rounded-lg bg-gradient-to-r from-blue-500 to-purple-600 text-white font-medium hover:from-blue-600 hover:to-purple-700 transition duration-300 disabled:opacity-70 disabled:cursor-not-allowed"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
             >
               {isSubmitting ? (
-                <motion.div
-                  className="flex items-center justify-center"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                >
-                  <div className="w-5 h-5 border-t-2 border-purple-700 border-solid rounded-full animate-spin mr-2"></div>
-                  Regisztráció...
-                </motion.div>
+                <span className="flex items-center justify-center">
+                  <svg
+                    className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
+                  </svg>
+                  {t("common.loading")}
+                </span>
               ) : (
-                "Regisztráció"
+                t("auth.registerButton")
               )}
             </motion.button>
-          </form>
 
-          <p className="mt-6 text-white/80 text-center">
-            Már van fiókod?{" "}
-            <a
-              onClick={() => navigate("/login")}
-              className="text-white underline hover:text-white/90 transition duration-300 cursor-pointer"
-            >
-              Jelentkezz be!
-            </a>
-          </p>
+            <div className="text-center text-white/70 text-sm">
+              {t("auth.alreadyHaveAccount")}{" "}
+              <motion.a
+                href="/login"
+                className="text-blue-400 hover:text-blue-300 font-medium"
+                whileHover={{ scale: 1.05 }}
+              >
+                {t("auth.loginLink")}
+              </motion.a>
+            </div>
+          </form>
         </motion.div>
         <style>
           {`

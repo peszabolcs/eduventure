@@ -1,8 +1,10 @@
 import { Link } from "react-router-dom";
-import { formatDate } from "../utils/dateUtils";
+import { formatDate } from "../../utils/dateUtils";
 import { Calendar, Clock, Tag, ChevronRight } from "lucide-react";
+import { useLanguage } from "../LanguageContext";
 
 function BlogCard({ article }) {
+  const { t } = useLanguage();
   const { id, title, summary, image, author, publishDate, category, readTime } =
     article;
 
@@ -27,7 +29,7 @@ function BlogCard({ article }) {
             </span>
             <span className="flex items-center">
               <Clock className="w-4 h-4 mr-1" />
-              {readTime} perc
+              {readTime} {t("blog.readTime")}
             </span>
           </div>
           <div className="mt-2 flex items-center">

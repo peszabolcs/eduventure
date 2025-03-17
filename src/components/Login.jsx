@@ -5,8 +5,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Eye, EyeOff, XCircle, Mail, Lock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "./AuthContext.jsx";
+import { useLanguage } from "./LanguageContext.jsx";
 
 export default function LoginPage() {
+  const { t } = useLanguage();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -39,11 +41,11 @@ export default function LoginPage() {
         login(data.user); // Itt csak a user adatokat adjuk át
         navigate("/profile");
       } else {
-        setError(data.error || "Sikertelen bejelentkezés");
+        setError(data.error || t("auth.messages.loginError"));
       }
     } catch (error) {
       console.error("Login failed:", error);
-      setError("Hiba történt a bejelentkezés során");
+      setError(t("auth.messages.loginError"));
     } finally {
       setIsLoading(false);
     }
@@ -67,7 +69,7 @@ export default function LoginPage() {
           className="bg-white/10 backdrop-blur-md rounded-xl p-8 w-full max-w-md relative z-10"
         >
           <h2 className="text-3xl font-bold text-white mb-6 text-center">
-            Bejelentkezés
+            {t("auth.loginTitle")}
           </h2>
           {error && (
             <div className="bg-red-500 bg-opacity-10 text-red-100 p-3 rounded-lg mb-4">
@@ -85,7 +87,7 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 type="email"
-                placeholder="Email cím"
+                placeholder={t("auth.email")}
                 className={inputClasses}
                 whileFocus={{ scale: 1.02 }}
                 required
@@ -102,7 +104,7 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 type="password"
-                placeholder="Jelszó"
+                placeholder={t("auth.password")}
                 className={inputClasses}
                 whileFocus={{ scale: 1.02 }}
                 required
@@ -127,10 +129,10 @@ export default function LoginPage() {
                   animate={{ opacity: 1 }}
                 >
                   <div className="w-5 h-5 border-t-2 border-purple-700 border-solid rounded-full animate-spin mr-2"></div>
-                  Bejelentkezés...
+                  {t("common.loading")}
                 </motion.div>
               ) : (
-                "Bejelentkezés"
+                t("auth.loginButton")
               )}
             </motion.button>
           </form>
@@ -141,16 +143,16 @@ export default function LoginPage() {
                 href="#"
                 className="text-white underline hover:text-white/90 transition duration-300"
               >
-                Elfelejtett jelszó?
+                {t("auth.forgotPassword")}
               </a>
             </p>
             <p>
-              Még nincs fiókod?{" "}
+              {t("auth.dontHaveAccount")}{" "}
               <a
                 onClick={() => navigate("/register")}
                 className="text-white underline hover:text-white/90 transition duration-300 cursor-pointer"
               >
-                Regisztrálj!
+                {t("auth.registerHere")}
               </a>
             </p>
           </div>

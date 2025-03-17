@@ -2,8 +2,11 @@
 
 import { motion } from "framer-motion";
 import PersonalityTestButton from "./ui/personality-test-button";
+import { useLanguage } from "./LanguageContext";
 
 export default function Hero() {
+  const { t } = useLanguage();
+
   return (
     <section className="relative min-h-screen flex md:flex-col items-center justify-center overflow-hidden bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 px-4">
       <div className="absolute inset-0 overflow-hidden">
@@ -24,7 +27,7 @@ export default function Hero() {
             className="w-48 h-48 sm:w-52 sm:h-52 md:w-64 md:h-64 mx-auto object-contain"
           />
           <h1 className="text-4xl sm:text-5xl md:text-7xl font-extrabold mb-4 sm:mb-6 bg-clip-text text-transparent bg-gradient-to-r from-white to-purple-200">
-            EduVenture
+            {t("hero.title")}
           </h1>
         </motion.div>
         <motion.p
@@ -33,8 +36,7 @@ export default function Hero() {
           transition={{ duration: 0.8, delay: 0.2 }}
           className="text-lg sm:text-xl md:text-2xl text-purple-100 mb-8 sm:mb-12 max-w-3xl mx-auto px-4"
         >
-          Fedezd fel a különböző szakmákat és találd meg a hozzád legjobban illő
-          karrierutat egy innovatív, interaktív platformon!
+          {t("hero.description")}
         </motion.p>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
