@@ -1,16 +1,24 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" href="/eduventurelogohatternelkul.svg">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="icon" href="/eduventurelogohatternelkul.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="canonical" href="https://edu-venture.hu" />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+      rel="stylesheet"
+    />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Fedezd fel a legjobb pályaválasztási lehetőségeket és szakmai tanácsokat az EduVenture platformon!" />
-    <meta name="keywords"
-          content="EduVenture, pályaválasztás, pályaorientáció, pályaválasztási platform, karrier, tanácsadás" />
+    <meta
+      name="description"
+      content="Fedezd fel a legjobb pályaválasztási lehetőségeket és szakmai tanácsokat az EduVenture platformon!"
+    />
+    <meta
+      name="keywords"
+      content="EduVenture, pályaválasztás, pályaorientáció, pályaválasztási platform, karrier, tanácsadás"
+    />
     <meta name="author" content="Perjési Szabolcs" />
     <meta name="robots" content="index, follow" />
     <meta name="language" content="Hungarian" />
@@ -18,20 +26,37 @@
     <meta name="rating" content="general" />
     <meta name="googlebot" content="index, follow" />
 
+    <!-- PWA meta tags -->
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#4F46E5" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <meta name="apple-mobile-web-app-title" content="EduVenture" />
+    <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
 
     <title>EduVenture - Innovatív pályaorientációs platform fiataloknak</title>
   </head>
   <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-3HQDQ76KM7"></script>
+  <script
+    async
+    src="https://www.googletagmanager.com/gtag/js?id=G-3HQDQ76KM7"
+  ></script>
   <script>
     window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+    gtag("js", new Date());
 
-    gtag('config', 'G-3HQDQ76KM7');
+    gtag("config", "G-3HQDQ76KM7");
   </script>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
+    <!-- PWA service worker registration -->
+    <script src="/register-sw.js"></script>
   </body>
 </html>
