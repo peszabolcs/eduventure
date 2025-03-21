@@ -10,7 +10,10 @@
       href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
       rel="stylesheet"
     />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+    />
     <meta
       name="description"
       content="Fedezd fel a legjobb pályaválasztási lehetőségeket és szakmai tanácsokat az EduVenture platformon!"
@@ -27,17 +30,96 @@
     <meta name="googlebot" content="index, follow" />
 
     <!-- PWA meta tags -->
-    <link rel="manifest" href="/manifest.json" />
+    <link rel="manifest" href="/manifest.json" crossorigin="use-credentials" />
     <meta name="theme-color" content="#4F46E5" />
+    <meta name="mobile-web-app-capable" content="yes" />
+
+    <!-- iOS meta tags - FRISSÍTVE -->
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta
       name="apple-mobile-web-app-status-bar-style"
       content="black-translucent"
     />
     <meta name="apple-mobile-web-app-title" content="EduVenture" />
-    <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
+    <meta name="format-detection" content="telephone=no" />
+
+    <!-- PWA-specific styles -->
+    <link rel="stylesheet" href="/pwa-styles.css" />
+
+    <!-- Apple Touch Icons - FRISSÍTVE -->
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link
+      rel="apple-touch-icon"
+      sizes="57x57"
+      href="/icons/apple-icon-57x57.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="60x60"
+      href="/icons/apple-icon-60x60.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="72x72"
+      href="/icons/apple-icon-72x72.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="76x76"
+      href="/icons/apple-icon-76x76.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="114x114"
+      href="/icons/apple-icon-114x114.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="120x120"
+      href="/icons/apple-icon-120x120.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="144x144"
+      href="/icons/apple-icon-144x144.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="152x152"
+      href="/icons/apple-icon-152x152.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="/icons/apple-icon-180x180.png"
+    />
 
     <title>EduVenture - Innovatív pályaorientációs platform fiataloknak</title>
+
+    <!-- iOS teljes képernyős mód stílusok -->
+    <style>
+      /* iPhone X vagy újabb készülékeken biztosítja a biztonságos területek kezelését */
+      @supports (padding: max(0px)) {
+        body {
+          padding-top: max(0px, env(safe-area-inset-top));
+          padding-bottom: max(0px, env(safe-area-inset-bottom));
+          padding-left: max(0px, env(safe-area-inset-left));
+          padding-right: max(0px, env(safe-area-inset-right));
+        }
+      }
+
+      /* PWA mód specifikus stílusok */
+      body.pwa-mode {
+        background-color: #000;
+        min-height: 100vh;
+        min-height: -webkit-fill-available;
+        overflow-x: hidden;
+      }
+
+      html {
+        height: -webkit-fill-available;
+      }
+    </style>
   </head>
   <!-- Google tag (gtag.js) -->
   <script
@@ -58,5 +140,57 @@
     <script type="module" src="/src/main.jsx"></script>
     <!-- PWA service worker registration -->
     <script src="/register-sw.js"></script>
+
+    <!-- PWA mode detection script -->
+    <script>
+      // Detektáljuk, hogy PWA módban vagyunk-e
+      function isPwaMode() {
+        return (
+          window.matchMedia("(display-mode: standalone)").matches ||
+          window.navigator.standalone ||
+          document.referrer.includes("android-app://")
+        );
+      }
+
+      // Ha PWA módban vagyunk, adjunk hozzá egy class-t a body-hoz
+      if (isPwaMode()) {
+        document.body.classList.add("pwa-mode");
+
+        // iPhone esetén a meta viewport beállítása
+        if (/iPhone|iPad|iPod/.test(navigator.userAgent)) {
+          // Státuszsáv átlátszóság biztosítása iPhone-on
+          if (document.head) {
+            const metaViewport = document.querySelector(
+              'meta[name="viewport"]'
+            );
+            if (metaViewport) {
+              metaViewport.setAttribute(
+                "content",
+                "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+              );
+            }
+
+            // Státuszsáv színének beállítása
+            const metaStatusBarStyle = document.querySelector(
+              'meta[name="apple-mobile-web-app-status-bar-style"]'
+            );
+            if (metaStatusBarStyle) {
+              metaStatusBarStyle.setAttribute("content", "black-translucent");
+            }
+          }
+        }
+      }
+
+      // Figyelje a display-mode változásait
+      window
+        .matchMedia("(display-mode: standalone)")
+        .addEventListener("change", (e) => {
+          if (e.matches) {
+            document.body.classList.add("pwa-mode");
+          } else {
+            document.body.classList.remove("pwa-mode");
+          }
+        });
+    </script>
   </body>
 </html>

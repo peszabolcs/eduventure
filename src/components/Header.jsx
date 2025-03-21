@@ -27,6 +27,29 @@ export default function Header() {
   const location = useLocation();
   const { user, logout } = useAuth();
 
+  // Ellenőrizzük, hogy PWA módban vagyunk-e
+  const [isPwa, setIsPwa] = useState(false);
+
+  useEffect(() => {
+    // Ellenőrizzük, hogy PWA módban vagyunk-e
+    // Standalone mód jelzi, hogy a PWA telepítve van és önálló alkalmazásként fut
+    const isPwaMode =
+      window.matchMedia("(display-mode: standalone)").matches ||
+      window.navigator.standalone ||
+      document.referrer.includes("android-app://");
+
+    setIsPwa(isPwaMode);
+
+    // Figyelje a display-mode változásait
+    const mediaQuery = window.matchMedia("(display-mode: standalone)");
+    const handleChange = (e) => {
+      setIsPwa(e.matches);
+    };
+
+    mediaQuery.addEventListener("change", handleChange);
+    return () => mediaQuery.removeEventListener("change", handleChange);
+  }, []);
+
   const isAuthPage =
     location.pathname === "/login" || location.pathname === "/register";
 
@@ -62,9 +85,14 @@ export default function Header() {
     navigate("/");
   };
 
+  // Headernek a CSS osztálya a PWA mód alapján
+  const headerClassName = isPwa
+    ? "absolute top-0 left-0 right-0 z-50 pwa-header" // PWA módban abszolút pozíció és pwa-header class
+    : "fixed top-0 left-0 right-0 z-50"; // Webes módban fixed pozíció
+
   return (
-    <header className="fixed top-0 left-0 right-0 z-50">
-      <div className="absolute inset-0 bg-gradient-to-r from-purple-900/90 via-indigo-900/90 to-purple-900/90 backdrop-blur-md border-b border-white/10"></div>
+    <header className={headerClassName}>
+      <div className="absolute inset-0 bg-gradient-to-r from-purple-900/90 via-indigo-900/90 to-purple-900/90 backdrop-blur-md border-b border-white/10 header-background"></div>
 
       <nav className="container mx-auto px-6 py-4 relative">
         <div className="flex items-center justify-between">

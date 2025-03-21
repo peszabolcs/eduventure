@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>iOS PWA Teszt</title>
+
+    <!-- PWA meta tags -->
+    <link rel="manifest" href="/manifest.json" crossorigin="use-credentials" />
+    <meta name="theme-color" content="#4F46E5" />
+    <meta name="mobile-web-app-capable" content="yes" />
+
+    <!-- iOS specific meta tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <meta name="apple-mobile-web-app-title" content="EduVenture" />
+    <meta name="format-detection" content="telephone=no" />
+
+    <!-- Apple Touch Icons -->
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link
+      rel="apple-touch-icon"
+      sizes="57x57"
+      href="/icons/apple-icon-57x57.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="60x60"
+      href="/icons/apple-icon-60x60.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="72x72"
+      href="/icons/apple-icon-72x72.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="76x76"
+      href="/icons/apple-icon-76x76.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="114x114"
+      href="/icons/apple-icon-114x114.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="120x120"
+      href="/icons/apple-icon-120x120.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="144x144"
+      href="/icons/apple-icon-144x144.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="152x152"
+      href="/icons/apple-icon-152x152.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="/icons/apple-icon-180x180.png"
+    />
+
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Helvetica, Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background-color: #f8f9fa;
+        color: #333;
+      }
+      .container {
+        max-width: 600px;
+        margin: 0 auto;
+        background-color: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+        color: #4f46e5;
+        margin-top: 0;
+      }
+      .icon-preview {
+        text-align: center;
+        margin: 30px 0;
+      }
+      .icon-preview img {
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        max-width: 150px;
+      }
+      .steps {
+        margin-top: 30px;
+      }
+      .steps ol {
+        padding-left: 20px;
+      }
+      .steps li {
+        margin-bottom: 15px;
+        line-height: 1.5;
+      }
+      .status {
+        margin-top: 30px;
+        padding: 15px;
+        background-color: #e9f5ff;
+        border-radius: 5px;
+        font-size: 0.9em;
+      }
+      button {
+        background-color: #4f46e5;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        margin-top: 20px;
+      }
+      button:hover {
+        background-color: #4338ca;
+      }
+      .icon-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 20px;
+        justify-content: center;
+      }
+      .icon-item {
+        text-align: center;
+        font-size: 0.8rem;
+      }
+      .icon-item img {
+        width: 48px;
+        height: 48px;
+        object-fit: contain;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>iOS PWA Teszt</h1>
+
+      <div class="icon-preview">
+        <h3>Elsődleges ikon előnézete:</h3>
+        <img src="/apple-touch-icon.png" alt="PWA Icon" />
+      </div>
+
+      <div class="icon-grid">
+        <h3>Összes iOS ikon:</h3>
+        <div class="icon-grid">
+          <div class="icon-item">
+            <img src="/icons/apple-icon-57x57.png" alt="57x57" />
+            <div>57x57</div>
+          </div>
+          <div class="icon-item">
+            <img src="/icons/apple-icon-60x60.png" alt="60x60" />
+            <div>60x60</div>
+          </div>
+          <div class="icon-item">
+            <img src="/icons/apple-icon-72x72.png" alt="72x72" />
+            <div>72x72</div>
+          </div>
+          <div class="icon-item">
+            <img src="/icons/apple-icon-76x76.png" alt="76x76" />
+            <div>76x76</div>
+          </div>
+          <div class="icon-item">
+            <img src="/icons/apple-icon-114x114.png" alt="114x114" />
+            <div>114x114</div>
+          </div>
+          <div class="icon-item">
+            <img src="/icons/apple-icon-120x120.png" alt="120x120" />
+            <div>120x120</div>
+          </div>
+          <div class="icon-item">
+            <img src="/icons/apple-icon-144x144.png" alt="144x144" />
+            <div>144x144</div>
+          </div>
+          <div class="icon-item">
+            <img src="/icons/apple-icon-152x152.png" alt="152x152" />
+            <div>152x152</div>
+          </div>
+          <div class="icon-item">
+            <img src="/icons/apple-icon-180x180.png" alt="180x180" />
+            <div>180x180</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="steps">
+        <h3>Telepítési lépések:</h3>
+        <ol>
+          <li>
+            Kattints a Safari böngészőben a Megosztás gombra (nyíl felfelé ikon
+            az alsó vagy felső sávban)
+          </li>
+          <li>
+            Válaszd a <strong>Hozzáadás a kezdőképernyőhöz</strong> opciót
+          </li>
+          <li>
+            Kattints a <strong>Hozzáadás</strong> gombra a felugró ablakban
+          </li>
+          <li>
+            Nézd meg a kezdőképernyődet, és indítsd el az appot az ikonra
+            kattintva
+          </li>
+        </ol>
+      </div>
+
+      <div class="status" id="statusBox">PWA státusz ellenőrzése...</div>
+
+      <button id="checkBtn">Ellenőrzés frissítése</button>
+    </div>
+
+    <script>
+      // PWA státusz ellenőrzése
+      function checkPWAStatus() {
+        const statusBox = document.getElementById("statusBox");
+        let statusText = "";
+
+        // Manifest ellenőrzése
+        fetch("/manifest.json")
+          .then((response) => {
+            if (response.ok) {
+              statusText += "✅ Manifest elérhető<br>";
+            } else {
+              statusText += "❌ Manifest nem elérhető<br>";
+            }
+          })
+          .catch(() => {
+            statusText += "❌ Manifest nem elérhető<br>";
+          })
+          .finally(() => {
+            // Service Worker ellenőrzése
+            if ("serviceWorker" in navigator) {
+              statusText += "✅ ServiceWorker támogatott<br>";
+
+              navigator.serviceWorker
+                .getRegistrations()
+                .then((registrations) => {
+                  if (registrations.length > 0) {
+                    statusText += "✅ ServiceWorker regisztrálva<br>";
+                  } else {
+                    statusText += "❌ ServiceWorker nincs regisztrálva<br>";
+                  }
+
+                  // További diagnosztika
+                  statusText += "<br><strong>Diagnosztika:</strong><br>";
+                  statusText += `📱 Standalone mód: ${
+                    window.navigator.standalone ? "Igen" : "Nem"
+                  }<br>`;
+                  statusText += `🔍 Böngésző: ${navigator.userAgent}<br>`;
+
+                  statusBox.innerHTML = statusText;
+                })
+                .catch((error) => {
+                  statusText += `❌ Hiba történt: ${error}<br>`;
+                  statusBox.innerHTML = statusText;
+                });
+            } else {
+              statusText += "❌ ServiceWorker nem támogatott<br>";
+              statusBox.innerHTML = statusText;
+            }
+          });
+      }
+
+      // Ellenőrzés az oldal betöltésekor
+      window.addEventListener("load", checkPWAStatus);
+
+      // Gomb eseménykezelő
+      document
+        .getElementById("checkBtn")
+        .addEventListener("click", checkPWAStatus);
+    </script>
+  </body>
+</html>

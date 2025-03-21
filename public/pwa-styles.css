@@ -1,0 +1,52 @@
+/* PWA-specific styles */
+
+/* Standalone mode detection */
+@media all and (display-mode: standalone) {
+  /* Scrollbar settings */
+  body {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Fix header to stay at the top in standalone mode */
+  header.pwa-header {
+    position: absolute !important;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 50;
+    /* Biztonságos terület figyelembe vétele - iPhone notch és státuszsáv */
+    padding-top: env(safe-area-inset-top, 20px);
+  }
+
+  /* A header háttere is vegye figyelembe a biztonságos területet */
+  header.pwa-header .header-background {
+    top: 0;
+    height: calc(100% + env(safe-area-inset-top, 20px));
+  }
+
+  /* A header tartalma megfelelő távolságra kerüljön a státuszsávtól */
+  header.pwa-header nav {
+    padding-top: calc(1rem + env(safe-area-inset-top, 0px));
+  }
+
+  /* Extra padding for the main content when header is fixed */
+  .hero-section-pwa {
+    padding-top: calc(80px + env(safe-area-inset-top, 20px)) !important;
+  }
+
+  /* Safari-specific fixes for bottom bar */
+  @supports (-webkit-touch-callout: none) {
+    body {
+      /* Prevent Safari's elastic scrolling */
+      overflow-y: scroll;
+      -webkit-overflow-scrolling: touch;
+      /* Add padding at the bottom to account for Safari's bottom bar */
+      padding-bottom: env(safe-area-inset-bottom, 20px);
+    }
+
+    /* Fix for home indicator on iPhone X and newer */
+    .safe-area-bottom {
+      padding-bottom: env(safe-area-inset-bottom, 20px);
+    }
+  }
+}
