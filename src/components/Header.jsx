@@ -16,6 +16,9 @@ const menuItems = [
     to: "form-section",
     href: "https://forms.gle/hewV8BhLbWoBoLsLA",
   },
+  { name: "Pályaorientáció", href: "/palyaorientacio" },
+  { name: "Egyetemek", href: "/egyetemek" },
+  { name: "Szakértő-kereső", href: "/szakerto-kereso" },
   // {name: "Regisztráció", href: "/register" },
   { name: "Blog", href: "/blog" },
 ];

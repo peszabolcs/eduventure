@@ -19,6 +19,13 @@ import BlogAdmin from "./components/BlogAdmin.jsx";
 import BlogEditor from "./components/BlogEditor.jsx";
 import Unauthorized from "./components/Unauthorized";
 import PrivacyPolicy from "./components/PrivacyPolicy.jsx";
+// Pályaorientációs modul importálása
+import CareerOrientationModule from "./components/career/CareerOrientationModule.jsx";
+// Egyetemi oldal importálása
+import UniversitiesPage from "./components/universities/UniversitiesPage.jsx";
+// Szakértői oldalak importálása
+import ExpertsListPage from "./components/experts/ExpertsListPage.jsx";
+import ExpertProfilePage from "./components/experts/ExpertProfilePage.jsx";
 
 // Új komponens a loading állapot kezelésére
 const AppContent = () => {
@@ -102,6 +109,18 @@ function App() {
                 }
               />
               <Route path="/unauthorized" element={<Unauthorized />} />
+              {/* Pályaorientációs modul útvonal */}
+              <Route
+                path="/palyaorientacio"
+                element={<CareerOrientationModule />}
+              />
+              {/* Egyetemi oldal útvonal */}
+              <Route path="/egyetemek" element={<UniversitiesPage />} />
+              {/* Szakértői oldalak útvonalai */}
+              <Route path="/szakerto-kereso" element={<ExpertsListPage />} />
+              <Route path="/szakerto/:id" element={<ExpertProfilePage />} />
+              {/* Placeholder útvonalak a további funkciókhoz */}
+              <Route path="/ajanlott-utak" element={<ComingSoonPage />} />
             </Routes>
           </main>
           <Footer />
