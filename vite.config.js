@@ -70,6 +70,24 @@ export default defineConfig({
       },
     }),
   ],
+  server: {
+    port: 5173,
+    strictPort: true,
+    host: "localhost", // Local IP címre változtatva
+    cors: true, // CORS engedélyezése
+    open: true, // Automatikus böngésző megnyitás
+    hmr: {
+      protocol: "http", // WebSocket helyett HTTP polling
+      host: "localhost",
+      port: 5173,
+      timeout: 30000,
+      overlay: true,
+    },
+    watch: {
+      usePolling: true,
+      interval: 1000,
+    },
+  },
   env: {
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
   },
@@ -80,6 +98,15 @@ export default defineConfig({
     },
   },
   optimizeDeps: {
+    include: ["canvas-confetti"],
+  },
+  // Fejlesztői szerver log részletessége
+  logLevel: "info",
+  clearScreen: false,
+  // Force teljes cache törölés minden indításkor
+  cacheDir: ".vite_cache",
+  optimizeDeps: {
+    force: true,
     include: ["canvas-confetti"],
   },
 });
