@@ -193,7 +193,7 @@ const ExpertsListPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 py-16 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 py-12 px-4 sm:px-6 lg:px-8">
       {/* Animated background blobs */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-blob"></div>
@@ -201,17 +201,17 @@ const ExpertsListPage = () => {
         <div className="absolute bottom-1/4 left-1/2 w-96 h-96 bg-pink-500 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-blob animation-delay-4000"></div>
       </div>
 
-      <div className="container mx-auto max-w-6xl relative z-10 pt-16">
+      <div className="container mx-auto max-w-7xl relative z-10 pt-24">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="text-center mb-12"
+          className="text-center mb-8"
         >
-          <h1 className="text-4xl sm:text-5xl font-bold text-white mb-4">
+          <h1 className="text-4xl sm:text-5xl font-bold text-white mb-3">
             Szakértők
           </h1>
-          <p className="text-xl text-purple-200 max-w-3xl mx-auto">
+          <p className="text-lg text-purple-200 max-w-3xl mx-auto">
             Találj személyre szabott tanácsadást és támogatást pályaválasztási,
             tanulási és karrierkérdésekben.
           </p>
@@ -222,9 +222,9 @@ const ExpertsListPage = () => {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.1 }}
-          className="bg-white/10 backdrop-blur-lg rounded-xl p-6 mb-8 border border-white/20"
+          className="bg-white/10 backdrop-blur-lg rounded-xl p-4 mb-6 border border-white/20"
         >
-          <div className="flex flex-col md:flex-row gap-4 items-center mb-4">
+          <div className="flex flex-col md:flex-row gap-3 items-center mb-3">
             {/* Search input */}
             <div className="relative flex-grow">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -233,7 +233,7 @@ const ExpertsListPage = () => {
               <input
                 type="text"
                 placeholder="Keresés név vagy szakterület alapján..."
-                className="block w-full bg-white/5 border border-white/20 rounded-lg pl-10 py-3 text-white placeholder-purple-300 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent"
+                className="block w-full bg-white/5 border border-white/20 rounded-lg pl-10 py-2 text-white placeholder-purple-300 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
@@ -242,23 +242,23 @@ const ExpertsListPage = () => {
             {/* Filter toggle button */}
             <button
               onClick={() => setShowFilters(!showFilters)}
-              className="flex items-center gap-2 bg-white/10 hover:bg-white/15 text-white px-5 py-3 rounded-lg transition-colors border border-white/20"
+              className="flex items-center gap-2 bg-white/10 hover:bg-white/15 text-white px-4 py-2 rounded-lg transition-colors border border-white/20"
             >
-              <Filter className="h-5 w-5" />
+              <Filter className="h-4 w-4" />
               Szűrők {showFilters ? "elrejtése" : "mutatása"}
             </button>
           </div>
 
           {/* Filters */}
           {showFilters && (
-            <div className="mt-4 pt-4 border-t border-white/10">
-              <h3 className="text-white font-medium mb-3">Szakterületek</h3>
+            <div className="mt-3 pt-3 border-t border-white/10">
+              <h3 className="text-white font-medium mb-2">Szakterületek</h3>
               <div className="flex flex-wrap gap-2">
                 {ALL_SPECIALIZATIONS.map((spec) => (
                   <button
                     key={spec}
                     onClick={() => handleSpecializationToggle(spec)}
-                    className={`px-3 py-1.5 rounded-full text-sm transition-colors ${
+                    className={`px-2 py-1 rounded-full text-xs transition-colors ${
                       selectedSpecializations.includes(spec)
                         ? "bg-purple-600 text-white"
                         : "bg-white/10 text-purple-200 hover:bg-white/15"
@@ -273,29 +273,29 @@ const ExpertsListPage = () => {
         </motion.div>
 
         {/* Experts List */}
-        <div className="space-y-6">
-          {filteredExperts.length === 0 ? (
-            <div className="bg-white/10 backdrop-blur-lg rounded-xl p-8 text-center border border-white/20">
-              <h3 className="text-xl text-white mb-2">Nincs találat</h3>
-              <p className="text-purple-200">
-                Próbáld meg módosítani a keresési feltételeket a találatok
-                megjelenítéséhez.
-              </p>
-            </div>
-          ) : (
-            filteredExperts.map((expert, index) => (
+        {filteredExperts.length === 0 ? (
+          <div className="bg-white/10 backdrop-blur-lg rounded-xl p-8 text-center border border-white/20">
+            <h3 className="text-xl text-white mb-2">Nincs találat</h3>
+            <p className="text-purple-200">
+              Próbáld meg módosítani a keresési feltételeket a találatok
+              megjelenítéséhez.
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {filteredExperts.map((expert, index) => (
               <motion.div
                 key={expert.id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: index * 0.1 }}
-                className="bg-white/10 backdrop-blur-lg rounded-xl p-5 border border-white/20 hover:bg-white/15 transition-colors cursor-pointer"
+                transition={{ duration: 0.4, delay: index * 0.05 }}
+                className="bg-white/10 backdrop-blur-lg rounded-xl p-4 border border-white/20 hover:bg-white/15 transition-colors cursor-pointer h-full flex flex-col"
                 onClick={() => handleViewExpert(expert.id)}
               >
-                <div className="md:flex items-center">
+                <div className="flex items-start gap-3">
                   {/* Expert photo */}
-                  <div className="md:w-1/6 flex justify-center mb-4 md:mb-0">
-                    <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-white/30">
+                  <div className="flex-shrink-0">
+                    <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-white/30">
                       <img
                         src={expert.photo || "/placeholder-expert.jpg"}
                         alt={expert.name}
@@ -308,70 +308,59 @@ const ExpertsListPage = () => {
                   </div>
 
                   {/* Expert info */}
-                  <div className="md:w-3/6 md:pl-4">
-                    <h2 className="text-xl font-semibold text-white">
+                  <div className="flex-grow">
+                    <h2 className="text-lg font-semibold text-white">
                       {expert.name}
                     </h2>
-                    <p className="text-purple-300 mb-2">{expert.title}</p>
+                    <p className="text-purple-300 text-sm">{expert.title}</p>
 
-                    <div className="flex items-center gap-4 text-sm text-purple-200 mb-3">
+                    <div className="flex items-center gap-2 mt-1">
                       <div className="flex items-center">
-                        <Clock className="h-4 w-4 mr-1" />
-                        {expert.experience}
-                      </div>
-                      <div className="flex items-center">
-                        <Users className="h-4 w-4 mr-1" />
-                        {expert.reviewCount} értékelés
-                      </div>
-                    </div>
-
-                    <div className="flex flex-wrap gap-2 mb-3 md:mb-0">
-                      {expert.specializations.slice(0, 3).map((spec, index) => (
-                        <span
-                          key={index}
-                          className="px-2 py-1 bg-purple-500/30 text-white rounded-full text-xs"
-                        >
-                          {spec}
-                        </span>
-                      ))}
-                      {expert.specializations.length > 3 && (
-                        <span className="px-2 py-1 bg-purple-500/20 text-white rounded-full text-xs">
-                          +{expert.specializations.length - 3} további
-                        </span>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Rating and price */}
-                  <div className="md:w-2/6 flex flex-col items-start md:items-end mt-4 md:mt-0">
-                    <div className="flex items-center mb-2">
-                      <div className="flex mr-2">
                         {renderStars(expert.rating)}
                       </div>
-                      <span className="text-white font-medium">
+                      <span className="text-white text-sm">
                         {expert.rating}
                       </span>
+                      <span className="text-purple-200 text-xs">
+                        ({expert.reviewCount})
+                      </span>
                     </div>
-
-                    <p className="text-purple-200 text-sm mb-3">
-                      {expert.availability}
-                    </p>
-                    <p className="text-white font-medium">
-                      {expert.hourlyRate}
-                    </p>
                   </div>
                 </div>
 
-                {/* Expert intro - only shown on mobile */}
-                <div className="mt-4 md:hidden">
-                  <p className="text-purple-100 text-sm line-clamp-2">
-                    {expert.introduction}
+                <div className="mt-3 flex flex-wrap gap-1">
+                  {expert.specializations.slice(0, 2).map((spec, index) => (
+                    <span
+                      key={index}
+                      className="px-2 py-0.5 bg-purple-500/30 text-white rounded-full text-xs"
+                    >
+                      {spec}
+                    </span>
+                  ))}
+                  {expert.specializations.length > 2 && (
+                    <span className="px-2 py-0.5 bg-purple-500/20 text-white rounded-full text-xs">
+                      +{expert.specializations.length - 2}
+                    </span>
+                  )}
+                </div>
+
+                <div className="flex justify-between items-center mt-3 text-sm">
+                  <div className="flex items-center text-purple-200">
+                    <Clock className="h-3 w-3 mr-1" />
+                    {expert.experience.replace("tapasztalat", "")}
+                  </div>
+                  <p className="text-white font-medium">
+                    {expert.hourlyRate.split(" / ")[0]}
                   </p>
                 </div>
+
+                <p className="text-purple-200 text-xs mt-2">
+                  {expert.availability}
+                </p>
               </motion.div>
-            ))
-          )}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
