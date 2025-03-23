@@ -7,35 +7,60 @@ const CareerQuestion = ({ question, onAnswer }) => {
 
   return (
     <motion.div
-      key={question.id}
-      initial={{ opacity: 0, x: 50 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: -50 }}
-      transition={{ duration: 0.3 }}
-      className="mb-6"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -20 }}
+      transition={{ duration: 0.5 }}
+      className="max-w-3xl mx-auto"
     >
-      <h3 className="text-xl md:text-2xl font-medium text-white mb-6">
+      <motion.h3
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+        className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 mb-8 text-center"
+      >
         {question.text}
-      </h3>
+      </motion.h3>
 
       <div className="space-y-4">
-        {question.options.map((option) => (
+        {question.options.map((option, index) => (
           <motion.button
             key={option.id}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: index * 0.1 + 0.3 }}
             onClick={() => handleOptionClick(option)}
-            className="w-full text-left p-4 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-lg transition-all duration-200 text-white border border-white/20"
+            className="w-full text-left p-6 rounded-xl bg-white/5 hover:bg-white/10 backdrop-blur-lg border border-white/10 hover:border-white/20 transition-all duration-200 group"
+            whileHover={{
+              scale: 1.02,
+              boxShadow: "0 10px 30px -10px rgba(0,0,0,0.3)",
+            }}
+            whileTap={{ scale: 0.98 }}
           >
-            <div className="flex items-start">
-              <div className="flex-shrink-0 h-6 w-6 mr-3 rounded-full bg-purple-500/40 border border-purple-300/50 flex items-center justify-center">
-                {option.id}
+            <div className="flex items-center">
+              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500/20 to-blue-500/20 flex items-center justify-center mr-4 group-hover:from-purple-500/30 group-hover:to-blue-500/30 transition-colors">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-blue-300 font-medium text-lg">
+                  {option.id.toUpperCase()}
+                </span>
               </div>
-              <span>{option.text}</span>
+              <p className="text-purple-100 text-lg flex-1 leading-relaxed">
+                {option.text}
+              </p>
             </div>
           </motion.button>
         ))}
       </div>
+
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5, delay: 0.8 }}
+        className="mt-8 text-center"
+      >
+        <p className="text-purple-300 text-sm">
+          Válaszd ki azt az opciót, ami leginkább jellemző rád
+        </p>
+      </motion.div>
     </motion.div>
   );
 };

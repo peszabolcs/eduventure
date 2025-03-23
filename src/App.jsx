@@ -5,7 +5,12 @@ import { Element } from "react-scroll";
 import Hero from "./components/Hero.jsx";
 import Header from "./components/Header.jsx";
 import Footer from "./components/Footer.jsx";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 import Register from "./components/Register.jsx";
 import Login from "./components/Login.jsx";
 import ProfilePage from "./components/ProfilePage.jsx";
@@ -121,6 +126,10 @@ function App() {
               <Route path="/szakerto/:id" element={<ExpertProfilePage />} />
               {/* Placeholder útvonalak a további funkciókhoz */}
               <Route path="/ajanlott-utak" element={<ComingSoonPage />} />
+              <Route
+                path="/palyaorientacio-n"
+                element={<Navigate to="/palyaorientacio" replace />}
+              />
             </Routes>
           </main>
           <Footer />
