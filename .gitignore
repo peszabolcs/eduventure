@@ -15,7 +15,7 @@ dist-ssr
 composer.lock
 phpunit.xml
 vendor
-.vite_cache/
+.vite_cache
 
 
 # Editor directories and files
