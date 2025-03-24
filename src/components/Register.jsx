@@ -107,7 +107,17 @@ export default function RegisterPage() {
       setIsSubmitting(true);
       try {
         //https://edu-venture.hu/backend/register.php
-        const response = await fetch(`${API_URL}/backend/register.php`, {
+        console.log("Regisztráció küldése:", {
+          url: `${API_URL}/backend/register_debug.php`,
+          data: {
+            fullname: formData.fullname,
+            username: formData.username,
+            email: formData.email,
+            password: formData.password,
+          },
+        });
+
+        const response = await fetch(`${API_URL}/backend/register_debug.php`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -118,8 +128,14 @@ export default function RegisterPage() {
             email: formData.email,
             password: formData.password,
           }),
+          credentials: "include",
         });
+
+        console.log("Regisztráció válasz státusz:", response.status);
+
         const result = await response.json();
+        console.log("Regisztráció válasz:", result);
+
         if (result.error) {
           setErrors({ api: result.error });
         } else {
@@ -128,7 +144,7 @@ export default function RegisterPage() {
         }
       } catch (error) {
         console.error("Hiba a regisztráció során:", error);
-        setErrors({ api: "Hiba a regisztráció során" });
+        setErrors({ api: `Hiba a regisztráció során: ${error.message}` });
       } finally {
         setIsSubmitting(false);
       }

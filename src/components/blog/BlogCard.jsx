@@ -7,6 +7,7 @@ function BlogCard({ article }) {
     article;
 
   const formattedDate = formatDate(publishDate);
+  const API_URL = import.meta.env.VITE_API_URL;
 
   return (
     <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-lg overflow-hidden transition-all duration-300 hover:transform hover:scale-105 hover:shadow-lg">
@@ -47,7 +48,11 @@ function BlogCard({ article }) {
         <div className="flex justify-between items-center">
           <div className="flex items-center">
             <img
-              src={author.avatar || "/default-avatar.jpg"}
+              src={
+                author.avatar
+                  ? `${API_URL}${author.avatar}`
+                  : "/default-avatar.jpg"
+              }
               alt={author.name}
               className="w-8 h-8 rounded-full mr-2"
             />

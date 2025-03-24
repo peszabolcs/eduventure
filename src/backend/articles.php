@@ -36,7 +36,7 @@ if ($conn->connect_error) {
     die(json_encode(["error" => "Database connection failed"]));
 }
 
-$query = "SELECT a.*, u.fullname as author_name, u.username as author_username 
+$query = "SELECT a.*, u.fullname as author_name, u.username as author_username, u.avatar as author_avatar 
           FROM articles a 
           LEFT JOIN users u ON a.author_id = u.id 
           ORDER BY a.created_at DESC";
@@ -58,7 +58,8 @@ if ($result) {
             'readTime' => $row['read_time'],
             'author' => [
                 'name' => $row['author_name'],
-                'username' => $row['author_username']
+                'username' => $row['author_username'],
+                'avatar' => $row['author_avatar']
             ]
         ];
     }

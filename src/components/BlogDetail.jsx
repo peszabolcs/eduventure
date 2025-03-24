@@ -19,6 +19,7 @@ function BlogDetail() {
   const { id } = useParams();
   const [article, setArticle] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const API_URL = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     const fetchArticle = async () => {
@@ -104,7 +105,11 @@ function BlogDetail() {
 
             <div className="flex items-center mb-6">
               <img
-                src={article.author.avatar || "/default-avatar.jpg"}
+                src={
+                  article.author.avatar
+                    ? `${API_URL}${article.author.avatar}`
+                    : "/default-avatar.jpg"
+                }
                 alt={article.author.name}
                 className="w-10 h-10 rounded-full mr-3"
               />

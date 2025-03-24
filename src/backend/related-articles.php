@@ -43,7 +43,7 @@ if (!isset($_GET['id']) || !isset($_GET['category'])) {
 $id = $_GET['id'];
 $category = $_GET['category'];
 
-$query = "SELECT a.*, u.fullname as author_name, u.username as author_username 
+$query = "SELECT a.*, u.fullname as author_name, u.username as author_username, u.avatar as author_avatar 
           FROM articles a 
           LEFT JOIN users u ON a.author_id = u.id 
           WHERE a.id != ? AND a.category = ? 
@@ -69,7 +69,8 @@ while ($row = $result->fetch_assoc()) {
         'readTime' => $row['read_time'],
         'author' => [
             'name' => $row['author_name'],
-            'username' => $row['author_username']
+            'username' => $row['author_username'],
+            'avatar' => $row['author_avatar']
         ]
     ];
 }
