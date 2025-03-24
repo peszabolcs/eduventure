@@ -19,6 +19,8 @@ import BlogAdmin from "./components/BlogAdmin.jsx";
 import BlogEditor from "./components/BlogEditor.jsx";
 import Unauthorized from "./components/Unauthorized";
 import PrivacyPolicy from "./components/PrivacyPolicy.jsx";
+import CookieConsent from "./components/CookieConsent.jsx";
+import { COOKIE_STATUS, setCookieConsent } from "./services/cookieService";
 
 // Új komponens a loading állapot kezelésére
 const AppContent = () => {
@@ -48,6 +50,15 @@ const AppContent = () => {
 };
 
 function App() {
+  // Süti kezelő függvények
+  const handleAcceptCookies = () => {
+    setCookieConsent(COOKIE_STATUS.ACCEPTED);
+  };
+
+  const handleDeclineCookies = () => {
+    setCookieConsent(COOKIE_STATUS.DECLINED);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 flex flex-col relative">
       {/* Animated background blobs */}
@@ -105,6 +116,12 @@ function App() {
             </Routes>
           </main>
           <Footer />
+
+          {/* Cookie Consent Banner */}
+          <CookieConsent
+            onAccept={handleAcceptCookies}
+            onDecline={handleDeclineCookies}
+          />
         </Router>
       </AuthProvider>
 

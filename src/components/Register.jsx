@@ -2,8 +2,18 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Eye, EyeOff, XCircle, User, Mail, Lock } from "lucide-react";
+import {
+  Eye,
+  EyeOff,
+  XCircle,
+  User,
+  Mail,
+  Lock,
+  AlertTriangle,
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { hasCookieConsent } from "../services/cookieService";
+import { useAuth } from "./AuthContext.jsx";
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState({
@@ -16,17 +26,27 @@ export default function RegisterPage() {
 
   const navigate = useNavigate();
   const API_URL = import.meta.env.VITE_API_URL;
+  const { cookieConsentStatus } = useAuth();
 
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [passwordStrength, setPasswordStrength] = useState(0);
+  const [cookieWarning, setCookieWarning] = useState(false);
 
   useEffect(() => {
     const strength = calculatePasswordStrength(formData.password);
     setPasswordStrength(strength);
   }, [formData.password]);
+
+  useEffect(() => {
+    if (!hasCookieConsent()) {
+      setCookieWarning(true);
+    } else {
+      setCookieWarning(false);
+    }
+  }, [cookieConsentStatus]);
 
   const calculatePasswordStrength = (password) => {
     let strength = 0;
@@ -67,6 +87,11 @@ export default function RegisterPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const newErrors = validateForm();
+
+    if (!hasCookieConsent()) {
+      newErrors.cookie = "A regisztrációhoz el kell fogadnod a sütiket.";
+    }
+
     if (Object.keys(newErrors).length === 0) {
       setIsSubmitting(true);
       try {
@@ -96,9 +121,6 @@ export default function RegisterPage() {
       } finally {
         setIsSubmitting(false);
       }
-      // await new Promise((resolve) => setTimeout(resolve, 1500))
-      // console.log("Form submitted:", formData)
-      // setIsSubmitting(false)
     } else {
       setErrors(newErrors);
     }
@@ -124,6 +146,29 @@ export default function RegisterPage() {
           <h2 className="text-3xl font-bold text-white mb-6 text-center">
             Regisztráció
           </h2>
+
+          {cookieWarning && (
+            <div className="bg-yellow-500 bg-opacity-10 text-yellow-100 p-3 rounded-lg mb-4 flex items-start">
+              <AlertTriangle className="shrink-0 mr-2 mt-0.5" size={18} />
+              <span>
+                A regisztrációhoz el kell fogadnod a süti használati
+                szabályzatot az oldal alján.
+              </span>
+            </div>
+          )}
+
+          {errors.api && (
+            <div className="bg-red-500 bg-opacity-10 text-red-100 p-3 rounded-lg mb-4">
+              {errors.api}
+            </div>
+          )}
+
+          {errors.cookie && (
+            <div className="bg-red-500 bg-opacity-10 text-red-100 p-3 rounded-lg mb-4">
+              {errors.cookie}
+            </div>
+          )}
+
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="relative">
               <User

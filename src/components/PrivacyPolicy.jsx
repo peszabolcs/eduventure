@@ -49,8 +49,89 @@ const PrivacyPolicy = () => {
           <p>
             Az adatkezelés jogalapja a felhasználó önkéntes hozzájárulása,
             amelyet a regisztráció során ad meg. A felhasználó bármikor jogosult
-            hozzájárulását visszavonni, azonban ez a fiók megszüntetését
-            eredményezheti.
+            a hozzájárulását visszavonni, amely azonban nem érinti a visszavonás
+            előtti adatkezelés jogszerűségét.
+          </p>
+        </section>
+
+        <section className="mb-8">
+          <h2 className="text-2xl font-semibold mb-4">
+            3. Sütik (cookie-k) használata
+          </h2>
+          <p className="mb-4">
+            Weboldalunk sütiket (cookie-kat) használ a felhasználói élmény
+            javítása, valamint a weboldal működésének biztosítása érdekében.
+          </p>
+
+          <h3 className="text-xl font-semibold mb-2 mt-4">
+            3.1. Mi az a süti (cookie)?
+          </h3>
+          <p className="mb-4">
+            A sütik kis szöveges fájlok, amelyeket a weboldal az Ön által
+            használt eszközön (számítógép, mobiltelefon vagy táblagép) tárol el.
+            A sütik lehetővé teszik, hogy a weboldal felismerje Önt, amikor
+            visszatér az oldalra, és megjegyezze a beállításait, preferenciáit.
+          </p>
+
+          <h3 className="text-xl font-semibold mb-2">
+            3.2. Milyen sütiket használunk?
+          </h3>
+          <p className="mb-2">
+            Weboldalunkon az alábbi típusú sütiket használjuk:
+          </p>
+          <ul className="list-disc pl-6 space-y-1 mb-4">
+            <li>
+              <strong>Feltétlenül szükséges sütik:</strong> Ezek a sütik
+              elengedhetetlenek a weboldal működéséhez. Lehetővé teszik az
+              alapvető funkciókat, például a bejelentkezést és a felhasználói
+              fiók létrehozását. Ezen sütik nélkül a weboldal nem tud
+              megfelelően működni.
+            </li>
+            <li>
+              <strong>Statisztikai sütik:</strong> Ezek a sütik anonim
+              információkat gyűjtenek arról, hogyan használják a látogatók a
+              weboldalunkat. Segítenek megérteni, hogy mely oldalaink a
+              legnépszerűbbek, és hogyan navigálnak a felhasználók az oldalon.
+            </li>
+            <li>
+              <strong>Funkcionális sütik:</strong> Ezek a sütik lehetővé teszik,
+              hogy a weboldal megjegyezzen bizonyos választásokat, amelyeket Ön
+              tett (például felhasználónév, nyelvi beállítások) a jobb
+              felhasználói élmény érdekében.
+            </li>
+          </ul>
+
+          <h3 className="text-xl font-semibold mb-2">
+            3.3. Mire használjuk a sütiket?
+          </h3>
+          <ul className="list-disc pl-6 space-y-1 mb-4">
+            <li>
+              Felhasználói munkamenetek kezelésére (bejelentkezés, regisztráció)
+            </li>
+            <li>A weboldal működésének és teljesítményének javítására</li>
+            <li>Felhasználói élmény személyre szabására</li>
+            <li>Weboldal-használati statisztikák készítésére</li>
+          </ul>
+
+          <h3 className="text-xl font-semibold mb-2">
+            3.4. Süti beállítások kezelése
+          </h3>
+          <p className="mb-4">
+            A süti használatot az oldal alján megjelenő süti értesítő sávban
+            tudja elfogadni vagy elutasítani. Fontos tudni, hogy a sütik
+            elutasítása esetén bizonyos funkciókat nem tud majd használni,
+            például:
+          </p>
+          <ul className="list-disc pl-6 space-y-1 mb-4">
+            <li>Nem tud bejelentkezni vagy regisztrálni a weboldalon</li>
+            <li>Nem tudunk személyre szabott tartalmat biztosítani</li>
+            <li>Bizonyos funkciókat nem tud majd használni</li>
+          </ul>
+          <p>
+            A süti beállításokat bármikor módosíthatja a böngészője
+            beállításaiban, vagy törölheti a sütiket. Kérjük vegye figyelembe,
+            hogy a sütik törlése után ismét döntenie kell a süti használatról,
+            amikor újra ellátogat weboldalunkra.
           </p>
         </section>
 
