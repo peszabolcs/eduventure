@@ -1,7 +1,11 @@
 "use client";
 
 import { createContext, useContext, useState, useEffect } from "react";
-import { hasCookieConsent, COOKIE_STATUS } from "../services/cookieService";
+import {
+  hasAcceptedAllCookies,
+  hasAcceptedEssentialCookies,
+  COOKIE_STATUS,
+} from "../services/cookieService";
 
 const AuthContext = createContext();
 const API_URL = import.meta.env.VITE_API_URL;
@@ -16,32 +20,38 @@ export function AuthProvider({ children }) {
     const cookieStatus = localStorage.getItem("cookieConsent");
     setCookieConsentStatus(cookieStatus);
 
-    // Csak akkor ellenőrizzük a mentett felhasználói adatokat, ha a süti használatot elfogadták
-    if (cookieStatus === COOKIE_STATUS.ACCEPTED) {
+    // Süti beállítások alapján betöltjük a felhasználói adatokat
+    loadUserData(cookieStatus);
+
+    setLoading(false);
+  }, []);
+
+  // Betölti a felhasználói adatokat a megfelelő helyről a süti beállítások alapján
+  const loadUserData = (cookieStatus) => {
+    if (cookieStatus === COOKIE_STATUS.ACCEPT_ALL) {
+      // Ha minden sütit elfogadott, a localStorage-ból töltjük be (tartós)
       const savedUser = localStorage.getItem("user");
       if (savedUser) {
         setUser(JSON.parse(savedUser));
       }
+    } else if (cookieStatus === COOKIE_STATUS.ESSENTIAL_ONLY) {
+      // Ha csak a kötelező sütiket fogadta el, a sessionStorage-ból töltjük (ideiglenes)
+      const savedUser = sessionStorage.getItem("user");
+      if (savedUser) {
+        setUser(JSON.parse(savedUser));
+      }
     }
-    setLoading(false);
-  }, []);
+  };
 
   // Süti állapot változásának figyelése
   useEffect(() => {
     const handleStorageChange = (e) => {
       if (e.key === "cookieConsent") {
-        setCookieConsentStatus(e.newValue);
+        const newValue = e.newValue;
+        setCookieConsentStatus(newValue);
 
-        // Ha a süti használatot visszavonták, töröljük a felhasználói adatokat
-        if (e.newValue !== COOKIE_STATUS.ACCEPTED) {
-          logout();
-        } else if (e.newValue === COOKIE_STATUS.ACCEPTED) {
-          // Ha elfogadták, de nincs még user, akkor lehet, hogy már volt korábban mentve
-          const savedUser = localStorage.getItem("user");
-          if (savedUser) {
-            setUser(JSON.parse(savedUser));
-          }
-        }
+        // Ha változott a süti beállítás, frissítjük a felhasználói adatokat
+        loadUserData(newValue);
       }
     };
 
@@ -52,20 +62,29 @@ export function AuthProvider({ children }) {
   }, []);
 
   const login = (userData) => {
-    // Csak akkor tároljuk a felhasználói adatokat, ha elfogadták a sütiket
-    if (hasCookieConsent()) {
-      setUser(userData);
+    // Süti beállítások ellenőrzése és felhasználó tárolása
+    setUser(userData);
+
+    if (hasAcceptedAllCookies()) {
+      // Ha minden sütit elfogadott, a localStorage-ba mentjük (tartós)
       localStorage.setItem("user", JSON.stringify(userData));
+    }
+
+    if (hasAcceptedEssentialCookies()) {
+      // Ha legalább a kötelező sütiket elfogadta, a sessionStorage-ba is mentjük (ideiglenes)
+      sessionStorage.setItem("user", JSON.stringify(userData));
       return true;
     } else {
-      // Ha nem fogadták el a sütiket, nem tárolhatjuk a session-t
+      // Ha még nem fogadta el a sütiket, nem tudjuk tárolni
       return false;
     }
   };
 
   const logout = () => {
     setUser(null);
+    // Mindkét tárolóból töröljük
     localStorage.removeItem("user");
+    sessionStorage.removeItem("user");
   };
 
   return (

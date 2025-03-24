@@ -21,6 +21,7 @@ import Unauthorized from "./components/Unauthorized";
 import PrivacyPolicy from "./components/PrivacyPolicy.jsx";
 import CookieConsent from "./components/CookieConsent.jsx";
 import { COOKIE_STATUS, setCookieConsent } from "./services/cookieService";
+import { useState, useEffect } from "react";
 
 // Új komponens a loading állapot kezelésére
 const AppContent = () => {
@@ -50,14 +51,25 @@ const AppContent = () => {
 };
 
 function App() {
-  // Süti kezelő függvények
-  const handleAcceptCookies = () => {
-    setCookieConsent(COOKIE_STATUS.ACCEPTED);
+  const [showCookieConsent, setShowCookieConsent] = useState(true);
+
+  const handleAcceptAllCookies = () => {
+    setCookieConsent(COOKIE_STATUS.ACCEPT_ALL);
+    setShowCookieConsent(false);
   };
 
-  const handleDeclineCookies = () => {
-    setCookieConsent(COOKIE_STATUS.DECLINED);
+  const handleEssentialOnlyCookies = () => {
+    setCookieConsent(COOKIE_STATUS.ESSENTIAL_ONLY);
+    setShowCookieConsent(false);
   };
+
+  useEffect(() => {
+    // Check if user has already made a choice
+    const cookieConsent = localStorage.getItem("cookieConsent");
+    if (cookieConsent) {
+      setShowCookieConsent(false);
+    }
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 flex flex-col relative">
@@ -119,8 +131,8 @@ function App() {
 
           {/* Cookie Consent Banner */}
           <CookieConsent
-            onAccept={handleAcceptCookies}
-            onDecline={handleDeclineCookies}
+            onAcceptAll={handleAcceptAllCookies}
+            onEssentialOnly={handleEssentialOnlyCookies}
           />
         </Router>
       </AuthProvider>

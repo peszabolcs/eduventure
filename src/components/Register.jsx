@@ -10,9 +10,13 @@ import {
   Mail,
   Lock,
   AlertTriangle,
+  Info,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { hasCookieConsent } from "../services/cookieService";
+import {
+  hasAcceptedAllCookies,
+  hasAcceptedEssentialCookies,
+} from "../services/cookieService";
 import { useAuth } from "./AuthContext.jsx";
 
 export default function RegisterPage() {
@@ -34,6 +38,7 @@ export default function RegisterPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [passwordStrength, setPasswordStrength] = useState(0);
   const [cookieWarning, setCookieWarning] = useState(false);
+  const [essentialOnlyInfo, setEssentialOnlyInfo] = useState(false);
 
   useEffect(() => {
     const strength = calculatePasswordStrength(formData.password);
@@ -41,10 +46,14 @@ export default function RegisterPage() {
   }, [formData.password]);
 
   useEffect(() => {
-    if (!hasCookieConsent()) {
-      setCookieWarning(true);
-    } else {
+    if (hasAcceptedEssentialCookies() && !hasAcceptedAllCookies()) {
+      // Ha csak a kötelező sütiket fogadta el
       setCookieWarning(false);
+      setEssentialOnlyInfo(true);
+    } else {
+      // Ha minden sütit elfogadott
+      setCookieWarning(false);
+      setEssentialOnlyInfo(false);
     }
   }, [cookieConsentStatus]);
 
@@ -88,8 +97,10 @@ export default function RegisterPage() {
     e.preventDefault();
     const newErrors = validateForm();
 
-    if (!hasCookieConsent()) {
-      newErrors.cookie = "A regisztrációhoz el kell fogadnod a sütiket.";
+    // Ha még nem fogadta el a sütiket, akkor nem engedjük a regisztrációt
+    if (!hasAcceptedEssentialCookies()) {
+      newErrors.cookie =
+        "A regisztrációhoz legalább a kötelező sütiket el kell fogadnod.";
     }
 
     if (Object.keys(newErrors).length === 0) {
@@ -151,8 +162,20 @@ export default function RegisterPage() {
             <div className="bg-yellow-500 bg-opacity-10 text-yellow-100 p-3 rounded-lg mb-4 flex items-start">
               <AlertTriangle className="shrink-0 mr-2 mt-0.5" size={18} />
               <span>
-                A regisztrációhoz el kell fogadnod a süti használati
-                szabályzatot az oldal alján.
+                A regisztrációhoz el kell fogadnod legalább a kötelező sütiket
+                az oldal alján.
+              </span>
+            </div>
+          )}
+
+          {essentialOnlyInfo && (
+            <div className="bg-blue-500 bg-opacity-10 text-blue-100 p-3 rounded-lg mb-4 flex items-start">
+              <Info className="shrink-0 mr-2 mt-0.5" size={18} />
+              <span>
+                Regisztráció után csak a böngésző bezárásáig leszel
+                bejelentkezve, mert csak a kötelező sütiket fogadtad el. Ha
+                szeretnéd, hogy a bejelentkezésed megmaradjon, válaszd az
+                "Összes elfogadása" opciót a süti beállításoknál.
               </span>
             </div>
           )}

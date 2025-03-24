@@ -1,7 +1,7 @@
 // Süti hozzájárulás állapotok
 export const COOKIE_STATUS = {
-  ACCEPTED: "accepted",
-  DECLINED: "declined",
+  ACCEPT_ALL: "accept_all", // Minden süti elfogadása
+  ESSENTIAL_ONLY: "essential_only", // Csak a kötelező sütik elfogadása
   UNKNOWN: null,
 };
 
@@ -21,7 +21,16 @@ export const clearCookieConsent = () => {
   localStorage.removeItem("cookieConsent");
 };
 
-// Annak ellenőrzése, hogy a felhasználó elfogadta-e a sütiket
-export const hasCookieConsent = () => {
-  return getCookieConsent() === COOKIE_STATUS.ACCEPTED;
+// Annak ellenőrzése, hogy a felhasználó elfogadott-e minden sütit
+export const hasAcceptedAllCookies = () => {
+  return getCookieConsent() === COOKIE_STATUS.ACCEPT_ALL;
+};
+
+// Annak ellenőrzése, hogy a felhasználó legalább a kötelező sütiket elfogadta-e
+export const hasAcceptedEssentialCookies = () => {
+  const status = getCookieConsent();
+  return (
+    status === COOKIE_STATUS.ESSENTIAL_ONLY ||
+    status === COOKIE_STATUS.ACCEPT_ALL
+  );
 };

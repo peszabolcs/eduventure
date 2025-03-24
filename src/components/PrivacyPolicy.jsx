@@ -117,21 +117,27 @@ const PrivacyPolicy = () => {
             3.4. Süti beállítások kezelése
           </h3>
           <p className="mb-4">
-            A süti használatot az oldal alján megjelenő süti értesítő sávban
-            tudja elfogadni vagy elutasítani. Fontos tudni, hogy a sütik
-            elutasítása esetén bizonyos funkciókat nem tud majd használni,
-            például:
+            Az oldalon két lehetőség közül választhat a sütik kezelésével
+            kapcsolatban:
           </p>
-          <ul className="list-disc pl-6 space-y-1 mb-4">
-            <li>Nem tud bejelentkezni vagy regisztrálni a weboldalon</li>
-            <li>Nem tudunk személyre szabott tartalmat biztosítani</li>
-            <li>Bizonyos funkciókat nem tud majd használni</li>
-          </ul>
-          <p>
-            A süti beállításokat bármikor módosíthatja a böngészője
-            beállításaiban, vagy törölheti a sütiket. Kérjük vegye figyelembe,
-            hogy a sütik törlése után ismét döntenie kell a süti használatról,
-            amikor újra ellátogat weboldalunkra.
+          <ol className="list-decimal pl-6 mb-4 space-y-2">
+            <li>
+              <strong>Összes elfogadása</strong>: Minden sütit elfogad,
+              beleértve a preferencia sütiket is. Ezáltal a bejelentkezési
+              állapota és személyes beállításai megőrződnek a böngésző bezárása
+              után is.
+            </li>
+            <li>
+              <strong>Csak kötelezők</strong>: Csak az oldal működéséhez
+              feltétlenül szükséges sütiket fogadja el. A bejelentkezési adatai
+              és beállításai csak a böngésző bezárásáig őrződnek meg, utána
+              automatikusan törlődnek.
+            </li>
+          </ol>
+          <p className="mb-4">
+            A süti beállításokat bármikor módosíthatja böngészőjében, vagy
+            törölheti a sütiket, ami után új választást kell majd tennie
+            következő látogatásakor.
           </p>
         </section>
 

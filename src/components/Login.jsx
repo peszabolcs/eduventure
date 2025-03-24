@@ -2,72 +2,65 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Eye, EyeOff, XCircle, Mail, Lock, AlertTriangle } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import {
+  Eye,
+  EyeOff,
+  XCircle,
+  Mail,
+  Lock,
+  AlertTriangle,
+  Info,
+} from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "./AuthContext.jsx";
-import { hasCookieConsent } from "../services/cookieService";
+import {
+  hasAcceptedAllCookies,
+  hasAcceptedEssentialCookies,
+} from "../services/cookieService";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [cookieWarning, setCookieWarning] = useState(false);
+  const [essentialOnlyInfo, setEssentialOnlyInfo] = useState(false);
   const navigate = useNavigate();
-  const { login, cookieConsentStatus } = useAuth();
+  const { login } = useAuth();
 
-  // Ellenőrizzük a süti állapotot, amikor betöltődik a komponens
   useEffect(() => {
-    // Ha nem fogadták el a sütiket, figyelmeztetjük a felhasználót
-    if (!hasCookieConsent()) {
-      setCookieWarning(true);
-    } else {
-      setCookieWarning(false);
+    // Ellenőrizzük a süti beállításokat
+    if (hasAcceptedEssentialCookies() && !hasAcceptedAllCookies()) {
+      setEssentialOnlyInfo(true);
     }
-  }, [cookieConsentStatus]);
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setErrorMsg("");
+    setIsLoading(true);
 
-    // Ha nem fogadták el a sütiket, nem engedjük a bejelentkezést
-    if (!hasCookieConsent()) {
-      setError("A bejelentkezéshez el kell fogadnod a sütiket.");
+    if (!hasAcceptedEssentialCookies()) {
+      setErrorMsg(
+        "A bejelentkezéshez legalább a kötelező sütiket engedélyeznie kell. Kérjük, módosítsa a süti beállításokat az oldal alján."
+      );
+      setIsLoading(false);
       return;
     }
 
-    setIsLoading(true);
-    setError("");
-
     try {
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/backend/login.php`,
-        {
-          method: "POST",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ email, password }),
-        }
-      );
-
-      const data = await response.json();
-
-      if (response.ok && data.success) {
-        // Sikeres bejelentkezés
-        const loginSuccess = login(data.user); // Itt csak a user adatokat adjuk át
-
-        if (loginSuccess) {
-          navigate("/profile");
-        } else {
-          setError("A bejelentkezéshez el kell fogadnod a sütiket.");
-        }
+      // Demo célokra egy egyszerű validáció
+      if (email === "demo@example.com" && password === "password") {
+        await login({
+          email,
+          name: "Demo User",
+          token: "demo-token",
+        });
+        navigate("/dashboard");
       } else {
-        setError(data.error || "Sikertelen bejelentkezés");
+        throw new Error("Érvénytelen bejelentkezési adatok");
       }
     } catch (error) {
-      console.error("Login failed:", error);
-      setError("Hiba történt a bejelentkezés során");
+      setErrorMsg(error.message);
     } finally {
       setIsLoading(false);
     }
@@ -94,19 +87,19 @@ export default function LoginPage() {
             Bejelentkezés
           </h2>
 
-          {cookieWarning && (
-            <div className="bg-yellow-500 bg-opacity-10 text-yellow-100 p-3 rounded-lg mb-4 flex items-start">
-              <AlertTriangle className="shrink-0 mr-2 mt-0.5" size={18} />
+          {essentialOnlyInfo && (
+            <div className="bg-blue-500 bg-opacity-10 text-blue-100 p-3 rounded-lg mb-4 flex items-start">
+              <Info className="shrink-0 mr-2 mt-0.5" size={18} />
               <span>
-                A bejelentkezéshez el kell fogadnod a süti használati
-                szabályzatot az oldal alján.
+                Ön csak a kötelező sütiket fogadta el, így bejelentkezése csak
+                addig marad aktív, amíg a böngészőt be nem zárja.
               </span>
             </div>
           )}
 
-          {error && (
+          {errorMsg && (
             <div className="bg-red-500 bg-opacity-10 text-red-100 p-3 rounded-lg mb-4">
-              {error}
+              {errorMsg}
             </div>
           )}
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -172,22 +165,14 @@ export default function LoginPage() {
 
           <div className="mt-6 text-white/80 text-center space-y-2">
             <p>
-              <a
-                href="#"
+              <Link
+                to="/register"
                 className="text-white underline hover:text-white/90 transition duration-300"
               >
-                Elfelejtett jelszó?
-              </a>
+                Nincs még fiókja?
+              </Link>
             </p>
-            <p>
-              Még nincs fiókod?{" "}
-              <a
-                onClick={() => navigate("/register")}
-                className="text-white underline hover:text-white/90 transition duration-300 cursor-pointer"
-              >
-                Regisztrálj!
-              </a>
-            </p>
+            <p>Demo bejelentkezés: demo@example.com / password</p>
           </div>
         </motion.div>
       </div>
