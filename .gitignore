@@ -16,6 +16,7 @@ composer.lock
 phpunit.xml
 vendor
 .vite_cache
+src/backend/uploads
 
 
 # Editor directories and files
