@@ -23,41 +23,36 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [essentialOnlyInfo, setEssentialOnlyInfo] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuth();
-
-  useEffect(() => {
-    // Ellenőrizzük a süti beállításokat
-    if (hasAcceptedEssentialCookies() && !hasAcceptedAllCookies()) {
-      setEssentialOnlyInfo(true);
-    }
-  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMsg("");
     setIsLoading(true);
 
-    if (!hasAcceptedEssentialCookies()) {
-      setErrorMsg(
-        "A bejelentkezéshez legalább a kötelező sütiket engedélyeznie kell. Kérjük, módosítsa a süti beállításokat az oldal alján."
-      );
-      setIsLoading(false);
-      return;
-    }
-
     try {
-      // Demo célokra egy egyszerű validáció
-      if (email === "demo@example.com" && password === "password") {
-        await login({
-          email,
-          name: "Demo User",
-          token: "demo-token",
-        });
-        navigate("/dashboard");
+      const API_URL = import.meta.env.VITE_API_URL;
+      const response = await fetch(`${API_URL}/backend/login.php`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+        credentials: "include",
+      });
+
+      const data = await response.json();
+
+      if (data.error) {
+        throw new Error(data.error);
+      }
+
+      if (data.success) {
+        await login(data.user);
+        navigate("/profile");
       } else {
-        throw new Error("Érvénytelen bejelentkezési adatok");
+        throw new Error("Sikertelen bejelentkezés");
       }
     } catch (error) {
       setErrorMsg(error.message);
@@ -86,16 +81,6 @@ export default function LoginPage() {
           <h2 className="text-3xl font-bold text-white mb-6 text-center">
             Bejelentkezés
           </h2>
-
-          {essentialOnlyInfo && (
-            <div className="bg-blue-500 bg-opacity-10 text-blue-100 p-3 rounded-lg mb-4 flex items-start">
-              <Info className="shrink-0 mr-2 mt-0.5" size={18} />
-              <span>
-                Ön csak a kötelező sütiket fogadta el, így bejelentkezése csak
-                addig marad aktív, amíg a böngészőt be nem zárja.
-              </span>
-            </div>
-          )}
 
           {errorMsg && (
             <div className="bg-red-500 bg-opacity-10 text-red-100 p-3 rounded-lg mb-4">
@@ -172,7 +157,6 @@ export default function LoginPage() {
                 Nincs még fiókja?
               </Link>
             </p>
-            <p>Demo bejelentkezés: demo@example.com / password</p>
           </div>
         </motion.div>
       </div>

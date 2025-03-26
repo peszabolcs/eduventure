@@ -37,25 +37,11 @@ export default function RegisterPage() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [passwordStrength, setPasswordStrength] = useState(0);
-  const [cookieWarning, setCookieWarning] = useState(false);
-  const [essentialOnlyInfo, setEssentialOnlyInfo] = useState(false);
 
   useEffect(() => {
     const strength = calculatePasswordStrength(formData.password);
     setPasswordStrength(strength);
   }, [formData.password]);
-
-  useEffect(() => {
-    if (hasAcceptedEssentialCookies() && !hasAcceptedAllCookies()) {
-      // Ha csak a kötelező sütiket fogadta el
-      setCookieWarning(false);
-      setEssentialOnlyInfo(true);
-    } else {
-      // Ha minden sütit elfogadott
-      setCookieWarning(false);
-      setEssentialOnlyInfo(false);
-    }
-  }, [cookieConsentStatus]);
 
   const calculatePasswordStrength = (password) => {
     let strength = 0;
@@ -97,18 +83,11 @@ export default function RegisterPage() {
     e.preventDefault();
     const newErrors = validateForm();
 
-    // Ha még nem fogadta el a sütiket, akkor nem engedjük a regisztrációt
-    if (!hasAcceptedEssentialCookies()) {
-      newErrors.cookie =
-        "A regisztrációhoz legalább a kötelező sütiket el kell fogadnod.";
-    }
-
     if (Object.keys(newErrors).length === 0) {
       setIsSubmitting(true);
       try {
-        //https://edu-venture.hu/backend/register.php
         console.log("Regisztráció küldése:", {
-          url: `${API_URL}/backend/register_debug.php`,
+          url: `${API_URL}/backend/register.php`,
           data: {
             fullname: formData.fullname,
             username: formData.username,
@@ -117,7 +96,7 @@ export default function RegisterPage() {
           },
         });
 
-        const response = await fetch(`${API_URL}/backend/register_debug.php`, {
+        const response = await fetch(`${API_URL}/backend/register.php`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -174,37 +153,9 @@ export default function RegisterPage() {
             Regisztráció
           </h2>
 
-          {cookieWarning && (
-            <div className="bg-yellow-500 bg-opacity-10 text-yellow-100 p-3 rounded-lg mb-4 flex items-start">
-              <AlertTriangle className="shrink-0 mr-2 mt-0.5" size={18} />
-              <span>
-                A regisztrációhoz el kell fogadnod legalább a kötelező sütiket
-                az oldal alján.
-              </span>
-            </div>
-          )}
-
-          {essentialOnlyInfo && (
-            <div className="bg-blue-500 bg-opacity-10 text-blue-100 p-3 rounded-lg mb-4 flex items-start">
-              <Info className="shrink-0 mr-2 mt-0.5" size={18} />
-              <span>
-                Regisztráció után csak a böngésző bezárásáig leszel
-                bejelentkezve, mert csak a kötelező sütiket fogadtad el. Ha
-                szeretnéd, hogy a bejelentkezésed megmaradjon, válaszd az
-                "Összes elfogadása" opciót a süti beállításoknál.
-              </span>
-            </div>
-          )}
-
           {errors.api && (
             <div className="bg-red-500 bg-opacity-10 text-red-100 p-3 rounded-lg mb-4">
               {errors.api}
-            </div>
-          )}
-
-          {errors.cookie && (
-            <div className="bg-red-500 bg-opacity-10 text-red-100 p-3 rounded-lg mb-4">
-              {errors.cookie}
             </div>
           )}
 
