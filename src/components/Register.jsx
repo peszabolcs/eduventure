@@ -86,16 +86,6 @@ export default function RegisterPage() {
     if (Object.keys(newErrors).length === 0) {
       setIsSubmitting(true);
       try {
-        console.log("Regisztráció küldése:", {
-          url: `${API_URL}/backend/register.php`,
-          data: {
-            fullname: formData.fullname,
-            username: formData.username,
-            email: formData.email,
-            password: formData.password,
-          },
-        });
-
         const response = await fetch(`${API_URL}/backend/register.php`, {
           method: "POST",
           headers: {
@@ -110,19 +100,14 @@ export default function RegisterPage() {
           credentials: "include",
         });
 
-        console.log("Regisztráció válasz státusz:", response.status);
-
         const result = await response.json();
-        console.log("Regisztráció válasz:", result);
 
         if (result.error) {
           setErrors({ api: result.error });
         } else {
-          console.log("Sikeres regisztráció:", result);
           navigate("/login");
         }
       } catch (error) {
-        console.error("Hiba a regisztráció során:", error);
         setErrors({ api: `Hiba a regisztráció során: ${error.message}` });
       } finally {
         setIsSubmitting(false);

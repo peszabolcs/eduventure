@@ -57,8 +57,8 @@ export default function Header() {
   useEffect(() => {
     if (user) {
       const items = [...menuItems, { name: "Profilom", href: "/profile" }];
-      // Ha a felhasználó CTO, vagy CPO hozzáadjuk a Blog Admin menüpontot
-      if (user.role === "CTO" || user.role === "CPO") {
+      // Ha a felhasználó adminisztrátor, hozzáadjuk a Blog Admin menüpontot
+      if (["CTO", "CFO", "CMO", "CPO", "admin"].includes(user.role)) {
         items.push({ name: "Blog Admin", href: "/blog/admin" });
       }
       setFilteredMenuItems(items);

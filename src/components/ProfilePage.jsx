@@ -115,12 +115,12 @@ export default function ProfilePage() {
           });
         }
       } catch (error) {
-        console.error("Failed to fetch user data:", error);
+        // Handle error silently
       }
     };
 
     fetchUserData();
-  }, []); // Csak egyszer fut le, amikor az oldal betöltődik
+  }, []);
 
   useEffect(() => {
     // Save the original background
@@ -176,7 +176,6 @@ export default function ProfilePage() {
         );
       }
     } catch (error) {
-      console.error("Cover upload failed:", error);
       showNotification(
         "Hiba",
         "A háttérkép frissítése közben hiba történt.",
@@ -213,7 +212,6 @@ export default function ProfilePage() {
         );
       }
     } catch (error) {
-      console.error("Avatar upload failed:", error);
       showNotification(
         "Hiba",
         "A profilkép frissítése közben hiba történt.",

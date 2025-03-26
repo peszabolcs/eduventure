@@ -33,14 +33,20 @@ export default function LoginPage() {
 
     try {
       const API_URL = import.meta.env.VITE_API_URL;
+      const requestBody = { email, password };
+
       const response = await fetch(`${API_URL}/backend/login.php`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify(requestBody),
         credentials: "include",
       });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
 
       const data = await response.json();
 
@@ -55,7 +61,13 @@ export default function LoginPage() {
         throw new Error("Sikertelen bejelentkezés");
       }
     } catch (error) {
-      setErrorMsg(error.message);
+      if (error.message.includes("Failed to fetch")) {
+        setErrorMsg(
+          "Nem sikerült kapcsolódni a szerverhez. Kérjük, ellenőrizze az internetkapcsolatát és próbálja újra."
+        );
+      } else {
+        setErrorMsg(error.message);
+      }
     } finally {
       setIsLoading(false);
     }

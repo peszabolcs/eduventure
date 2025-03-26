@@ -11,7 +11,6 @@ export const getAllArticles = async () => {
     }
     return await response.json();
   } catch (error) {
-    console.error("Error fetching articles:", error);
     throw error;
   }
 };
@@ -27,7 +26,6 @@ export const getArticleById = async (id) => {
     }
     return await response.json();
   } catch (error) {
-    console.error("Error fetching article:", error);
     throw error;
   }
 };
@@ -45,7 +43,6 @@ export const getRelatedArticles = async (currentId, category) => {
     }
     return await response.json();
   } catch (error) {
-    console.error("Error fetching related articles:", error);
     throw error;
   }
 };
@@ -69,7 +66,6 @@ export const createArticle = async (articleData) => {
     }
     return await response.json();
   } catch (error) {
-    console.error("Error creating article:", error);
     throw error;
   }
 };
@@ -93,7 +89,6 @@ export const updateArticle = async (id, articleData) => {
     }
     return await response.json();
   } catch (error) {
-    console.error("Error updating article:", error);
     throw error;
   }
 };
@@ -117,7 +112,6 @@ export const deleteArticle = async (id) => {
     }
     return await response.json();
   } catch (error) {
-    console.error("Error deleting article:", error);
     throw error;
   }
 };

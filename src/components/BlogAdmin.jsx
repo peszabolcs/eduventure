@@ -15,7 +15,7 @@ function BlogAdmin() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (!user || user.role !== "CTO") {
+    if (!user || !["CTO", "CFO", "CMO", "CPO", "admin"].includes(user.role)) {
       navigate("/unauthorized");
       return;
     }

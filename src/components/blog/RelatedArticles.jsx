@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { getRelatedArticles } from "../../services/blogService";
 import { ChevronRight, Calendar, Clock } from "lucide-react";
 
+// eslint-disable-next-line react/prop-types
 function RelatedArticles({ currentArticleId, category }) {
   const [articles, setArticles] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
