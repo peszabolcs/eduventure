@@ -103,7 +103,7 @@ function App() {
               <Route
                 path="/blog/admin"
                 element={
-                  <ProtectedRoute allowedRoles={["CTO"]}>
+                  <ProtectedRoute allowedRoles={["CTO", "CFO", "CMO", "CPO"]}>
                     <BlogAdmin />
                   </ProtectedRoute>
                 }
@@ -111,7 +111,7 @@ function App() {
               <Route
                 path="/blog/admin/new"
                 element={
-                  <ProtectedRoute allowedRoles={["CTO"]}>
+                  <ProtectedRoute allowedRoles={["CTO", "CFO", "CMO", "CPO"]}>
                     <BlogEditor />
                   </ProtectedRoute>
                 }
@@ -119,7 +119,7 @@ function App() {
               <Route
                 path="/blog/admin/edit/:id"
                 element={
-                  <ProtectedRoute allowedRoles={["CTO"]}>
+                  <ProtectedRoute allowedRoles={["CTO", "CFO", "CMO", "CPO"]}>
                     <BlogEditor />
                   </ProtectedRoute>
                 }
