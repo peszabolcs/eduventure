@@ -629,7 +629,7 @@ const CareerResults = ({
       )}
 
       <div className="flex flex-col sm:flex-row justify-center gap-4 mt-8">
-        <motion.button
+        {/* <motion.button
           whileHover={{ scale: 1.03 }}
           whileTap={{ scale: 0.97 }}
           onClick={() => {
@@ -658,7 +658,7 @@ const CareerResults = ({
         >
           <span className="mr-2">🗺️</span>
           Ajánlott karrierutak
-        </motion.button>
+        </motion.button> */}
         <motion.button
           whileHover={{ scale: 1.03 }}
           whileTap={{ scale: 0.97 }}
