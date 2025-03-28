@@ -10,6 +10,8 @@ const CareerResults = ({
 }) => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("careers"); // careers, personality
+  const [modalContent, setModalContent] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   if (!results || results.length === 0) {
     return (
@@ -216,6 +218,42 @@ const CareerResults = ({
     return result.matching_traits;
   };
 
+  // Add Modal component
+  const Modal = ({ isOpen, onClose, title, content }) => {
+    if (!isOpen) return null;
+
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm"
+          onClick={onClose}
+        />
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.95 }}
+          className="relative bg-white/10 backdrop-blur-lg rounded-xl p-6 max-w-2xl w-full max-h-[80vh] overflow-y-auto border border-white/20"
+        >
+          <h3 className="text-2xl font-bold text-white mb-4">{title}</h3>
+          <div className="space-y-2">
+            {content.map((item, index) => (
+              <div key={index} className="flex items-center text-purple-100">
+                <span className="w-1.5 h-1.5 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full mr-2"></span>
+                {item}
+              </div>
+            ))}
+          </div>
+          <button
+            onClick={onClose}
+            className="mt-6 w-full py-2 bg-white/10 hover:bg-white/15 text-white rounded-lg transition-colors duration-200"
+          >
+            Bezárás
+          </button>
+        </motion.div>
+      </div>
+    );
+  };
+
   return (
     <div className="space-y-8 pt-24">
       <div className="text-center mb-8">
@@ -374,7 +412,13 @@ const CareerResults = ({
                           </li>
                         ))}
                         {result.skills.length > 4 && (
-                          <li className="text-purple-300 text-xs italic">
+                          <li
+                            className="text-purple-300 text-xs italic cursor-pointer hover:text-purple-200 transition-colors"
+                            onClick={() => {
+                              setModalContent(result.skills);
+                              setIsModalOpen(true);
+                            }}
+                          >
                             +{result.skills.length - 4} további...
                           </li>
                         )}
@@ -413,7 +457,15 @@ const CareerResults = ({
                             </div>
                           ))}
                         {generateDefaultMatchingTraits(result).length > 3 && (
-                          <p className="text-purple-300 text-xs italic">
+                          <p
+                            className="text-purple-300 text-xs italic cursor-pointer hover:text-purple-200 transition-colors"
+                            onClick={() => {
+                              setModalContent(
+                                generateDefaultMatchingTraits(result)
+                              );
+                              setIsModalOpen(true);
+                            }}
+                          >
                             +{generateDefaultMatchingTraits(result).length - 3}{" "}
                             további...
                           </p>
@@ -620,6 +672,14 @@ const CareerResults = ({
           Teszt újrakezdése
         </motion.button>
       </div>
+
+      {/* Add Modal at the end of the component */}
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title="Részletes lista"
+        content={modalContent || []}
+      />
     </div>
   );
 };
