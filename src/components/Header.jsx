@@ -9,6 +9,7 @@ import { useAuth } from "./AuthContext.jsx";
 
 const menuItems = [
   { name: "Főoldal", to: "hero-section", href: "/" },
+  { name: "Személyiségteszt", href: "/szemelyisegteszt" },
   // { name: "Projekt", to: "project-description" },
   // { name: "Csapat", to: "team-section" },
   {

@@ -11,7 +11,7 @@ import Login from "./components/Login.jsx";
 import ProfilePage from "./components/ProfilePage.jsx";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { AuthProvider, useAuth } from "./components/AuthContext.jsx";
-import ComingSoonPage from "./components/coming-soon-page.jsx";
+import CareerOrientationModule from "./components/career/CareerOrientationModule.jsx";
 // Blog komponensek importálása
 import Blog from "./components/Blog.jsx";
 import BlogDetail from "./components/BlogDetail.jsx";
@@ -86,7 +86,10 @@ function App() {
           <main className="flex-grow relative z-10">
             <Routes>
               <Route path="/" element={<AppContent />} />
-              <Route path="/szemelyisegteszt" element={<ComingSoonPage />} />
+              <Route
+                path="/szemelyisegteszt"
+                element={<CareerOrientationModule />}
+              />
               <Route path="/privacy-policy" element={<PrivacyPolicy />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
