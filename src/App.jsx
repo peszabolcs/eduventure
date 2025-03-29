@@ -12,6 +12,7 @@ import ProfilePage from "./components/ProfilePage.jsx";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { AuthProvider, useAuth } from "./components/AuthContext.jsx";
 import CareerOrientationModule from "./components/career/CareerOrientationModule.jsx";
+import CareerResultDetail from "./components/career/CareerResultDetail.jsx";
 // Blog komponensek importálása
 import Blog from "./components/Blog.jsx";
 import BlogDetail from "./components/BlogDetail.jsx";
@@ -100,6 +101,16 @@ function App() {
                     allowedRoles={["user", "CTO", "CFO", "CMO", "CPO", "admin"]}
                   >
                     <ProfilePage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/karrier-eredmenyek/:id"
+                element={
+                  <ProtectedRoute
+                    allowedRoles={["user", "CTO", "CFO", "CMO", "CPO", "admin"]}
+                  >
+                    <CareerResultDetail />
                   </ProtectedRoute>
                 }
               />

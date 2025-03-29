@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { X, Check } from "lucide-react";
 
 const CareerResults = ({
   results,
@@ -12,6 +13,74 @@ const CareerResults = ({
   const [activeTab, setActiveTab] = useState("careers"); // careers, personality
   const [modalContent, setModalContent] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [notification, setNotification] = useState(null);
+  const API_URL = window.location.origin.includes("www")
+    ? "https://www.edu-venture.hu/backend"
+    : "https://edu-venture.hu/backend";
+
+  const showNotification = (title, message, type = "success") => {
+    setNotification({ title, message, type });
+    setTimeout(() => {
+      setNotification(null);
+    }, 3000);
+  };
+
+  const handleSaveResults = async () => {
+    setIsSaving(true);
+    try {
+      // Transform the results to include all necessary fields
+      const transformedResults = results.map((result) => ({
+        ...result,
+        required_skills: result.skills || [], // Ensure skills are included
+        matching_traits:
+          result.matching_traits || generateDefaultMatchingTraits(result),
+        growth_potential: result.growthPotential || "Átlagos",
+        future_outlook: result.futureOutlook || "Átlagos",
+        salary_range: result.salaryRange || "Nem elérhető",
+        work_environment: result.workEnvironment || "Nem elérhető",
+      }));
+
+      const response = await fetch(`${API_URL}/save_career_results.php`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          results: transformedResults,
+          personalityProfile,
+        }),
+        credentials: "include",
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      if (result.success) {
+        showNotification(
+          "Eredmények mentve",
+          "A karrier eredményeid sikeresen elmentve lettek a profilodba."
+        );
+      } else {
+        showNotification(
+          "Hiba",
+          result.error || "Az eredmények mentése közben hiba történt.",
+          "error"
+        );
+      }
+    } catch (error) {
+      console.error("Failed to save results:", error);
+      showNotification(
+        "Hiba",
+        "Az eredmények mentése közben hiba történt.",
+        "error"
+      );
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   if (!results || results.length === 0) {
     return (
@@ -255,7 +324,38 @@ const CareerResults = ({
   };
 
   return (
-    <div className="space-y-8 pt-24">
+    <div className="space-y-8 pt-16">
+      {/* Add notification component at the top */}
+      {notification && (
+        <div
+          className={`fixed top-24 right-4 z-[100] max-w-md p-4 rounded-lg shadow-lg transition-all duration-300 transform translate-y-0 ${
+            notification.type === "error"
+              ? "bg-red-900 border border-red-700"
+              : "bg-indigo-900 border border-purple-700"
+          }`}
+        >
+          <div className="flex items-start gap-3">
+            {notification.type === "error" ? (
+              <X className="h-5 w-5 text-red-400 mt-0.5" />
+            ) : (
+              <Check className="h-5 w-5 text-green-400 mt-0.5" />
+            )}
+            <div>
+              <h4 className="font-medium text-white">{notification.title}</h4>
+              <p className="text-sm mt-1 text-white/80">
+                {notification.message}
+              </p>
+            </div>
+            <button
+              onClick={() => setNotification(null)}
+              className="ml-auto -mt-1 text-white/60 hover:text-white"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
+      )}
+
       <div className="text-center mb-8">
         <h2 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 mb-4">
           Karrierprofilod Eredményei
@@ -300,11 +400,11 @@ const CareerResults = ({
             <h3 className="text-xl font-medium text-purple-300 mb-6 text-center">
               Karrier kompatibilitás
             </h3>
-            <div className="flex items-end justify-center space-x-12">
+            <div className="flex flex-wrap items-end justify-center gap-4 sm:gap-8 md:gap-12">
               {results.map((result, index) => (
                 <motion.div
                   key={result.id}
-                  className="flex flex-col items-center w-24"
+                  className="flex flex-col items-center w-20 sm:w-24"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.5, delay: index * 0.2 }}
@@ -318,17 +418,19 @@ const CareerResults = ({
                     transition={{ duration: 0.8, delay: index * 0.2 + 0.3 }}
                   >
                     <div
-                      className="w-16 rounded-t-lg bg-gradient-to-t from-blue-600 to-purple-600"
+                      className="w-12 sm:w-16 rounded-t-lg bg-gradient-to-t from-blue-600 to-purple-600"
                       style={{
                         height: `${Math.max(15, (result.score / 100) * 180)}px`,
                         opacity: 0.6 + 0.4 * (1 - index * 0.15),
                       }}
                     ></div>
                   </motion.div>
-                  <p className="text-white font-medium mt-2">{result.score}%</p>
+                  <p className="text-white font-medium mt-2 text-sm sm:text-base">
+                    {result.score}%
+                  </p>
                   <div className="h-16 flex items-center mt-1">
                     <p
-                      className="text-purple-300 text-sm text-center w-28 break-words hyphens-auto"
+                      className="text-purple-300 text-xs sm:text-sm text-center w-20 sm:w-28 break-words hyphens-auto"
                       title={result.name}
                     >
                       {result.name}
@@ -402,24 +504,32 @@ const CareerResults = ({
                         Szükséges készségek
                       </h4>
                       <ul className="space-y-1">
-                        {result.skills.slice(0, 4).map((skill, idx) => (
-                          <li
-                            key={idx}
-                            className="flex items-center text-purple-100 text-sm"
-                          >
-                            <span className="w-1.5 h-1.5 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full mr-2"></span>
-                            {skill}
-                          </li>
-                        ))}
-                        {result.skills.length > 4 && (
-                          <li
-                            className="text-purple-300 text-xs italic cursor-pointer hover:text-purple-200 transition-colors"
-                            onClick={() => {
-                              setModalContent(result.skills);
-                              setIsModalOpen(true);
-                            }}
-                          >
-                            +{result.skills.length - 4} további...
+                        {result.skills && result.skills.length > 0 ? (
+                          <>
+                            {result.skills.slice(0, 4).map((skill, idx) => (
+                              <li
+                                key={idx}
+                                className="flex items-center text-purple-100 text-sm"
+                              >
+                                <span className="w-1.5 h-1.5 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full mr-2"></span>
+                                {skill}
+                              </li>
+                            ))}
+                            {result.skills.length > 4 && (
+                              <li
+                                className="text-purple-300 text-xs italic cursor-pointer hover:text-purple-200 transition-colors"
+                                onClick={() => {
+                                  setModalContent(result.skills);
+                                  setIsModalOpen(true);
+                                }}
+                              >
+                                +{result.skills.length - 4} további...
+                              </li>
+                            )}
+                          </>
+                        ) : (
+                          <li className="text-purple-300 text-xs italic">
+                            Nincs elérhető készséglista
                           </li>
                         )}
                       </ul>
@@ -629,36 +739,16 @@ const CareerResults = ({
       )}
 
       <div className="flex flex-col sm:flex-row justify-center gap-4 mt-8">
-        {/* <motion.button
-          whileHover={{ scale: 1.03 }}
-          whileTap={{ scale: 0.97 }}
-          onClick={() => {
-            if (typeof onFindExpert === "function") {
-              onFindExpert();
-            } else {
-              navigate("/szakerto-kereso");
-            }
-          }}
-          className="px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white rounded-xl transition-all duration-200 flex items-center justify-center shadow-lg"
-        >
-          <span className="mr-2">🎯</span>
-          Találj szakértőt ezen a területen
-        </motion.button>
         <motion.button
           whileHover={{ scale: 1.03 }}
           whileTap={{ scale: 0.97 }}
-          onClick={() => {
-            if (typeof onRecommendedPaths === "function") {
-              onRecommendedPaths();
-            } else {
-              navigate("/ajanlott-utak");
-            }
-          }}
-          className="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl transition-all duration-200 flex items-center justify-center shadow-lg"
+          onClick={handleSaveResults}
+          disabled={isSaving}
+          className="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl transition-all duration-200 flex items-center justify-center shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          <span className="mr-2">🗺️</span>
-          Ajánlott karrierutak
-        </motion.button> */}
+          <span className="mr-2">💾</span>
+          {isSaving ? "Mentés..." : "Eredmények mentése"}
+        </motion.button>
         <motion.button
           whileHover={{ scale: 1.03 }}
           whileTap={{ scale: 0.97 }}

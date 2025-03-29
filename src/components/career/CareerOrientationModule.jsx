@@ -1389,7 +1389,7 @@ const CareerOrientationModule = () => {
   };
 
   return (
-    <div className="min-h-screen px-4 py-12">
+    <div className="min-h-screen px-4 pt-32 pb-12">
       {!isCompleted ? (
         // Questions Screen
         <motion.div
