@@ -656,7 +656,7 @@ const CareerResults = ({
                   </div>
 
                   {/* View Details Button */}
-                  <button
+                  {/* <button
                     onClick={() =>
                       window.open(`/karrier-reszletek/${result.id}`, "_blank")
                     }
@@ -677,7 +677,7 @@ const CareerResults = ({
                         d="M14 5l7 7m0 0l-7 7m7-7H3"
                       ></path>
                     </svg>
-                  </button>
+                  </button> */}
                 </div>
               </motion.div>
             ))}
