@@ -29,6 +29,7 @@ function BlogEditor() {
   const [isSaving, setIsSaving] = useState(false);
   const [errors, setErrors] = useState({});
   const [editorKey, setEditorKey] = useState(0);
+  const [submitError, setSubmitError] = useState(null);
 
   useEffect(() => {
     if (isEditMode) {
@@ -96,6 +97,7 @@ function BlogEditor() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setSubmitError(null);
 
     if (!validateForm()) {
       return;
@@ -121,6 +123,9 @@ function BlogEditor() {
       navigate("/blog/admin");
     } catch (error) {
       console.error("Error saving article:", error);
+      setSubmitError(
+        "Nem sikerült menteni a cikket. Kérjük, próbálja újra később."
+      );
       setIsSaving(false);
     }
   };
@@ -150,6 +155,12 @@ function BlogEditor() {
           <h1 className="text-3xl font-bold text-white mb-8">
             {isEditMode ? "Cikk szerkesztése" : "Új cikk létrehozása"}
           </h1>
+
+          {submitError && (
+            <div className="mb-6 p-4 bg-red-500 bg-opacity-10 border border-red-500 rounded-lg">
+              <p className="text-red-300">{submitError}</p>
+            </div>
+          )}
 
           <form onSubmit={handleSubmit}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">

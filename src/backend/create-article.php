@@ -46,22 +46,33 @@ if ($conn->connect_error) {
 $data = json_decode(file_get_contents("php://input"), true);
 
 if (!isset($data['title']) || !isset($data['content'])) {
-    die(json_encode(["error" => "Title and content are required"]));
+    http_response_code(400);
+    die(json_encode(["error" => "A cím és a tartalom megadása kötelező"]));
 }
 
-$title = $data['title'];
-$summary = $data['summary'] ?? '';
-$content = $data['content'];
-$category = $data['category'] ?? '';
+$title = trim($data['title']);
+$summary = trim($data['summary'] ?? '');
+$content = trim($data['content']);
+$category = trim($data['category'] ?? '');
 $tags = isset($data['tags']) ? json_encode($data['tags']) : '[]';
-$image = $data['image'] ?? '';
-$readTime = $data['readTime'] ?? 5;
+$image = trim($data['image'] ?? '');
+$readTime = intval($data['readTime'] ?? 5);
 $author_id = $_SESSION['id'];
+
+if (empty($title) || empty($content)) {
+    http_response_code(400);
+    die(json_encode(["error" => "A cím és a tartalom nem lehet üres"]));
+}
 
 $query = "INSERT INTO articles (title, summary, content, category, tags, image, read_time, author_id) 
           VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
 $stmt = $conn->prepare($query);
+if (!$stmt) {
+    http_response_code(500);
+    die(json_encode(["error" => "Adatbázis hiba: " . $conn->error]));
+}
+
 $stmt->bind_param("ssssssii", $title, $summary, $content, $category, $tags, $image, $readTime, $author_id);
 
 if ($stmt->execute()) {
@@ -97,7 +108,8 @@ if ($stmt->execute()) {
         echo json_encode(["success" => true, "article" => $article]);
     }
 } else {
-    echo json_encode(["error" => "Error creating article"]);
+    http_response_code(500);
+    echo json_encode(["error" => "Hiba a cikk létrehozása során: " . $stmt->error]);
 }
 
 $stmt->close();
