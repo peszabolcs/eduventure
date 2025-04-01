@@ -2,14 +2,20 @@ import React from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 
-const CareerResults = ({ results }) => {
+const CareerResults = ({
+  results,
+  personalityProfile,
+  onFindExpert,
+  onRecommendedPaths,
+  isSaving,
+}) => {
   const navigate = useNavigate();
 
-  if (
-    !results ||
-    !results.career_matches ||
-    results.career_matches.length === 0
-  ) {
+  // Debug log to check the structure
+  console.log("CareerResults props:", { results, personalityProfile });
+
+  // Early return if no valid results
+  if (!results || typeof results !== "object") {
     return (
       <div className="min-h-screen bg-gradient-to-br from-[#312e81] to-[#581c87] to-[#831843] flex flex-col items-center justify-center p-4">
         <h2 className="text-2xl font-semibold text-white mb-4">
@@ -25,12 +31,41 @@ const CareerResults = ({ results }) => {
     );
   }
 
-  const { personality_profile, career_matches } = results;
+  // Ensure we have valid career matches and personality profile
+  const career_matches = Array.isArray(results.career_matches)
+    ? results.career_matches
+    : [];
+  const personality_profile = results.personality_profile || {};
 
-  // Szűrjük ki az alacsony egyezési arányú szakmákat
+  // Filter career matches with proper type checking
   const filteredCareerMatches = career_matches.filter(
-    (career) => career.score >= 50
+    (career) =>
+      typeof career === "object" &&
+      typeof career.score === "number" &&
+      career.score >= 50
   );
+
+  // Early return if no valid career matches
+  if (filteredCareerMatches.length === 0) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-[#312e81] to-[#581c87] to-[#831843] flex flex-col items-center justify-center p-4">
+        <h2 className="text-2xl font-semibold text-white mb-4">
+          Nincs elegendő adat az eredmények megjelenítéséhez
+        </h2>
+        <button
+          onClick={() => navigate("/career-test")}
+          className="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+        >
+          Teszt újrakezdése
+        </button>
+      </div>
+    );
+  }
+
+  // Generate personality traits array from the profile
+  const personalityTraits = Array.isArray(personality_profile.traits)
+    ? personality_profile.traits
+    : [];
 
   return (
     <>
@@ -47,6 +82,12 @@ const CareerResults = ({ results }) => {
       `}</style>
       <div className="min-h-screen py-8">
         <div className="max-w-7xl mx-auto px-4 pt-24">
+          {isSaving && (
+            <div className="fixed top-4 right-4 bg-purple-500/20 backdrop-blur-sm text-purple-300 px-4 py-2 rounded-lg flex items-center gap-2 animate-pulse">
+              <div className="w-4 h-4 border-2 border-purple-300 border-t-transparent rounded-full animate-spin"></div>
+              Eredmények mentése...
+            </div>
+          )}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -64,7 +105,7 @@ const CareerResults = ({ results }) => {
                 Személyiségprofil
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {personality_profile.traits.map((trait, index) => (
+                {personalityTraits.map((trait, index) => (
                   <motion.div
                     key={`trait-${index}`}
                     initial={{ opacity: 0, y: 20 }}
@@ -106,7 +147,7 @@ const CareerResults = ({ results }) => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {filteredCareerMatches.map((career, index) => (
                   <motion.div
-                    key={`career-${career.id}`}
+                    key={`career-${career.id || index}`}
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.1 }}
@@ -138,14 +179,17 @@ const CareerResults = ({ results }) => {
                             Szükséges készségek
                           </h4>
                           <div className="flex flex-wrap gap-1.5">
-                            {career.skills.map((skill, skillIndex) => (
-                              <span
-                                key={`skill-${career.id}-${skillIndex}`}
-                                className="bg-purple-500/10 text-purple-200 px-2 py-0.5 rounded-full text-xs hover:bg-purple-500/20 hover:text-purple-300 transition-colors cursor-default"
-                              >
-                                {skill}
-                              </span>
-                            ))}
+                            {Array.isArray(career.skills) &&
+                              career.skills.map((skill, skillIndex) => (
+                                <span
+                                  key={`skill-${
+                                    career.id || index
+                                  }-${skillIndex}`}
+                                  className="bg-purple-500/10 text-purple-200 px-2 py-0.5 rounded-full text-xs hover:bg-purple-500/20 hover:text-purple-300 transition-colors cursor-default"
+                                >
+                                  {skill}
+                                </span>
+                              ))}
                           </div>
                         </div>
 
@@ -155,14 +199,19 @@ const CareerResults = ({ results }) => {
                             Illeszkedő tulajdonságaid
                           </h4>
                           <div className="flex flex-wrap gap-1.5">
-                            {career.matching_traits.map((trait, traitIndex) => (
-                              <span
-                                key={`trait-${career.id}-${traitIndex}`}
-                                className="bg-green-500/10 text-green-300 px-2 py-0.5 rounded-full text-xs hover:bg-green-500/20 transition-colors cursor-default"
-                              >
-                                {trait}
-                              </span>
-                            ))}
+                            {Array.isArray(career.matching_traits) &&
+                              career.matching_traits.map(
+                                (trait, traitIndex) => (
+                                  <span
+                                    key={`trait-${
+                                      career.id || index
+                                    }-${traitIndex}`}
+                                    className="bg-green-500/10 text-green-300 px-2 py-0.5 rounded-full text-xs hover:bg-green-500/20 transition-colors cursor-default"
+                                  >
+                                    {trait}
+                                  </span>
+                                )
+                              )}
                           </div>
                         </div>
                       </div>
@@ -203,7 +252,7 @@ const CareerResults = ({ results }) => {
                         </div>
 
                         {/* Specializációk */}
-                        {career.specializations &&
+                        {Array.isArray(career.specializations) &&
                           career.specializations.length > 0 && (
                             <div>
                               <h4 className="text-sm font-medium text-white mb-1.5">
@@ -213,7 +262,9 @@ const CareerResults = ({ results }) => {
                                 {career.specializations.map(
                                   (spec, specIndex) => (
                                     <span
-                                      key={`spec-${career.id}-${specIndex}`}
+                                      key={`spec-${
+                                        career.id || index
+                                      }-${specIndex}`}
                                       className="bg-white/5 px-2 py-0.5 rounded-full text-xs text-purple-200/80 hover:bg-purple-500/10 hover:text-purple-300 transition-colors cursor-default"
                                     >
                                       {spec}

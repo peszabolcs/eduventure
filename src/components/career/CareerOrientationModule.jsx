@@ -17,8 +17,10 @@ const CareerOrientationModule = () => {
   const [showResults, setShowResults] = useState(false);
   const [results, setResults] = useState(null);
   const [personalityProfile, setPersonalityProfile] = useState({});
+  const [isSaving, setIsSaving] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const API_URL = import.meta.env.VITE_API_URL;
 
   // Reset state when the component mounts or when the location changes
   useEffect(() => {
@@ -28,13 +30,14 @@ const CareerOrientationModule = () => {
       setShowResults(false);
       setResults(null);
       setPersonalityProfile({});
+      setIsSaving(false);
     };
 
     resetState();
     return () => resetState(); // Cleanup on unmount
   }, [location.key]);
 
-  const handleAnswer = (answer) => {
+  const handleAnswer = async (answer) => {
     const newAnswers = [...answers, answer];
     setAnswers(newAnswers);
 
@@ -45,6 +48,46 @@ const CareerOrientationModule = () => {
       setResults(calculatedResults);
       setPersonalityProfile(calculatedResults.personality_profile);
       setShowResults(true);
+
+      // Save the results
+      try {
+        setIsSaving(true);
+        const response = await fetch(
+          `${API_URL}/backend/save_career_result.php`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              results: {
+                career_matches: calculatedResults.career_matches,
+                personality_profile: calculatedResults.personality_profile,
+              },
+              personality_profile: calculatedResults.personality_profile,
+              answers: newAnswers,
+            }),
+            credentials: "include",
+          }
+        );
+
+        const data = await response.json();
+        if (!data.success) {
+          console.error("Failed to save career results:", data.error);
+          // Show error notification to user
+          alert("Hiba történt az eredmények mentése közben: " + data.error);
+        } else {
+          // Show success notification
+          alert("Az eredmények sikeresen elmentve!");
+        }
+      } catch (error) {
+        console.error("Error saving career results:", error);
+        alert(
+          "Hiba történt az eredmények mentése közben. Kérjük, próbáld újra!"
+        );
+      } finally {
+        setIsSaving(false);
+      }
     }
   };
 
@@ -153,28 +196,24 @@ const CareerOrientationModule = () => {
       });
 
       // Végső egyezési pontszám számítása
-      const finalScore = totalWeight > 0 ? matchScore / totalWeight : 0;
+      const finalScore = totalWeight > 0 ? (matchScore / totalWeight) * 100 : 0;
 
       return {
         id,
-        title: area.name,
+        title: area.title,
         description: area.description,
-        score: Math.round(finalScore * 100),
-        skills: area.skills,
+        score: Math.round(finalScore),
+        skills: area.required_skills,
+        matching_traits: area.matching_traits,
         growthPotential: area.growth_potential,
         futureOutlook: area.future_outlook,
         salaryRange: area.salary_range,
-        matching_traits: generateMatchingTraits(
-          hollandCodes,
-          cognitiveSkills,
-          area
-        ),
         specializations: area.specializations,
       };
     });
 
-    // Eredmények rendezése egyezési pontszám szerint
-    return matches.sort((a, b) => b.score - a.score).slice(0, 5);
+    // Rendezzük a karrierterületeket pontszám szerint csökkenő sorrendben
+    return matches.sort((a, b) => b.score - a.score);
   };
 
   const generateMatchingTraits = (
@@ -236,6 +275,7 @@ const CareerOrientationModule = () => {
         personalityProfile={personalityProfile}
         onFindExpert={handleFindExpert}
         onRecommendedPaths={handleRecommendedPaths}
+        isSaving={isSaving}
       />
     );
   }

@@ -623,29 +623,14 @@ export default function ProfilePage() {
 
               {/* Main Content */}
               <div>
-                <Tabs defaultValue="personal" className="w-full">
-                  <TabsList className="bg-white/5 border-b border-purple-500/20 w-full rounded-t-lg rounded-b-none h-auto p-0 mb-6">
-                    <TabsTrigger
-                      value="personal"
-                      className="rounded-none data-[state=active]:bg-purple-500/10 data-[state=active]:border-b-2 data-[state=active]:border-purple-400 data-[state=active]:shadow-none py-3 px-4 flex-1 data-[state=active]:text-white"
-                    >
-                      Személyes adatok
-                    </TabsTrigger>
-                    <TabsTrigger
-                      value="security"
-                      className="rounded-none data-[state=active]:bg-purple-500/10 data-[state=active]:border-b-2 data-[state=active]:border-purple-400 data-[state=active]:shadow-none py-3 px-4 flex-1 data-[state=active]:text-white"
-                    >
-                      Biztonság
-                    </TabsTrigger>
-                    <TabsTrigger
-                      value="careers"
-                      className="rounded-none data-[state=active]:bg-purple-500/10 data-[state=active]:border-b-2 data-[state=active]:border-purple-400 data-[state=active]:shadow-none py-3 px-4 flex-1 data-[state=active]:text-white"
-                    >
-                      Karrier eredmények
-                    </TabsTrigger>
+                <Tabs defaultValue="profile" className="w-full">
+                  <TabsList className="grid w-full grid-cols-3">
+                    <TabsTrigger value="profile">Profil</TabsTrigger>
+                    <TabsTrigger value="security">Biztonság</TabsTrigger>
+                    <TabsTrigger value="career">Karrier</TabsTrigger>
                   </TabsList>
 
-                  <TabsContent value="personal" className="mt-0">
+                  <TabsContent value="profile" className="mt-6">
                     <Card className="bg-white/5 backdrop-blur-sm border-purple-500/20 text-white">
                       <CardContent className="p-6 space-y-6">
                         <div className="space-y-4">
@@ -916,7 +901,7 @@ export default function ProfilePage() {
                     </Card>
                   </TabsContent>
 
-                  <TabsContent value="security" className="mt-0">
+                  <TabsContent value="security" className="mt-6">
                     <Card className="bg-white/5 backdrop-blur-sm border-purple-500/20 text-white">
                       <CardContent className="p-6 space-y-6">
                         {/* Password Change Section */}
@@ -1143,101 +1128,100 @@ export default function ProfilePage() {
                     </Card>
                   </TabsContent>
 
-                  <TabsContent value="careers" className="mt-0">
-                    <Card className="bg-white/5 backdrop-blur-sm border-purple-500/20 text-white">
-                      <CardContent className="p-6 space-y-6">
-                        <div className="space-y-4">
-                          <h3 className="text-lg font-medium flex items-center gap-2">
-                            <User className="h-5 w-5 text-purple-300" />
-                            Karrier eredmények
-                          </h3>
-
-                          {careerResults.length === 0 ? (
-                            <div className="text-center py-8">
-                              <p className="text-purple-200/70 mb-4">
-                                Még nincsenek mentett karrier eredményeid.
-                              </p>
-                              <Button
-                                onClick={() => navigate("/szemelyisegteszt")}
-                                className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700"
-                              >
-                                Teszt elvégzése
-                              </Button>
-                            </div>
-                          ) : (
-                            <div className="space-y-6">
-                              {careerResults.map((result, index) => (
-                                <div
-                                  key={index}
-                                  className="bg-white/5 rounded-lg p-4 border border-white/10 hover:border-white/20 transition-all"
-                                >
-                                  <div className="flex justify-between items-start mb-4">
-                                    <div>
-                                      <h4 className="text-lg font-medium text-white">
-                                        {new Date(
-                                          result.date
-                                        ).toLocaleDateString("hu-HU", {
-                                          year: "numeric",
-                                          month: "long",
-                                          day: "numeric",
-                                        })}
-                                      </h4>
-                                      <p className="text-purple-300/70 text-sm">
-                                        Top 5 karrier ajánlat
-                                      </p>
-                                    </div>
-                                    <Button
-                                      variant="ghost"
-                                      size="sm"
-                                      onClick={() =>
-                                        navigate(
-                                          `/karrier-eredmenyek/${result.id}`
-                                        )
+                  <TabsContent value="career" className="mt-6">
+                    {careerResults.length > 0 ? (
+                      <div className="space-y-6">
+                        {careerResults.map((result) => (
+                          <Card
+                            key={result.id}
+                            className="bg-white/5 border-purple-500/20"
+                          >
+                            <CardContent className="p-6">
+                              <div className="flex justify-between items-start mb-4">
+                                <div>
+                                  <p className="text-sm text-purple-300">
+                                    Teszt dátuma:{" "}
+                                    {new Date(result.date).toLocaleDateString(
+                                      "hu-HU",
+                                      {
+                                        year: "numeric",
+                                        month: "long",
+                                        day: "numeric",
                                       }
-                                      className="text-purple-300 hover:text-white"
-                                    >
-                                      Megtekintés
-                                    </Button>
-                                  </div>
+                                    )}
+                                  </p>
+                                </div>
+                              </div>
 
-                                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                                    {result.results
-                                      .slice(0, 3)
-                                      .map((career, idx) => (
+                              <div className="space-y-4">
+                                <div>
+                                  <h3 className="text-lg font-semibold text-white mb-2">
+                                    Top karrier egyezések
+                                  </h3>
+                                  <div className="space-y-3">
+                                    {result.results?.career_matches
+                                      ?.slice(0, 3)
+                                      .map((career, index) => (
                                         <div
-                                          key={idx}
-                                          className="bg-white/5 rounded-lg p-3 border border-white/10"
+                                          key={index}
+                                          className="bg-white/5 rounded-lg p-3 border border-purple-500/20"
                                         >
-                                          <div className="flex justify-between items-center mb-2">
-                                            <h5 className="text-sm font-medium text-white truncate">
-                                              {career.name}
-                                            </h5>
-                                            <span className="text-xs text-purple-300">
+                                          <div className="flex justify-between items-start">
+                                            <div>
+                                              <h4 className="text-white font-medium">
+                                                {career.title}
+                                              </h4>
+                                              <p className="text-purple-300/80 text-sm mt-1">
+                                                {career.description}
+                                              </p>
+                                            </div>
+                                            <div className="bg-purple-500/20 text-purple-300 px-2 py-1 rounded text-sm">
                                               {career.score}%
-                                            </span>
-                                          </div>
-                                          <div className="space-y-1">
-                                            {career.skills
-                                              .slice(0, 2)
-                                              .map((skill, skillIdx) => (
-                                                <p
-                                                  key={skillIdx}
-                                                  className="text-xs text-purple-200/70"
-                                                >
-                                                  • {skill}
-                                                </p>
-                                              ))}
+                                            </div>
                                           </div>
                                         </div>
                                       ))}
                                   </div>
                                 </div>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      </CardContent>
-                    </Card>
+
+                                <div>
+                                  <h3 className="text-lg font-semibold text-white mb-2">
+                                    Személyiség tulajdonságok
+                                  </h3>
+                                  <div className="flex flex-wrap gap-2">
+                                    {result.results?.personality_profile?.traits
+                                      ?.slice(0, 3)
+                                      .map((trait, index) => (
+                                        <div
+                                          key={index}
+                                          className="bg-purple-500/10 text-purple-300 px-3 py-1 rounded-full text-sm"
+                                        >
+                                          {trait.name}
+                                        </div>
+                                      ))}
+                                  </div>
+                                </div>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        ))}
+                      </div>
+                    ) : (
+                      <Card className="bg-white/5 backdrop-blur-sm border-purple-500/20">
+                        <CardContent className="p-6 text-center">
+                          <p className="text-purple-200/80 mb-4">
+                            Még nem végeztél pályaorientációs tesztet.
+                          </p>
+                          <Button
+                            variant="outline"
+                            className="text-purple-300 border-purple-500/20 hover:bg-purple-500/10"
+                            onClick={() => navigate("/career-test")}
+                          >
+                            Teszt elvégzése
+                          </Button>
+                        </CardContent>
+                      </Card>
+                    )}
                   </TabsContent>
                 </Tabs>
               </div>
