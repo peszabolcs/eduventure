@@ -13,6 +13,7 @@ import {
   Check,
   X,
   AlertTriangle,
+  Briefcase,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { Button } from "../components/ui/button";
@@ -624,10 +625,28 @@ export default function ProfilePage() {
               {/* Main Content */}
               <div>
                 <Tabs defaultValue="profile" className="w-full">
-                  <TabsList className="grid w-full grid-cols-3">
-                    <TabsTrigger value="profile">Profil</TabsTrigger>
-                    <TabsTrigger value="security">Biztonság</TabsTrigger>
-                    <TabsTrigger value="career">Karrier</TabsTrigger>
+                  <TabsList className="grid w-full grid-cols-3 bg-white/5 backdrop-blur-sm border border-purple-500/20 p-1 rounded-lg">
+                    <TabsTrigger
+                      value="profile"
+                      className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-600 data-[state=active]:to-pink-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-purple-500/25 text-purple-300 hover:text-white hover:bg-white/10 transition-all duration-300"
+                    >
+                      <User className="w-4 h-4 mr-2" />
+                      Profil
+                    </TabsTrigger>
+                    <TabsTrigger
+                      value="security"
+                      className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-600 data-[state=active]:to-pink-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-purple-500/25 text-purple-300 hover:text-white hover:bg-white/10 transition-all duration-300"
+                    >
+                      <Lock className="w-4 h-4 mr-2" />
+                      Biztonság
+                    </TabsTrigger>
+                    <TabsTrigger
+                      value="career"
+                      className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-600 data-[state=active]:to-pink-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-purple-500/25 text-purple-300 hover:text-white hover:bg-white/10 transition-all duration-300"
+                    >
+                      <Briefcase className="w-4 h-4 mr-2" />
+                      Karrier
+                    </TabsTrigger>
                   </TabsList>
 
                   <TabsContent value="profile" className="mt-6">
