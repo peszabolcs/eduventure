@@ -1,7 +1,8 @@
 const CACHE_NAME = "eduventure-cache-v1";
-const urlsToCache = [
-  "/",
-  "/index.html",
+const STATIC_CACHE_NAME = "eduventure-static-cache-v1";
+
+// Statikus erőforrások, amiket mindig cache-elünk
+const staticUrlsToCache = [
   "/manifest.json",
   "/eduventurelogohatternelkul.svg",
   "/icons/icon-192x192.png",
@@ -12,56 +13,58 @@ const urlsToCache = [
 // Service Worker telepítése
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      console.log("Cache opened");
-      return cache.addAll(urlsToCache);
+    caches.open(STATIC_CACHE_NAME).then((cache) => {
+      console.log("Static cache opened");
+      return cache.addAll(staticUrlsToCache);
     })
   );
 });
 
 // Hálózati kérések kezelése
 self.addEventListener("fetch", (event) => {
+  const url = new URL(event.request.url);
+
+  // Statikus erőforrások esetén Cache First stratégia
+  if (isStaticAsset(url)) {
+    event.respondWith(
+      caches.match(event.request).then((response) => {
+        return (
+          response ||
+          fetch(event.request).then((response) => {
+            return caches.open(STATIC_CACHE_NAME).then((cache) => {
+              cache.put(event.request, response.clone());
+              return response;
+            });
+          })
+        );
+      })
+    );
+    return;
+  }
+
+  // Dinamikus tartalom esetén Network First stratégia
   event.respondWith(
-    caches
-      .match(event.request)
+    fetch(event.request)
       .then((response) => {
-        // Cache találat - visszaadjuk a cache-elt választ
-        if (response) {
-          return response;
-        }
-
-        // Nincs cache találat - hálózati kérést küldünk
-        return fetch(event.request).then((response) => {
-          // Ellenőrizzük, hogy érvényes-e a válasz
-          if (
-            !response ||
-            response.status !== 200 ||
-            response.type !== "basic"
-          ) {
-            return response;
-          }
-
-          // Klónozzuk a választ, mert a response stream csak egyszer olvasható
+        // Csak sikeres válaszokat cache-elünk
+        if (response && response.status === 200) {
           const responseToCache = response.clone();
-
-          // Elmentsük a választ a cache-be
           caches.open(CACHE_NAME).then((cache) => {
             cache.put(event.request, responseToCache);
           });
-
-          return response;
-        });
+        }
+        return response;
       })
       .catch(() => {
-        // Offline fallback - itt lehetne speciális offline oldalt mutatni
-        return caches.match("/index.html");
+        // Offline esetben visszatérünk a cache-elt tartalomhoz
+        return caches.match(event.request);
       })
   );
 });
 
 // Régi cache-ek törlése
 self.addEventListener("activate", (event) => {
-  const cacheWhitelist = [CACHE_NAME];
+  const cacheWhitelist = [CACHE_NAME, STATIC_CACHE_NAME];
 
   event.waitUntil(
     caches.keys().then((cacheNames) => {
@@ -75,3 +78,24 @@ self.addEventListener("activate", (event) => {
     })
   );
 });
+
+// Segédfüggvény a statikus erőforrások azonosításához
+function isStaticAsset(url) {
+  const staticExtensions = [
+    ".css",
+    ".js",
+    ".png",
+    ".jpg",
+    ".jpeg",
+    ".gif",
+    ".svg",
+    ".ico",
+    ".woff",
+    ".woff2",
+    ".ttf",
+    ".eot",
+  ];
+  return staticExtensions.some((ext) =>
+    url.pathname.toLowerCase().endsWith(ext)
+  );
+}
