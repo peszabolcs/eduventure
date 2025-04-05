@@ -29,6 +29,7 @@ src/backend/uploads
 *.njsproj
 *.sln
 *.sw?
+.cursor
 
 #secret file
 .env
