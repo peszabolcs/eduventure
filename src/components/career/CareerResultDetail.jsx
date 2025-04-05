@@ -286,7 +286,7 @@ export default function CareerResultDetail() {
         <div className="absolute bottom-1/4 left-1/2 w-96 h-96 bg-pink-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
       </div>
 
-      <div className="container mx-auto px-4 py-8 relative z-10 pt-32">
+      <div className="container mx-auto px-4 py-12 relative z-10 pt-32">
         <Button
           onClick={() => navigate("/profile")}
           variant="ghost"

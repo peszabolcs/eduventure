@@ -242,7 +242,7 @@ const CareerOrientationModule = () => {
           alert("Hiba történt az eredmények mentése közben: " + data.error);
         }
       } else {
-        alert("Az eredmények sikeresen elmentve!");
+        // alert("Az eredmények sikeresen elmentve!");
       }
     } catch (error) {
       console.error("Error saving career results:", error);
