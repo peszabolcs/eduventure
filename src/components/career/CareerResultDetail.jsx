@@ -158,16 +158,30 @@ export default function CareerResultDetail() {
   useEffect(() => {
     const fetchResult = async () => {
       try {
+        const token =
+          localStorage.getItem("token") || sessionStorage.getItem("token");
         const response = await fetch(
           `${API_URL}/backend/get_career_result.php?id=${id}`,
           {
             credentials: "include",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           }
         );
         const data = await response.json();
         if (data.success) {
           setResult(data.result);
         } else {
+          if (
+            data.error === "Érvénytelen munkamenet" ||
+            data.error === "Nincs bejelentkezett felhasználó"
+          ) {
+            // Ha session probléma van, átirányítjuk a bejelentkezési oldalra
+            alert("A munkamenete lejárt. Kérjük, jelentkezzen be újra!");
+            navigate("/login");
+            return;
+          }
           setError(data.error || "Nem sikerült betölteni az eredményt");
         }
       } catch (error) {

@@ -1,5 +1,5 @@
-import React from "react";
-import { motion } from "framer-motion";
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 
 const CareerResults = ({
@@ -9,38 +9,48 @@ const CareerResults = ({
   onRecommendedPaths,
   isSaving,
 }) => {
+  const [activeTab, setActiveTab] = useState("summary");
   const navigate = useNavigate();
+  const token =
+    localStorage.getItem("token") || sessionStorage.getItem("token");
+  const isLoggedIn = !!token;
 
   // Debug log to check the structure
-  console.log("CareerResults props:", { results, personalityProfile });
+  console.log("CareerResults received props:", { results, personalityProfile });
 
-  // Early return if no valid results
-  if (!results || typeof results !== "object") {
+  // Early validation of results
+  if (
+    !results ||
+    !results.career_matches ||
+    !Array.isArray(results.career_matches)
+  ) {
+    console.error("Invalid results data:", results);
     return (
-      <div className="min-h-screen bg-gradient-to-br from-[#312e81] to-[#581c87] to-[#831843] flex flex-col items-center justify-center p-4">
-        <h2 className="text-2xl font-semibold text-white mb-4">
-          Nincs elegendő adat az eredmények megjelenítéséhez
-        </h2>
-        <button
-          onClick={() => navigate("/career-test")}
-          className="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
-        >
-          Teszt újrakezdése
-        </button>
+      <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 py-12">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-purple-500/20 text-center">
+            <h2 className="text-3xl font-bold text-white mb-4">Hiba történt</h2>
+            <p className="text-purple-200">
+              Az eredmények betöltése sikertelen. Kérjük, próbálja újra a
+              tesztet.
+            </p>
+            <button
+              onClick={() => window.location.reload()}
+              className="mt-6 px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg font-medium hover:from-purple-700 hover:to-indigo-700 transition-all duration-300"
+            >
+              Teszt újrakezdése
+            </button>
+          </div>
+        </div>
       </div>
     );
   }
 
   // Ensure we have valid career matches and personality profile
-  const career_matches = Array.isArray(results.career_matches)
-    ? results.career_matches
-    : [];
-  const personality_profile = results.personality_profile || {};
-
-  // Filter career matches with proper type checking
-  const filteredCareerMatches = career_matches.filter(
+  const filteredCareerMatches = results.career_matches.filter(
     (career) =>
       typeof career === "object" &&
+      career !== null &&
       typeof career.score === "number" &&
       career.score >= 50
   );
@@ -53,7 +63,7 @@ const CareerResults = ({
           Nincs elegendő adat az eredmények megjelenítéséhez
         </h2>
         <button
-          onClick={() => navigate("/career-test")}
+          onClick={() => window.location.reload()}
           className="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
         >
           Teszt újrakezdése
@@ -62,242 +72,266 @@ const CareerResults = ({
     );
   }
 
+  const topCareerMatches = filteredCareerMatches.slice(0, 3);
+
   // Generate personality traits array from the profile
-  const personalityTraits = Array.isArray(personality_profile.traits)
-    ? personality_profile.traits
+  const personalityTraits = Array.isArray(personalityProfile?.traits)
+    ? personalityProfile.traits
     : [];
 
   return (
-    <>
-      <style jsx global>{`
-        body {
-          background: linear-gradient(
-            to bottom right,
-            #312e81,
-            #581c87,
-            #831843
-          );
-          background-attachment: fixed;
-        }
-      `}</style>
-      <div className="min-h-screen py-8">
-        <div className="max-w-7xl mx-auto px-4 pt-24">
-          {isSaving && (
-            <div className="fixed top-4 right-4 bg-purple-500/20 backdrop-blur-sm text-purple-300 px-4 py-2 rounded-lg flex items-center gap-2 animate-pulse">
-              <div className="w-4 h-4 border-2 border-purple-300 border-t-transparent rounded-full animate-spin"></div>
-              Eredmények mentése...
+    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 py-12">
+      <div className="max-w-6xl mx-auto px-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-purple-500/20"
+        >
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-bold text-white mb-4">
+              Karrierteszt Eredmények
+            </h2>
+            <p className="text-purple-200 text-lg">
+              {isLoggedIn
+                ? "Íme a részletes elemzés a karrierlehetőségeidről és személyiségprofilodról"
+                : "Íme egy előzetes áttekintés a karrierlehetőségeidről"}
+            </p>
+          </div>
+
+          {/* Top 3 Career Matches */}
+          <div className="mb-12">
+            <h3 className="text-2xl font-semibold text-purple-300 mb-6 text-center">
+              Legjobb Karrieregyezések
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {topCareerMatches.map((career, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                  className="bg-white/10 rounded-xl p-6 border border-purple-500/20"
+                >
+                  <div className="text-center mb-4">
+                    <div className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400 mb-2">
+                      {career.score}%
+                    </div>
+                    <h4 className="text-xl font-semibold text-white">
+                      {career.title}
+                    </h4>
+                  </div>
+                  <p className="text-purple-200 text-sm mb-4 line-clamp-3">
+                    {career.description}
+                  </p>
+                  {!isLoggedIn && (
+                    <div className="text-center">
+                      <span className="text-purple-300 text-sm">
+                        Regisztrálj a részletes elemzésért
+                      </span>
+                    </div>
+                  )}
+                </motion.div>
+              ))}
+            </div>
+          </div>
+
+          {isLoggedIn ? (
+            <>
+              {/* Detailed Analysis Tabs */}
+              <div className="flex justify-center gap-4 mb-8">
+                <button
+                  onClick={() => setActiveTab("summary")}
+                  className={`px-6 py-3 rounded-full transition-all duration-300 ${
+                    activeTab === "summary"
+                      ? "bg-purple-600 text-white"
+                      : "bg-white/10 text-purple-300 hover:bg-white/20"
+                  }`}
+                >
+                  Összefoglaló
+                </button>
+                <button
+                  onClick={() => setActiveTab("personality")}
+                  className={`px-6 py-3 rounded-full transition-all duration-300 ${
+                    activeTab === "personality"
+                      ? "bg-purple-600 text-white"
+                      : "bg-white/10 text-purple-300 hover:bg-white/20"
+                  }`}
+                >
+                  Személyiségprofil
+                </button>
+                <button
+                  onClick={() => setActiveTab("recommendations")}
+                  className={`px-6 py-3 rounded-full transition-all duration-300 ${
+                    activeTab === "recommendations"
+                      ? "bg-purple-600 text-white"
+                      : "bg-white/10 text-purple-300 hover:bg-white/20"
+                  }`}
+                >
+                  Ajánlások
+                </button>
+              </div>
+
+              {/* Tab Content */}
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeTab}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  {activeTab === "summary" && (
+                    <div className="space-y-8">
+                      {/* Detailed career matches */}
+                      {results.career_matches.map((career, index) => (
+                        <div
+                          key={index}
+                          className="bg-white/10 rounded-xl p-6 border border-purple-500/20"
+                        >
+                          <div className="flex justify-between items-center mb-4">
+                            <h4 className="text-xl font-semibold text-white">
+                              {career.title}
+                            </h4>
+                            <div className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
+                              {career.score}%
+                            </div>
+                          </div>
+                          <p className="text-purple-200 mb-4">
+                            {career.description}
+                          </p>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                              <h5 className="text-purple-300 font-medium mb-2">
+                                Szükséges készségek
+                              </h5>
+                              <ul className="list-disc list-inside text-purple-200">
+                                {career.skills.map((skill, idx) => (
+                                  <li key={idx}>{skill}</li>
+                                ))}
+                              </ul>
+                            </div>
+                            <div>
+                              <h5 className="text-purple-300 font-medium mb-2">
+                                Személyiségjegyek
+                              </h5>
+                              <ul className="list-disc list-inside text-purple-200">
+                                {career.matching_traits.map((trait, idx) => (
+                                  <li key={idx}>{trait}</li>
+                                ))}
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {activeTab === "personality" && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {personalityProfile &&
+                        typeof personalityProfile === "object" &&
+                        Object.entries(personalityProfile)
+                          .filter(
+                            ([category, traits]) =>
+                              traits &&
+                              Array.isArray(traits) &&
+                              traits.length > 0
+                          )
+                          .map(([category, traits], index) => {
+                            if (!traits || traits.length === 0) return null;
+
+                            return (
+                              <div
+                                key={category}
+                                className="bg-white/10 rounded-xl p-6 border border-purple-500/20"
+                              >
+                                <h4 className="text-xl font-semibold text-white mb-4">
+                                  {category
+                                    .split("_")
+                                    .map(
+                                      (word) =>
+                                        word.charAt(0).toUpperCase() +
+                                        word.slice(1)
+                                    )
+                                    .join(" ")}
+                                </h4>
+                                <ul className="space-y-3">
+                                  {traits.map((trait, idx) => (
+                                    <li
+                                      key={idx}
+                                      className="flex items-center text-purple-200"
+                                    >
+                                      <span className="w-2 h-2 bg-purple-400 rounded-full mr-3"></span>
+                                      {typeof trait === "object" && trait
+                                        ? trait.name || "Ismeretlen"
+                                        : trait || "Ismeretlen"}
+                                      {typeof trait === "object" &&
+                                        trait &&
+                                        trait.score !== undefined && (
+                                          <span className="ml-2 text-sm text-purple-400">
+                                            ({Math.round(trait.score * 100)}%)
+                                          </span>
+                                        )}
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            );
+                          })}
+                    </div>
+                  )}
+
+                  {activeTab === "recommendations" && (
+                    <div className="space-y-6">
+                      <div className="bg-white/10 rounded-xl p-6 border border-purple-500/20">
+                        <h4 className="text-xl font-semibold text-white mb-4">
+                          Következő lépések
+                        </h4>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <button
+                            onClick={onFindExpert}
+                            className="p-4 bg-purple-600/20 rounded-lg text-purple-200 hover:bg-purple-600/30 transition-all duration-300"
+                          >
+                            Szakértő keresése
+                          </button>
+                          <button
+                            onClick={onRecommendedPaths}
+                            className="p-4 bg-purple-600/20 rounded-lg text-purple-200 hover:bg-purple-600/30 transition-all duration-300"
+                          >
+                            Ajánlott képzési utak
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </motion.div>
+              </AnimatePresence>
+            </>
+          ) : (
+            <div className="text-center mt-8">
+              <p className="text-purple-200 mb-6">
+                Regisztrálj vagy jelentkezz be a részletes karrierelemzés és
+                személyiségprofil megtekintéséhez!
+              </p>
+              <div className="flex justify-center gap-4">
+                <button
+                  onClick={() => navigate("/register")}
+                  className="px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg font-medium hover:from-purple-700 hover:to-indigo-700 transition-all duration-300"
+                >
+                  Regisztráció
+                </button>
+                <button
+                  onClick={() => navigate("/login")}
+                  className="px-6 py-3 bg-white/10 text-purple-200 rounded-lg font-medium hover:bg-white/20 transition-all duration-300"
+                >
+                  Bejelentkezés
+                </button>
+              </div>
             </div>
           )}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="bg-white/5 backdrop-blur-sm rounded-2xl shadow-lg p-6 border border-purple-500/20"
-          >
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-300 to-pink-300 bg-clip-text text-transparent mb-6">
-              Pályaorientációs eredmények
-            </h1>
-
-            {/* Személyiségprofil szekció */}
-            <section className="mb-8">
-              <h2 className="text-xl font-semibold text-white mb-4 flex items-center">
-                <span className="w-1.5 h-6 bg-gradient-to-b from-purple-500 to-pink-500 rounded-full mr-2"></span>
-                Személyiségprofil
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {personalityTraits.map((trait, index) => (
-                  <motion.div
-                    key={`trait-${index}`}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                    className="bg-gradient-to-br from-purple-500/10 to-pink-500/10 rounded-lg p-4 border border-purple-500/20 hover:shadow-lg transition-all duration-300 group"
-                    whileHover={{ scale: 1.01 }}
-                  >
-                    <h3 className="text-base font-medium text-white mb-2 group-hover:text-purple-300 transition-colors">
-                      {trait.name}
-                    </h3>
-                    <p className="text-purple-200/80 text-xs mb-3">
-                      {trait.description}
-                    </p>
-                    <div className="mt-2">
-                      <div className="w-full bg-purple-500/10 rounded-full h-1.5 overflow-hidden">
-                        <motion.div
-                          className="bg-gradient-to-r from-purple-500 to-pink-500 h-full rounded-full"
-                          initial={{ width: 0 }}
-                          animate={{ width: `${trait.score * 100}%` }}
-                          transition={{ duration: 1, delay: index * 0.1 }}
-                        />
-                      </div>
-                      <p className="text-xs text-purple-300 mt-1">
-                        {Math.round(trait.score * 100)}%
-                      </p>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-            </section>
-
-            {/* Karrierterületek szekció */}
-            <section>
-              <h2 className="text-xl font-semibold text-white mb-4 flex items-center">
-                <span className="w-1.5 h-6 bg-gradient-to-b from-purple-500 to-pink-500 rounded-full mr-2"></span>
-                Ajánlott karrierterületek
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {filteredCareerMatches.map((career, index) => (
-                  <motion.div
-                    key={`career-${career.id || index}`}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                    className="bg-gradient-to-br from-purple-500/10 to-pink-500/10 rounded-lg border border-purple-500/20 p-4 hover:shadow-lg transition-all duration-300 group"
-                    whileHover={{ scale: 1.01 }}
-                  >
-                    {/* Karrier cím és egyezés */}
-                    <div className="flex justify-between items-start mb-3">
-                      <div>
-                        <h3 className="text-base font-bold text-white group-hover:text-purple-300 transition-colors">
-                          {career.title}
-                        </h3>
-                        <p className="text-purple-200/80 text-xs mt-1">
-                          {career.description}
-                        </p>
-                      </div>
-                      <div className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-3 py-1 rounded-full text-xs font-medium shadow-md">
-                        {career.score}% egyezés
-                      </div>
-                    </div>
-
-                    {/* Karrier adatok grid */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {/* Bal oldali oszlop */}
-                      <div className="space-y-3">
-                        {/* Készségek */}
-                        <div>
-                          <h4 className="text-sm font-medium text-white mb-1.5">
-                            Szükséges készségek
-                          </h4>
-                          <div className="flex flex-wrap gap-1.5">
-                            {Array.isArray(career.skills) &&
-                              career.skills.map((skill, skillIndex) => (
-                                <span
-                                  key={`skill-${
-                                    career.id || index
-                                  }-${skillIndex}`}
-                                  className="bg-purple-500/10 text-purple-200 px-2 py-0.5 rounded-full text-xs hover:bg-purple-500/20 hover:text-purple-300 transition-colors cursor-default"
-                                >
-                                  {skill}
-                                </span>
-                              ))}
-                          </div>
-                        </div>
-
-                        {/* Illeszkedő tulajdonságok */}
-                        <div>
-                          <h4 className="text-sm font-medium text-white mb-1.5">
-                            Illeszkedő tulajdonságaid
-                          </h4>
-                          <div className="flex flex-wrap gap-1.5">
-                            {Array.isArray(career.matching_traits) &&
-                              career.matching_traits.map(
-                                (trait, traitIndex) => (
-                                  <span
-                                    key={`trait-${
-                                      career.id || index
-                                    }-${traitIndex}`}
-                                    className="bg-green-500/10 text-green-300 px-2 py-0.5 rounded-full text-xs hover:bg-green-500/20 transition-colors cursor-default"
-                                  >
-                                    {trait}
-                                  </span>
-                                )
-                              )}
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Jobb oldali oszlop */}
-                      <div className="space-y-3">
-                        {/* Karrierkilátások */}
-                        <div>
-                          <h4 className="text-sm font-medium text-white mb-1.5">
-                            Karrierkilátások
-                          </h4>
-                          <div className="grid grid-cols-3 gap-2">
-                            <div className="bg-white/5 p-2 rounded-lg border border-purple-500/20">
-                              <h4 className="text-xs font-medium text-purple-200/80">
-                                Növekedés
-                              </h4>
-                              <p className="mt-0.5 text-white text-xs">
-                                {career.growthPotential}
-                              </p>
-                            </div>
-                            <div className="bg-white/5 p-2 rounded-lg border border-purple-500/20">
-                              <h4 className="text-xs font-medium text-purple-200/80">
-                                Kilátások
-                              </h4>
-                              <p className="mt-0.5 text-white text-xs">
-                                {career.futureOutlook}
-                              </p>
-                            </div>
-                            <div className="bg-white/5 p-2 rounded-lg border border-purple-500/20">
-                              <h4 className="text-xs font-medium text-purple-200/80">
-                                Fizetés
-                              </h4>
-                              <p className="mt-0.5 text-white text-xs">
-                                {career.salaryRange}
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Specializációk */}
-                        {Array.isArray(career.specializations) &&
-                          career.specializations.length > 0 && (
-                            <div>
-                              <h4 className="text-sm font-medium text-white mb-1.5">
-                                Specializációk
-                              </h4>
-                              <div className="flex flex-wrap gap-1.5">
-                                {career.specializations.map(
-                                  (spec, specIndex) => (
-                                    <span
-                                      key={`spec-${
-                                        career.id || index
-                                      }-${specIndex}`}
-                                      className="bg-white/5 px-2 py-0.5 rounded-full text-xs text-purple-200/80 hover:bg-purple-500/10 hover:text-purple-300 transition-colors cursor-default"
-                                    >
-                                      {spec}
-                                    </span>
-                                  )
-                                )}
-                              </div>
-                            </div>
-                          )}
-                      </div>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-            </section>
-          </motion.div>
-
-          {/* Újrakezdés gomb */}
-          <div className="text-center mt-6">
-            <motion.button
-              onClick={() => {
-                window.location.reload();
-              }}
-              className="px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all duration-300 text-base font-medium shadow-md hover:shadow-lg"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              Teszt újrakezdése
-            </motion.button>
-          </div>
-        </div>
+        </motion.div>
       </div>
-    </>
+    </div>
   );
 };
 

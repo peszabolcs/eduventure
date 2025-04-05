@@ -19,7 +19,7 @@ if (!in_array($origin, $allowedOrigins)) {
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     header("Access-Control-Allow-Origin: $origin");
     header('Access-Control-Allow-Methods: POST, OPTIONS');
-    header('Access-Control-Allow-Headers: Content-Type');
+    header('Access-Control-Allow-Headers: Content-Type, Authorization');
     header('Access-Control-Allow-Credentials: true');
     header('Access-Control-Max-Age: 86400');    // cache for 1 day
     exit(0);
@@ -29,21 +29,38 @@ header('Content-Type: application/json');
 header("Access-Control-Allow-Origin: $origin");
 header('Access-Control-Allow-Credentials: true');
 header('Access-Control-Allow-Methods: POST, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type');
+header('Access-Control-Allow-Headers: Content-Type, Authorization');
 
 // Start session with secure settings
-ini_set('session.cookie_samesite', 'None');
 ini_set('session.cookie_secure', true);
-ini_set('session.cookie_domain', '.edu-venture.hu'); // Allow cookies for both www and non-www
+ini_set('session.cookie_httponly', true);
+ini_set('session.cookie_samesite', 'None');
+ini_set('session.cookie_domain', '.edu-venture.hu');
+ini_set('session.gc_maxlifetime', 3600); // 1 óra
 session_start();
 
 // .env betöltése
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
 $dotenv->load();
 
-if (!isset($_SESSION['id'])) {
+// Token ellenőrzése
+$headers = getallheaders();
+$auth_header = isset($headers['Authorization']) ? $headers['Authorization'] : '';
+
+if (!isset($_SESSION['id']) || !isset($_SESSION['token'])) {
     echo json_encode(['success' => false, 'error' => 'Nincs bejelentkezett felhasználó']);
     exit;
+}
+
+// Ha van Authorization header, ellenőrizzük a token egyezést
+if ($auth_header && preg_match('/Bearer\s(\S+)/', $auth_header, $matches)) {
+    $token = $matches[1];
+    if ($token !== $_SESSION['token']) {
+        session_destroy();
+        setcookie(session_name(), '', time() - 3600, '/');
+        echo json_encode(['success' => false, 'error' => 'Érvénytelen munkamenet']);
+        exit;
+    }
 }
 
 // Get POST data
@@ -86,6 +103,9 @@ try {
     }
 
     $resultId = $conn->insert_id;
+
+    // Session frissítése
+    session_regenerate_id(true);
 
     echo json_encode([
         'success' => true,

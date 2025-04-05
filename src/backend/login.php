@@ -91,7 +91,7 @@ if ($result->num_rows > 0) {
         $_SESSION = array(
             "token" => $sessionToken,
             "id" => $row["id"],
-            "email" => $email,
+            "email" => $row["email"],
             "user_name" => $row["username"],
             "fullname" => $row["fullname"],
             "role" => $row["role"],
@@ -108,7 +108,7 @@ if ($result->num_rows > 0) {
             "user" => [
                 "id" => $row["id"],
                 "fullname" => $row["fullname"],
-                "email" => $email,
+                "email" => $row["email"],
                 "username" => $row["username"],
                 "role" => $row["role"],
                 "created_at" => $row["created_at"],

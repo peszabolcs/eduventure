@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Eye,
@@ -18,56 +18,34 @@ import {
   hasAcceptedEssentialCookies,
 } from "../services/cookieService";
 
-export default function LoginPage() {
+const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [errorMsg, setErrorMsg] = useState("");
+  const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate();
   const { login } = useAuth();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setErrorMsg("");
     setIsLoading(true);
+    setError("");
 
     try {
-      const API_URL = import.meta.env.VITE_API_URL;
-      const requestBody = { email, password };
-
-      const response = await fetch(`${API_URL}/backend/login.php`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(requestBody),
-        credentials: "include",
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-
-      if (data.error) {
-        throw new Error(data.error);
-      }
-
-      if (data.success) {
-        await login(data.user);
-        navigate("/profile");
+      const result = await login(email, password);
+      if (result.success) {
+        // Ha van mentett karrierteszt eredmény, navigáljunk oda
+        if (result.shouldNavigateToCareerTest) {
+          navigate("/szemelyisegteszt");
+        } else {
+          // Egyébként a főoldalra
+          navigate("/");
+        }
       } else {
-        throw new Error("Sikertelen bejelentkezés");
+        setError(result.error || "Sikertelen bejelentkezés");
       }
-    } catch (error) {
-      if (error.message.includes("Failed to fetch")) {
-        setErrorMsg(
-          "Nem sikerült kapcsolódni a szerverhez. Kérjük, ellenőrizze az internetkapcsolatát és próbálja újra."
-        );
-      } else {
-        setErrorMsg(error.message);
-      }
+    } catch (err) {
+      setError("Hiba történt a bejelentkezés során");
     } finally {
       setIsLoading(false);
     }
@@ -94,9 +72,9 @@ export default function LoginPage() {
             Bejelentkezés
           </h2>
 
-          {errorMsg && (
+          {error && (
             <div className="bg-red-500 bg-opacity-10 text-red-100 p-3 rounded-lg mb-4">
-              {errorMsg}
+              {error}
             </div>
           )}
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -174,4 +152,6 @@ export default function LoginPage() {
       </div>
     </div>
   );
-}
+};
+
+export default Login;

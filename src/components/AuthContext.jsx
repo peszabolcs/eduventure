@@ -7,29 +7,76 @@ import {
   COOKIE_STATUS,
 } from "../services/cookieService";
 
-const AuthContext = createContext();
-const API_URL = import.meta.env.VITE_API_URL;
+export const AuthContext = createContext();
 
-export function AuthProvider({ children }) {
+export const AuthProvider = ({ children }) => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [cookieConsentStatus, setCookieConsentStatus] = useState(null);
+  const API_URL = import.meta.env.VITE_API_URL;
+
+  // Function to save career results
+  const saveStoredCareerResults = async () => {
+    const storedResults = localStorage.getItem("tempCareerResults");
+    const storedAnswers = localStorage.getItem("tempCareerAnswers");
+    const token =
+      localStorage.getItem("token") || sessionStorage.getItem("token");
+
+    if (storedResults && storedAnswers && token) {
+      try {
+        const response = await fetch(
+          `${API_URL}/backend/save_career_result.php`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              results: JSON.parse(storedResults),
+              personality_profile:
+                JSON.parse(storedResults).personality_profile,
+              answers: JSON.parse(storedAnswers),
+            }),
+            credentials: "include",
+          }
+        );
+
+        const data = await response.json();
+        if (data.success) {
+          // Clear stored results after successful save
+          localStorage.removeItem("tempCareerResults");
+          localStorage.removeItem("tempCareerAnswers");
+          // Return success to handle navigation in the component
+          return true;
+        }
+      } catch (error) {
+        console.error("Error saving stored career results:", error);
+      }
+    }
+    return false;
+  };
 
   // Session ellenőrzés
   const validateSession = async () => {
     try {
+      const token =
+        localStorage.getItem("token") || sessionStorage.getItem("token");
+      if (!token) {
+        logout();
+        return false;
+      }
+
       const response = await fetch(`${API_URL}/backend/check_auth.php`, {
         method: "GET",
         credentials: "include",
         headers: {
-          Authorization: `Bearer ${
-            localStorage.getItem("token") || sessionStorage.getItem("token")
-          }`,
+          Authorization: `Bearer ${token}`,
         },
       });
 
       if (!response.ok) {
-        // Ha a session érvénytelen, kijelentkeztetjük a felhasználót
         logout();
         return false;
       }
@@ -38,6 +85,17 @@ export function AuthProvider({ children }) {
       if (!data.success) {
         logout();
         return false;
+      }
+
+      // Update user data if it has changed
+      const userData = data.user;
+      if (JSON.stringify(user) !== JSON.stringify(userData)) {
+        setUser(userData);
+        if (cookieConsentStatus === COOKIE_STATUS.ACCEPT_ALL) {
+          localStorage.setItem("user", JSON.stringify(userData));
+        } else {
+          sessionStorage.setItem("user", JSON.stringify(userData));
+        }
       }
 
       return true;
@@ -111,30 +169,55 @@ export function AuthProvider({ children }) {
     };
   }, []);
 
-  const login = async (userData) => {
-    // Süti beállítások ellenőrzése és felhasználó tárolása
-    setUser(userData);
+  const login = async (email, password) => {
+    try {
+      const response = await fetch(`${API_URL}/backend/login.php`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+        credentials: "include",
+      });
 
-    if (hasAcceptedAllCookies()) {
-      // Ha minden sütit elfogadott, a localStorage-ba mentjük (tartós)
-      localStorage.setItem("user", JSON.stringify(userData));
-      localStorage.setItem("token", userData.token);
-    }
+      const data = await response.json();
 
-    if (hasAcceptedEssentialCookies()) {
-      // Ha legalább a kötelező sütiket elfogadta, a sessionStorage-ba is mentjük (ideiglenes)
-      sessionStorage.setItem("user", JSON.stringify(userData));
-      sessionStorage.setItem("token", userData.token);
-      return true;
-    } else {
-      // Ha még nem fogadta el a sütiket, nem tudjuk tárolni
-      return false;
+      if (data.success) {
+        const userData = data.user;
+        const token = userData.token;
+
+        // Store token and user data based on cookie preferences
+        if (cookieConsentStatus === COOKIE_STATUS.ACCEPT_ALL) {
+          localStorage.setItem("token", token);
+          localStorage.setItem("user", JSON.stringify(userData));
+        } else {
+          sessionStorage.setItem("token", token);
+          sessionStorage.setItem("user", JSON.stringify(userData));
+        }
+
+        setIsAuthenticated(true);
+        setUser(userData);
+
+        // Save stored career results and return success with navigation info
+        const savedResults = await saveStoredCareerResults();
+        return {
+          success: true,
+          shouldNavigateToCareerTest: savedResults,
+        };
+      } else {
+        return { success: false, error: data.error };
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      return { success: false, error: "Hiba történt a bejelentkezés során" };
     }
   };
 
   const logout = () => {
     setUser(null);
-    // Mindkét tárolóból töröljük
+    setIsAuthenticated(false);
+
+    // Clear both storages to be safe
     localStorage.removeItem("user");
     localStorage.removeItem("token");
     sessionStorage.removeItem("user");
@@ -151,6 +234,7 @@ export function AuthProvider({ children }) {
     <AuthContext.Provider
       value={{
         user,
+        isAuthenticated,
         login,
         logout,
         loading,
@@ -160,7 +244,7 @@ export function AuthProvider({ children }) {
       {children}
     </AuthContext.Provider>
   );
-}
+};
 
 export function useAuth() {
   return useContext(AuthContext);

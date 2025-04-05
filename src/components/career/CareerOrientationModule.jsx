@@ -11,6 +11,105 @@ import {
   CAREER_AREAS,
 } from "./questions";
 
+const SignupPromptModal = ({ isOpen, onClose, onSignup, results }) => {
+  if (!isOpen) return null;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+    >
+      <motion.div
+        initial={{ scale: 0.9, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.9, opacity: 0 }}
+        className="bg-gradient-to-br from-indigo-900/90 to-purple-900/90 backdrop-blur-lg rounded-2xl p-8 max-w-lg w-full border border-purple-500/20 shadow-xl"
+      >
+        <div className="text-center mb-6">
+          <h3 className="text-2xl font-bold text-white mb-4">
+            Gratulálunk a teszt kitöltéséhez! 🎉
+          </h3>
+          <p className="text-purple-200 mb-4">
+            A részletes eredmények megtekintéséhez és az eredmények későbbi
+            eléréséhez hozz létre egy fiókot vagy jelentkezz be!
+          </p>
+          <div className="bg-purple-500/10 rounded-lg p-4 mb-6">
+            <p className="text-purple-300 text-sm">
+              A fiók létrehozásával az alábbi előnyöket élvezheted:
+            </p>
+            <ul className="text-left mt-3 space-y-2">
+              <li className="flex items-center text-purple-200">
+                <svg
+                  className="w-5 h-5 mr-2 text-green-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+                Részletes karrierelemzés és személyiségprofil
+              </li>
+              <li className="flex items-center text-purple-200">
+                <svg
+                  className="w-5 h-5 mr-2 text-green-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+                Eredmények mentése és későbbi megtekintése
+              </li>
+              <li className="flex items-center text-purple-200">
+                <svg
+                  className="w-5 h-5 mr-2 text-green-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+                Személyre szabott karriertanácsok
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div className="flex flex-col gap-3">
+          <button
+            onClick={onSignup}
+            className="w-full py-3 px-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg font-medium hover:from-purple-700 hover:to-indigo-700 transition-all duration-300 transform hover:scale-105"
+          >
+            Fiók létrehozása
+          </button>
+          <button
+            onClick={onClose}
+            className="w-full py-3 px-4 bg-white/10 text-purple-200 rounded-lg font-medium hover:bg-white/20 transition-all duration-300"
+          >
+            Később
+          </button>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+};
+
 const CareerOrientationModule = () => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState([]);
@@ -18,12 +117,18 @@ const CareerOrientationModule = () => {
   const [results, setResults] = useState(null);
   const [personalityProfile, setPersonalityProfile] = useState({});
   const [isSaving, setIsSaving] = useState(false);
+  const [showSignupPrompt, setShowSignupPrompt] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const API_URL = import.meta.env.VITE_API_URL;
 
-  // Reset state when the component mounts or when the location changes
+  // Check for stored results on mount
   useEffect(() => {
+    const storedResults = localStorage.getItem("tempCareerResults");
+    const storedAnswers = localStorage.getItem("tempCareerAnswers");
+    const token =
+      localStorage.getItem("token") || sessionStorage.getItem("token");
+
     const resetState = () => {
       setCurrentQuestion(0);
       setAnswers([]);
@@ -31,11 +136,121 @@ const CareerOrientationModule = () => {
       setResults(null);
       setPersonalityProfile({});
       setIsSaving(false);
+      setShowSignupPrompt(false);
     };
 
-    resetState();
+    if (storedResults && storedAnswers) {
+      try {
+        const parsedResults = JSON.parse(storedResults);
+        const parsedAnswers = JSON.parse(storedAnswers);
+
+        // Validate the stored results structure
+        if (
+          !parsedResults.career_matches ||
+          !parsedResults.personality_profile
+        ) {
+          // If the structure is invalid, recalculate results
+          const recalculatedResults = calculateResults(parsedAnswers);
+          setResults(recalculatedResults);
+          setPersonalityProfile(recalculatedResults.personality_profile);
+        } else {
+          setResults(parsedResults);
+          setPersonalityProfile(parsedResults.personality_profile);
+        }
+
+        setAnswers(parsedAnswers);
+        setShowResults(true);
+
+        // If user is logged in and we have stored results, save them
+        if (token) {
+          saveResults(parsedResults, parsedAnswers);
+          // Clear stored results after saving
+          localStorage.removeItem("tempCareerResults");
+          localStorage.removeItem("tempCareerAnswers");
+        }
+      } catch (error) {
+        console.error("Error processing stored results:", error);
+        resetState();
+      }
+    } else {
+      resetState();
+    }
+
     return () => resetState(); // Cleanup on unmount
   }, [location.key]);
+
+  // Function to save results to the server
+  const saveResults = async (resultsToSave, answersToSave) => {
+    try {
+      setIsSaving(true);
+      const token =
+        localStorage.getItem("token") || sessionStorage.getItem("token");
+
+      if (!token) {
+        // Store results temporarily and show signup prompt
+        localStorage.setItem(
+          "tempCareerResults",
+          JSON.stringify(resultsToSave)
+        );
+        localStorage.setItem(
+          "tempCareerAnswers",
+          JSON.stringify(answersToSave)
+        );
+        setShowSignupPrompt(true);
+        setIsSaving(false);
+        return;
+      }
+
+      const response = await fetch(
+        `${API_URL}/backend/save_career_result.php`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            results: {
+              career_matches: resultsToSave.career_matches,
+              personality_profile: resultsToSave.personality_profile,
+            },
+            personality_profile: resultsToSave.personality_profile,
+            answers: answersToSave,
+          }),
+          credentials: "include",
+        }
+      );
+
+      const data = await response.json();
+      if (!data.success) {
+        if (
+          data.error === "Érvénytelen munkamenet" ||
+          data.error === "Nincs bejelentkezett felhasználó"
+        ) {
+          // Store results temporarily and show signup prompt
+          localStorage.setItem(
+            "tempCareerResults",
+            JSON.stringify(resultsToSave)
+          );
+          localStorage.setItem(
+            "tempCareerAnswers",
+            JSON.stringify(answersToSave)
+          );
+          setShowSignupPrompt(true);
+        } else {
+          console.error("Failed to save career results:", data.error);
+          alert("Hiba történt az eredmények mentése közben: " + data.error);
+        }
+      } else {
+        alert("Az eredmények sikeresen elmentve!");
+      }
+    } catch (error) {
+      console.error("Error saving career results:", error);
+      alert("Hiba történt az eredmények mentése közben. Kérjük, próbáld újra!");
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   const handleAnswer = async (answer) => {
     const newAnswers = [...answers, answer];
@@ -49,45 +264,8 @@ const CareerOrientationModule = () => {
       setPersonalityProfile(calculatedResults.personality_profile);
       setShowResults(true);
 
-      // Save the results
-      try {
-        setIsSaving(true);
-        const response = await fetch(
-          `${API_URL}/backend/save_career_result.php`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              results: {
-                career_matches: calculatedResults.career_matches,
-                personality_profile: calculatedResults.personality_profile,
-              },
-              personality_profile: calculatedResults.personality_profile,
-              answers: newAnswers,
-            }),
-            credentials: "include",
-          }
-        );
-
-        const data = await response.json();
-        if (!data.success) {
-          console.error("Failed to save career results:", data.error);
-          // Show error notification to user
-          alert("Hiba történt az eredmények mentése közben: " + data.error);
-        } else {
-          // Show success notification
-          alert("Az eredmények sikeresen elmentve!");
-        }
-      } catch (error) {
-        console.error("Error saving career results:", error);
-        alert(
-          "Hiba történt az eredmények mentése közben. Kérjük, próbáld újra!"
-        );
-      } finally {
-        setIsSaving(false);
-      }
+      // Save or store results
+      await saveResults(calculatedResults, newAnswers);
     }
   };
 
@@ -105,6 +283,11 @@ const CareerOrientationModule = () => {
 
   const handleRecommendedPaths = () => {
     navigate("/ajanlott-utak");
+  };
+
+  const handleSignup = () => {
+    // Átirányítás a regisztrációs oldalra
+    navigate("/register");
   };
 
   const calculateResults = (answers) => {
@@ -169,9 +352,22 @@ const CareerOrientationModule = () => {
 
     return {
       personality_profile: {
-        holland_codes: hollandCodes,
-        cognitive_skills: cognitiveSkills,
-        work_environments: workEnvironments,
+        holland_codes: Object.entries(hollandCodes).map(([code, score]) => ({
+          name: HOLLAND_CODES[code].name,
+          score: score,
+        })),
+        cognitive_skills: Object.entries(cognitiveSkills).map(
+          ([skill, score]) => ({
+            name: COGNITIVE_SKILLS[skill].name,
+            score: score,
+          })
+        ),
+        work_environments: Object.entries(workEnvironments).map(
+          ([env, score]) => ({
+            name: WORK_ENVIRONMENTS[env].name,
+            score: score,
+          })
+        ),
         traits: generatePersonalityTraits(hollandCodes, cognitiveSkills),
       },
       career_matches: careerMatches,
@@ -269,14 +465,85 @@ const CareerOrientationModule = () => {
   };
 
   if (showResults && results) {
+    // Debug log
+    console.log("Rendering CareerResults with:", {
+      results,
+      personality_profile: results.personality_profile,
+    });
+
+    // Validate the results structure
+    if (!results.career_matches || !Array.isArray(results.career_matches)) {
+      console.error("Invalid results structure:", results);
+      return (
+        <div className="min-h-screen bg-gradient-to-br from-[#312e81] to-[#581c87] to-[#831843] flex flex-col items-center justify-center p-4">
+          <h2 className="text-2xl font-semibold text-white mb-4">
+            Hiba történt az eredmények betöltése közben
+          </h2>
+          <button
+            onClick={() => {
+              // Clear stored results and reset state
+              localStorage.removeItem("tempCareerResults");
+              localStorage.removeItem("tempCareerAnswers");
+              setCurrentQuestion(0);
+              setAnswers([]);
+              setShowResults(false);
+              setResults(null);
+              setPersonalityProfile({});
+              window.location.reload();
+            }}
+            className="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+          >
+            Teszt újrakezdése
+          </button>
+        </div>
+      );
+    }
+
+    // Ensure we have valid data structures before rendering CareerResults
+    const validatedResults = {
+      career_matches: results.career_matches.map((match) => ({
+        ...match,
+        skills: Array.isArray(match.skills) ? match.skills : [],
+        matching_traits: Array.isArray(match.matching_traits)
+          ? match.matching_traits
+          : [],
+      })),
+      personality_profile: {
+        holland_codes: Array.isArray(results.personality_profile?.holland_codes)
+          ? results.personality_profile.holland_codes
+          : [],
+        cognitive_skills: Array.isArray(
+          results.personality_profile?.cognitive_skills
+        )
+          ? results.personality_profile.cognitive_skills
+          : [],
+        work_environments: Array.isArray(
+          results.personality_profile?.work_environments
+        )
+          ? results.personality_profile.work_environments
+          : [],
+        traits: Array.isArray(results.personality_profile?.traits)
+          ? results.personality_profile.traits
+          : [],
+      },
+    };
+
     return (
-      <CareerResults
-        results={results}
-        personalityProfile={personalityProfile}
-        onFindExpert={handleFindExpert}
-        onRecommendedPaths={handleRecommendedPaths}
-        isSaving={isSaving}
-      />
+      <>
+        <CareerResults
+          results={validatedResults}
+          personalityProfile={validatedResults.personality_profile}
+          onFindExpert={handleFindExpert}
+          onRecommendedPaths={handleRecommendedPaths}
+          isSaving={isSaving}
+        />
+        <SignupPromptModal
+          isOpen={showSignupPrompt}
+          onClose={() => setShowSignupPrompt(false)}
+          onSignup={handleSignup}
+          results={validatedResults}
+        />
+      </>
     );
   }
 

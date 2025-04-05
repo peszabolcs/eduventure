@@ -21,16 +21,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit();
 }
 
-if (isset($_SESSION["user_id"])) {
+if (isset($_SESSION["id"])) {
     echo json_encode([
         "logged_in" => true,
         "user" => [
-            "id" => $_SESSION["user_id"],
-            "name" => $_SESSION["user_name"],
-            "email" => $_SESSION["user_email"]
+            "id" => $_SESSION["id"],
+            "username" => $_SESSION["user_name"],
+            "email" => $_SESSION["email"],
+            "fullname" => $_SESSION["fullname"],
+            "role" => $_SESSION["role"],
+            "created_at" => $_SESSION["created_at"]
         ]
     ]);
 } else {
     echo json_encode(["logged_in" => false]);
 }
-?>
