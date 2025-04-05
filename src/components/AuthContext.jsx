@@ -15,6 +15,47 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
   const [cookieConsentStatus, setCookieConsentStatus] = useState(null);
 
+  // Session ellenőrzés
+  const validateSession = async () => {
+    try {
+      const response = await fetch(`${API_URL}/backend/check_auth.php`, {
+        method: "GET",
+        credentials: "include",
+        headers: {
+          Authorization: `Bearer ${
+            localStorage.getItem("token") || sessionStorage.getItem("token")
+          }`,
+        },
+      });
+
+      if (!response.ok) {
+        // Ha a session érvénytelen, kijelentkeztetjük a felhasználót
+        logout();
+        return false;
+      }
+
+      const data = await response.json();
+      if (!data.success) {
+        logout();
+        return false;
+      }
+
+      return true;
+    } catch (error) {
+      console.error("Session validation error:", error);
+      logout();
+      return false;
+    }
+  };
+
+  // Rendszeres session ellenőrzés (5 percenként)
+  useEffect(() => {
+    if (user) {
+      const interval = setInterval(validateSession, 5 * 60 * 1000);
+      return () => clearInterval(interval);
+    }
+  }, [user]);
+
   useEffect(() => {
     // Frissítjük a cookie állapotot, amikor az komponens betöltődik
     const cookieStatus = localStorage.getItem("cookieConsent");
@@ -23,7 +64,16 @@ export function AuthProvider({ children }) {
     // Süti beállítások alapján betöltjük a felhasználói adatokat
     loadUserData(cookieStatus);
 
-    setLoading(false);
+    // Kezdeti session validáció
+    const initialValidation = async () => {
+      const isValid = await validateSession();
+      if (!isValid && user) {
+        logout();
+      }
+      setLoading(false);
+    };
+
+    initialValidation();
   }, []);
 
   // Betölti a felhasználói adatokat a megfelelő helyről a süti beállítások alapján
@@ -61,18 +111,20 @@ export function AuthProvider({ children }) {
     };
   }, []);
 
-  const login = (userData) => {
+  const login = async (userData) => {
     // Süti beállítások ellenőrzése és felhasználó tárolása
     setUser(userData);
 
     if (hasAcceptedAllCookies()) {
       // Ha minden sütit elfogadott, a localStorage-ba mentjük (tartós)
       localStorage.setItem("user", JSON.stringify(userData));
+      localStorage.setItem("token", userData.token);
     }
 
     if (hasAcceptedEssentialCookies()) {
       // Ha legalább a kötelező sütiket elfogadta, a sessionStorage-ba is mentjük (ideiglenes)
       sessionStorage.setItem("user", JSON.stringify(userData));
+      sessionStorage.setItem("token", userData.token);
       return true;
     } else {
       // Ha még nem fogadta el a sütiket, nem tudjuk tárolni
@@ -84,7 +136,15 @@ export function AuthProvider({ children }) {
     setUser(null);
     // Mindkét tárolóból töröljük
     localStorage.removeItem("user");
+    localStorage.removeItem("token");
     sessionStorage.removeItem("user");
+    sessionStorage.removeItem("token");
+
+    // Szerver oldali kijelentkezés
+    fetch(`${API_URL}/backend/logout.php`, {
+      method: "POST",
+      credentials: "include",
+    }).catch(console.error);
   };
 
   return (

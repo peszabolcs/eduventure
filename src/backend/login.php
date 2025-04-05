@@ -2,15 +2,18 @@
 require 'vendor/autoload.php';
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
-setcookie("wordpress_test_cookie", "", time() - 3600, "/");
-setcookie("wordpress_logged_in_0719db475a6c68e3b3bc04eaaccbb6d4", "", time() - 3600, "/");
-
-
 
 // Session beállítások
 ini_set('session.cookie_secure', 1);
 ini_set('session.cookie_httponly', 1);
 ini_set('session.cookie_samesite', 'None');
+ini_set('session.cookie_domain', '.edu-venture.hu');
+ini_set('session.gc_maxlifetime', 3600); // 1 óra
+
+// Régi session törlése és új indítása
+if (session_status() === PHP_SESSION_ACTIVE) {
+    session_destroy();
+}
 session_start();
 
 // .env betöltése
@@ -53,7 +56,7 @@ $password = $_ENV['DB_PASS'];
 $conn = new mysqli($host, $username, $password, $dbname);
 
 if ($conn->connect_error) {
-    echo json_encode(["error" => "Database connection failed"]);
+    echo json_encode(["success" => false, "error" => "Database connection failed"]);
     exit();
 }
 
@@ -61,7 +64,7 @@ if ($conn->connect_error) {
 $data = json_decode(file_get_contents("php://input"), true);
 
 if (!isset($data["email"]) || !isset($data["password"])) {
-    echo json_encode(["error" => "Missing email or password"]);
+    echo json_encode(["success" => false, "error" => "Missing email or password"]);
     exit();
 }
 
@@ -78,6 +81,9 @@ if ($result->num_rows > 0) {
     $row = $result->fetch_assoc();
 
     if (password_verify($password, $row["password"])) {
+        // Új session ID generálása a session fixation támadások ellen
+        session_regenerate_id(true);
+
         // Generáljunk egy egyedi session tokent
         $sessionToken = bin2hex(random_bytes(32));
 
@@ -89,29 +95,31 @@ if ($result->num_rows > 0) {
             "user_name" => $row["username"],
             "fullname" => $row["fullname"],
             "role" => $row["role"],
-            "created_at" => $row["created_at"]
+            "created_at" => $row["created_at"],
+            "last_activity" => time()
         );
 
         // Session mentése
         session_write_close();
 
         echo json_encode([
-            "success" => "Sikeres bejelentkezés",
+            "success" => true,
+            "message" => "Sikeres bejelentkezés",
             "user" => [
                 "id" => $row["id"],
                 "fullname" => $row["fullname"],
                 "email" => $email,
                 "username" => $row["username"],
                 "role" => $row["role"],
-                "created_at" => $row["created_at"]
-            ],
-            "token" => $sessionToken
+                "created_at" => $row["created_at"],
+                "token" => $sessionToken
+            ]
         ]);
     } else {
-        echo json_encode(["error" => "Hibás felhasználónév vagy jelszó"]);
+        echo json_encode(["success" => false, "error" => "Hibás felhasználónév vagy jelszó"]);
     }
 } else {
-    echo json_encode(["error" => "Email cím nem található"]);
+    echo json_encode(["success" => false, "error" => "Email cím nem található"]);
 }
 
 $conn->close();

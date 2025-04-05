@@ -7,6 +7,8 @@ ini_set('display_errors', 1);
 ini_set('session.cookie_secure', 1);
 ini_set('session.cookie_httponly', 1);
 ini_set('session.cookie_samesite', 'None');
+ini_set('session.cookie_domain', '.edu-venture.hu');
+ini_set('session.gc_maxlifetime', 3600); // 1 óra
 session_start();
 
 header('Content-Type: application/json');
@@ -14,7 +16,8 @@ header('Content-Type: application/json');
 // CORS headers
 $allowed_origins = [
     "http://localhost:5173",
-    "https://edu-venture.hu"
+    "https://edu-venture.hu",
+    "https://www.edu-venture.hu"
 ];
 
 if (isset($_SERVER['HTTP_ORIGIN']) && in_array($_SERVER['HTTP_ORIGIN'], $allowed_origins)) {
@@ -45,10 +48,11 @@ error_log("Auth header: " . $auth_header);
 if (preg_match('/Bearer\s(\S+)/', $auth_header, $matches)) {
     $token = $matches[1];
 
-    error_log("Extracted token: " . $token);
-    error_log("Session token: " . ($_SESSION['token'] ?? 'No session token'));
-
+    // Session és token ellenőrzése
     if (isset($_SESSION["token"]) && $token === $_SESSION["token"] && isset($_SESSION["id"])) {
+        // Session frissítése
+        session_regenerate_id(true);
+
         echo json_encode([
             'success' => true,
             'user' => [
@@ -64,16 +68,12 @@ if (preg_match('/Bearer\s(\S+)/', $auth_header, $matches)) {
     }
 }
 
+// Ha nincs érvényes session vagy token, töröljük a session-t
+session_destroy();
+setcookie(session_name(), '', time() - 3600, '/');
+
 http_response_code(401);
 echo json_encode([
-    'error' => 'Unauthorized',
-    'debug' => [
-        'session_exists' => isset($_SESSION),
-        'token_exists' => isset($_SESSION["token"]),
-        'session_id' => session_id(),
-        'received_token' => $token ?? null,
-        'stored_token' => $_SESSION["token"] ?? null,
-        'auth_header' => $auth_header,
-        'session_data' => $_SESSION
-    ]
+    'success' => false,
+    'error' => 'Unauthorized'
 ]);
