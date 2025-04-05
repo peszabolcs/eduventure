@@ -48,11 +48,7 @@ function BlogCard({ article }) {
         <div className="flex justify-between items-center">
           <div className="flex items-center">
             <img
-              src={
-                author.avatar
-                  ? `${API_URL}${author.avatar}`
-                  : "/default-avatar.jpg"
-              }
+              src={author.avatar ? `${API_URL}${author.avatar}` : "/blank.webp"}
               alt={author.name}
               className="w-8 h-8 rounded-full mr-2"
             />

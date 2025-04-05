@@ -108,7 +108,7 @@ function BlogDetail() {
                 src={
                   article.author.avatar
                     ? `${API_URL}${article.author.avatar}`
-                    : "/default-avatar.jpg"
+                    : "/blank.webp"
                 }
                 alt={article.author.name}
                 className="w-10 h-10 rounded-full mr-3"
