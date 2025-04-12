@@ -131,13 +131,14 @@ function BlogEditor() {
   };
 
   const categories = [
-    { id: "it", name: "IT és Programozás" },
-    { id: "engineering", name: "Mérnöki Szakmák" },
-    { id: "medicine", name: "Orvostudomány" },
-    { id: "business", name: "Üzlet és Menedzsment" },
-    { id: "education", name: "Oktatás" },
-    { id: "arts", name: "Művészetek" },
-    { id: "science", name: "Természettudományok" },
+    { id: "it-es-programozas", name: "IT és Programozás" },
+    { id: "mernoki-szakmak", name: "Mérnöki Szakmák" },
+    { id: "orvostudomany", name: "Orvostudomány" },
+    { id: "uzlet-es-menedzsment", name: "Üzlet és Menedzsment" },
+    { id: "oktatas", name: "Oktatás" },
+    { id: "muveszetek", name: "Művészetek" },
+    { id: "termeszettudomanyok", name: "Természettudományok" },
+    { id: "palyaorientacio", name: "Pályaorientáció" },
   ];
 
   if (isLoading) {

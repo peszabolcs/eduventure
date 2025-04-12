@@ -3,6 +3,18 @@ import { formatDate } from "../utils/dateUtils";
 import { Calendar, Clock, Tag, ChevronRight, Image } from "lucide-react";
 import { useState } from "react";
 
+const categories = [
+  { id: "osszes", name: "Összes" },
+  { id: "it-es-programozas", name: "IT és Programozás" },
+  { id: "mernoki-szakmak", name: "Mérnöki Szakmák" },
+  { id: "orvostudomany", name: "Orvostudomány" },
+  { id: "uzlet-es-menedzsment", name: "Üzlet és Menedzsment" },
+  { id: "oktatas", name: "Oktatás" },
+  { id: "muveszetek", name: "Művészetek" },
+  { id: "termeszettudomanyok", name: "Természettudományok" },
+  { id: "palyaorientacio", name: "Pályaorientáció" },
+];
+
 function BlogCard({ article }) {
   const {
     id,
@@ -18,6 +30,8 @@ function BlogCard({ article }) {
 
   const formattedDate = formatDate(publishDate);
   const API_URL = import.meta.env.VITE_API_URL;
+  const categoryName =
+    categories.find((c) => c.id === category)?.name || category;
 
   const handleNextImage = (e) => {
     e.preventDefault();
@@ -75,7 +89,7 @@ function BlogCard({ article }) {
           </div>
           <div className="mt-2 flex items-center">
             <Tag className="w-4 h-4 mr-1 text-purple-300" />
-            <span className="text-purple-300">{category}</span>
+            <span className="text-purple-300">{categoryName}</span>
           </div>
         </div>
 

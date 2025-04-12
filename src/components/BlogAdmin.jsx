@@ -6,6 +6,18 @@ import { useAuth } from "./AuthContext.jsx";
 import { getAllArticles, deleteArticle } from "../services/blogService";
 import { Plus, Pencil, Trash2, Eye, Search } from "lucide-react";
 
+const categories = [
+  { id: "osszes", name: "Összes" },
+  { id: "it-es-programozas", name: "IT és Programozás" },
+  { id: "mernoki-szakmak", name: "Mérnöki Szakmák" },
+  { id: "orvostudomany", name: "Orvostudomány" },
+  { id: "uzlet-es-menedzsment", name: "Üzlet és Menedzsment" },
+  { id: "oktatas", name: "Oktatás" },
+  { id: "muveszetek", name: "Művészetek" },
+  { id: "termeszettudomanyok", name: "Természettudományok" },
+  { id: "palyaorientacio", name: "Pályaorientáció" },
+];
+
 function BlogAdmin() {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -115,7 +127,8 @@ function BlogAdmin() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className="px-2 py-1 text-xs font-semibold rounded-full bg-purple-600 text-white">
-                          {article.category}
+                          {categories.find((c) => c.id === article.category)
+                            ?.name || article.category}
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">

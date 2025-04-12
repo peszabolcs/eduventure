@@ -15,6 +15,18 @@ import { formatDate } from "../utils/dateUtils";
 import RelatedArticles from "../components/blog/RelatedArticles";
 import SocialShare from "../components/blog/SocialShare";
 
+const categories = [
+  { id: "osszes", name: "Összes" },
+  { id: "it-es-programozas", name: "IT és Programozás" },
+  { id: "mernoki-szakmak", name: "Mérnöki Szakmák" },
+  { id: "orvostudomany", name: "Orvostudomány" },
+  { id: "uzlet-es-menedzsment", name: "Üzlet és Menedzsment" },
+  { id: "oktatas", name: "Oktatás" },
+  { id: "muveszetek", name: "Művészetek" },
+  { id: "termeszettudomanyok", name: "Természettudományok" },
+  { id: "palyaorientacio", name: "Pályaorientáció" },
+];
+
 function BlogDetail() {
   const { id } = useParams();
   const [article, setArticle] = useState(null);
@@ -86,7 +98,8 @@ function BlogDetail() {
           <div className="p-6 md:p-8">
             <div className="flex flex-wrap gap-2 mb-4">
               <span className="px-3 py-1 bg-purple-600 text-white text-sm font-semibold rounded-full">
-                {article.category}
+                {categories.find((c) => c.id === article.category)?.name ||
+                  article.category}
               </span>
               {article.tags &&
                 article.tags.map((tag) => (
