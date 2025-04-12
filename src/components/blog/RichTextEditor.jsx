@@ -38,13 +38,85 @@ function RichTextEditor({ initialValue, onChange, error }) {
             "code",
             "help",
             "wordcount",
-            // "directionality",
+            "imagetools",
+            "image",
+            "media",
+            "imagetools",
+            "textpattern",
+            "template",
+            "visualchars",
+            "nonbreaking",
+            "emoticons",
+            "advlist",
+            "autoresize",
+            "directionality",
           ],
           toolbar:
             "undo redo | blocks | " +
             "bold italic underline strikethrough | alignleft aligncenter " +
             "alignright alignjustify | bullist numlist outdent indent | " +
-            "removeformat | help",
+            "removeformat | image media | template | " +
+            "help",
+          image_advtab: true,
+          image_title: true,
+          image_caption: true,
+          image_uploadtab: true,
+          image_class_list: [
+            { title: "None", value: "" },
+            { title: "Full Width", value: "full-width" },
+            { title: "Left Align", value: "left-align" },
+            { title: "Right Align", value: "right-align" },
+            { title: "Gallery", value: "gallery-image" },
+          ],
+          image_dimensions: true,
+          image_description: true,
+          image_upload_url: "/api/upload",
+          image_prepend_url: import.meta.env.VITE_API_URL,
+          image_list: [],
+          image_upload_handler: function (blobInfo, progress) {
+            return new Promise((resolve, reject) => {
+              const xhr = new XMLHttpRequest();
+              xhr.withCredentials = false;
+              xhr.open("POST", "/api/upload");
+
+              xhr.upload.onprogress = (e) => {
+                progress((e.loaded / e.total) * 100);
+              };
+
+              xhr.onload = function () {
+                if (xhr.status === 403) {
+                  reject({
+                    message: "Error 403: Upload forbidden",
+                    remove: true,
+                  });
+                  return;
+                }
+
+                if (xhr.status < 200 || xhr.status >= 300) {
+                  reject("Error: Image upload failed");
+                  return;
+                }
+
+                const json = JSON.parse(xhr.responseText);
+
+                if (!json || typeof json.location != "string") {
+                  reject("Invalid JSON: " + xhr.responseText);
+                  return;
+                }
+
+                resolve(json.location);
+              };
+
+              xhr.onerror = function () {
+                reject("Image upload failed due to a XHR Transport error");
+              };
+
+              const formData = new FormData();
+              formData.append("file", blobInfo.blob(), blobInfo.filename());
+
+              xhr.send(formData);
+            });
+          },
           content_style: `
             body { 
               font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;

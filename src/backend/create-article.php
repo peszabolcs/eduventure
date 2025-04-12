@@ -97,7 +97,7 @@ if ($stmt->execute()) {
             'content' => $row['content'],
             'category' => $row['category'],
             'tags' => json_decode($row['tags']),
-            'image' => $row['image'],
+            'images' => [$row['image']],
             'publishDate' => $row['created_at'],
             'readTime' => $row['read_time'],
             'author' => [

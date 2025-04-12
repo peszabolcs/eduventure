@@ -53,7 +53,7 @@ function RelatedArticles({ currentArticleId, category }) {
             className="bg-white bg-opacity-10 backdrop-blur-sm rounded-lg overflow-hidden transition-all duration-300 hover:transform hover:scale-105"
           >
             <img
-              src={article.image || "/placeholder.jpg"}
+              src={article.images?.[0] || "/placeholder.jpg"}
               alt={article.title}
               className="w-full h-40 object-cover"
             />

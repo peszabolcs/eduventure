@@ -78,7 +78,7 @@ function BlogDetail() {
 
         <article className="bg-white bg-opacity-10 backdrop-blur-sm rounded-lg overflow-hidden">
           <img
-            src={article.image || "/placeholder.jpg"}
+            src={article.images?.[0] || "/placeholder.jpg"}
             alt={article.title}
             className="w-full h-64 md:h-96 object-cover"
           />

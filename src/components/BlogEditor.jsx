@@ -21,7 +21,7 @@ function BlogEditor() {
     content: "",
     category: "",
     tags: "",
-    image: "",
+    images: [],
     readTime: 5,
   });
 
@@ -42,7 +42,7 @@ function BlogEditor() {
             content: article.content,
             category: article.category,
             tags: article.tags ? article.tags.join(", ") : "",
-            image: article.image,
+            images: article.images || [],
             readTime: article.readTime,
           });
           setEditorKey((prev) => prev + 1);
