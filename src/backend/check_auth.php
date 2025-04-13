@@ -1,15 +1,8 @@
 <?php
 require 'vendor/autoload.php';
+require 'session.php';
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
-
-// Session beállítások
-ini_set('session.cookie_secure', 1);
-ini_set('session.cookie_httponly', 1);
-ini_set('session.cookie_samesite', 'None');
-ini_set('session.cookie_domain', '.edu-venture.hu');
-ini_set('session.gc_maxlifetime', 3600); // 1 óra
-session_start();
 
 header('Content-Type: application/json');
 
@@ -34,25 +27,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit();
 }
 
-// Debug log minden header
-error_log("All headers: " . print_r(getallheaders(), true));
-error_log("REQUEST_METHOD: " . $_SERVER['REQUEST_METHOD']);
-error_log("HTTP_AUTHORIZATION: " . (isset($_SERVER['HTTP_AUTHORIZATION']) ? $_SERVER['HTTP_AUTHORIZATION'] : 'Not set'));
-
 // Token ellenőrzése
 $headers = getallheaders();
 $auth_header = isset($headers['Authorization']) ? $headers['Authorization'] : (isset($_SERVER['HTTP_AUTHORIZATION']) ? $_SERVER['HTTP_AUTHORIZATION'] : '');
 
 error_log("Auth header: " . $auth_header);
+error_log("Session data: " . print_r($_SESSION, true));
 
 if (preg_match('/Bearer\s(\S+)/', $auth_header, $matches)) {
     $token = $matches[1];
 
     // Session és token ellenőrzése
-    if (isset($_SESSION["token"]) && $token === $_SESSION["token"] && isset($_SESSION["id"])) {
-        // Session frissítése
-        session_regenerate_id(true);
-
+    if (validateSession() && isset($_SESSION["token"]) && $token === $_SESSION["token"]) {
         echo json_encode([
             'success' => true,
             'user' => [
@@ -70,7 +56,6 @@ if (preg_match('/Bearer\s(\S+)/', $auth_header, $matches)) {
 
 // Ha nincs érvényes session vagy token, töröljük a session-t
 session_destroy();
-setcookie(session_name(), '', time() - 3600, '/');
 
 http_response_code(401);
 echo json_encode([

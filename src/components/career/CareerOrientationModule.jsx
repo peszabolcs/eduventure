@@ -25,76 +25,20 @@ const SignupPromptModal = ({ isOpen, onClose, onSignup, results }) => {
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.9, opacity: 0 }}
-        className="bg-gradient-to-br from-indigo-900/90 to-purple-900/90 backdrop-blur-lg rounded-2xl p-8 max-w-lg w-full border border-purple-500/20 shadow-xl"
+        className="bg-gradient-to-br from-[#312e81] to-[#581c87] to-[#831843] rounded-2xl p-8 max-w-lg w-full shadow-xl"
       >
-        <div className="text-center mb-6">
-          <h3 className="text-2xl font-bold text-white mb-4">
-            Gratulálunk a teszt kitöltéséhez! 🎉
-          </h3>
-          <p className="text-purple-200 mb-4">
-            A részletes eredmények megtekintéséhez és az eredmények későbbi
-            eléréséhez hozz létre egy fiókot vagy jelentkezz be!
-          </p>
-          <div className="bg-purple-500/10 rounded-lg p-4 mb-6">
-            <p className="text-purple-300 text-sm">
-              A fiók létrehozásával az alábbi előnyöket élvezheted:
-            </p>
-            <ul className="text-left mt-3 space-y-2">
-              <li className="flex items-center text-purple-200">
-                <svg
-                  className="w-5 h-5 mr-2 text-green-400"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M5 13l4 4L19 7"
-                  />
-                </svg>
-                Részletes karrierelemzés és személyiségprofil
-              </li>
-              <li className="flex items-center text-purple-200">
-                <svg
-                  className="w-5 h-5 mr-2 text-green-400"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M5 13l4 4L19 7"
-                  />
-                </svg>
-                Eredmények mentése és későbbi megtekintése
-              </li>
-              <li className="flex items-center text-purple-200">
-                <svg
-                  className="w-5 h-5 mr-2 text-green-400"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M5 13l4 4L19 7"
-                  />
-                </svg>
-                Személyre szabott karriertanácsok
-              </li>
-            </ul>
-          </div>
-        </div>
-        <div className="flex flex-col gap-3">
+        <h2 className="text-2xl font-bold text-white mb-4">
+          Mentsd el az eredményeidet!
+        </h2>
+        <p className="text-purple-200 mb-6">
+          Hozz létre egy fiókot, hogy elmentsd az eredményeidet és később is
+          elérhesd őket. A fiók létrehozása után azonnal láthatod a teljes
+          eredményeket.
+        </p>
+        <div className="space-y-4">
           <button
             onClick={onSignup}
-            className="w-full py-3 px-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg font-medium hover:from-purple-700 hover:to-indigo-700 transition-all duration-300 transform hover:scale-105"
+            className="w-full py-3 px-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg font-medium hover:from-purple-700 hover:to-indigo-700 transition-all duration-300"
           >
             Fiók létrehozása
           </button>
@@ -167,6 +111,9 @@ const CareerOrientationModule = () => {
           // Clear stored results after saving
           localStorage.removeItem("tempCareerResults");
           localStorage.removeItem("tempCareerAnswers");
+        } else {
+          // Only show signup prompt if user is not logged in
+          setShowSignupPrompt(true);
         }
       } catch (error) {
         console.error("Error processing stored results:", error);
@@ -241,8 +188,6 @@ const CareerOrientationModule = () => {
           console.error("Failed to save career results:", data.error);
           alert("Hiba történt az eredmények mentése közben: " + data.error);
         }
-      } else {
-        // alert("Az eredmények sikeresen elmentve!");
       }
     } catch (error) {
       console.error("Error saving career results:", error);
@@ -528,6 +473,10 @@ const CareerOrientationModule = () => {
       },
     };
 
+    const token =
+      localStorage.getItem("token") || sessionStorage.getItem("token");
+    const isLoggedIn = !!token;
+
     return (
       <>
         <CareerResults
@@ -537,12 +486,14 @@ const CareerOrientationModule = () => {
           onRecommendedPaths={handleRecommendedPaths}
           isSaving={isSaving}
         />
-        <SignupPromptModal
-          isOpen={showSignupPrompt}
-          onClose={() => setShowSignupPrompt(false)}
-          onSignup={handleSignup}
-          results={validatedResults}
-        />
+        {!isLoggedIn && (
+          <SignupPromptModal
+            isOpen={showSignupPrompt}
+            onClose={() => setShowSignupPrompt(false)}
+            onSignup={handleSignup}
+            results={validatedResults}
+          />
+        )}
       </>
     );
   }

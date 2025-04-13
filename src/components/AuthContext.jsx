@@ -61,8 +61,7 @@ export const AuthProvider = ({ children }) => {
   // Session ellenőrzés
   const validateSession = async () => {
     try {
-      const token =
-        localStorage.getItem("token") || sessionStorage.getItem("token");
+      const token = localStorage.getItem("token");
       if (!token) {
         logout();
         return false;
@@ -91,11 +90,8 @@ export const AuthProvider = ({ children }) => {
       const userData = data.user;
       if (JSON.stringify(user) !== JSON.stringify(userData)) {
         setUser(userData);
-        if (cookieConsentStatus === COOKIE_STATUS.ACCEPT_ALL) {
-          localStorage.setItem("user", JSON.stringify(userData));
-        } else {
-          sessionStorage.setItem("user", JSON.stringify(userData));
-        }
+        localStorage.setItem("user", JSON.stringify(userData));
+        setIsAuthenticated(true);
       }
 
       return true;
@@ -106,69 +102,44 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Kezdeti session validáció és adatok betöltése
+  useEffect(() => {
+    const initializeAuth = async () => {
+      setLoading(true);
+      try {
+        const savedUser = localStorage.getItem("user");
+        const token = localStorage.getItem("token");
+
+        if (savedUser && token) {
+          setUser(JSON.parse(savedUser));
+          setIsAuthenticated(true);
+
+          // Validáljuk a session-t
+          const isValid = await validateSession();
+          if (!isValid) {
+            logout();
+          }
+        }
+      } catch (error) {
+        console.error("Error initializing auth:", error);
+        logout();
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    initializeAuth();
+  }, []);
+
   // Rendszeres session ellenőrzés (5 percenként)
   useEffect(() => {
-    if (user) {
+    if (isAuthenticated) {
       const interval = setInterval(validateSession, 5 * 60 * 1000);
       return () => clearInterval(interval);
     }
-  }, [user]);
+  }, [isAuthenticated]);
 
-  useEffect(() => {
-    // Frissítjük a cookie állapotot, amikor az komponens betöltődik
-    const cookieStatus = localStorage.getItem("cookieConsent");
-    setCookieConsentStatus(cookieStatus);
-
-    // Süti beállítások alapján betöltjük a felhasználói adatokat
-    loadUserData(cookieStatus);
-
-    // Kezdeti session validáció
-    const initialValidation = async () => {
-      const isValid = await validateSession();
-      if (!isValid && user) {
-        logout();
-      }
-      setLoading(false);
-    };
-
-    initialValidation();
-  }, []);
-
-  // Betölti a felhasználói adatokat a megfelelő helyről a süti beállítások alapján
-  const loadUserData = (cookieStatus) => {
-    if (cookieStatus === COOKIE_STATUS.ACCEPT_ALL) {
-      // Ha minden sütit elfogadott, a localStorage-ból töltjük be (tartós)
-      const savedUser = localStorage.getItem("user");
-      if (savedUser) {
-        setUser(JSON.parse(savedUser));
-      }
-    } else if (cookieStatus === COOKIE_STATUS.ESSENTIAL_ONLY) {
-      // Ha csak a kötelező sütiket fogadta el, a sessionStorage-ból töltjük (ideiglenes)
-      const savedUser = sessionStorage.getItem("user");
-      if (savedUser) {
-        setUser(JSON.parse(savedUser));
-      }
-    }
-  };
-
-  // Süti állapot változásának figyelése
-  useEffect(() => {
-    const handleStorageChange = (e) => {
-      if (e.key === "cookieConsent") {
-        const newValue = e.newValue;
-        setCookieConsentStatus(newValue);
-
-        // Ha változott a süti beállítás, frissítjük a felhasználói adatokat
-        loadUserData(newValue);
-      }
-    };
-
-    window.addEventListener("storage", handleStorageChange);
-    return () => {
-      window.removeEventListener("storage", handleStorageChange);
-    };
-  }, []);
-
+  // Function to handle login
   const login = async (email, password) => {
     try {
       const response = await fetch(`${API_URL}/backend/login.php`, {
@@ -181,29 +152,17 @@ export const AuthProvider = ({ children }) => {
       });
 
       const data = await response.json();
-
       if (data.success) {
-        const userData = data.user;
-        const token = userData.token;
-
-        // Store token and user data based on cookie preferences
-        if (cookieConsentStatus === COOKIE_STATUS.ACCEPT_ALL) {
-          localStorage.setItem("token", token);
-          localStorage.setItem("user", JSON.stringify(userData));
-        } else {
-          sessionStorage.setItem("token", token);
-          sessionStorage.setItem("user", JSON.stringify(userData));
-        }
-
+        // Always store token in localStorage for persistence
+        localStorage.setItem("token", data.user.token);
+        localStorage.setItem("user", JSON.stringify(data.user));
         setIsAuthenticated(true);
-        setUser(userData);
+        setUser(data.user);
 
-        // Save stored career results and return success with navigation info
-        const savedResults = await saveStoredCareerResults();
-        return {
-          success: true,
-          shouldNavigateToCareerTest: savedResults,
-        };
+        // Check for and save any stored career results
+        await saveStoredCareerResults();
+
+        return { success: true };
       } else {
         return { success: false, error: data.error };
       }

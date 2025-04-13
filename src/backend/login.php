@@ -1,20 +1,8 @@
 <?php
 require 'vendor/autoload.php';
+require 'session.php';
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
-
-// Session beállítások
-ini_set('session.cookie_secure', 1);
-ini_set('session.cookie_httponly', 1);
-ini_set('session.cookie_samesite', 'None');
-ini_set('session.cookie_domain', '.edu-venture.hu');
-ini_set('session.gc_maxlifetime', 3600); // 1 óra
-
-// Régi session törlése és új indítása
-if (session_status() === PHP_SESSION_ACTIVE) {
-    session_destroy();
-}
-session_start();
 
 // .env betöltése
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
@@ -81,9 +69,6 @@ if ($result->num_rows > 0) {
     $row = $result->fetch_assoc();
 
     if (password_verify($password, $row["password"])) {
-        // Új session ID generálása a session fixation támadások ellen
-        session_regenerate_id(true);
-
         // Generáljunk egy egyedi session tokent
         $sessionToken = bin2hex(random_bytes(32));
 
