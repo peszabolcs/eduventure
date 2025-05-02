@@ -1,7 +1,17 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
-import { Star, Search, Users, Clock, Filter } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  Star,
+  Search,
+  Users,
+  Clock,
+  Filter,
+  BadgeCheck,
+  ChevronRight,
+  Sparkles,
+  Award,
+} from "lucide-react";
 
 // Sample experts data - would come from an API in a real application
 const EXPERTS = [
@@ -124,12 +134,43 @@ const ALL_SPECIALIZATIONS = [
   "Vállalkozásfejlesztés",
 ];
 
+// Category groups for better organization
+const SPECIALIZATION_CATEGORIES = [
+  {
+    name: "Pályaválasztás",
+    icon: <BadgeCheck className="h-4 w-4" />,
+    items: ["Pályaorientáció", "Karrierváltás", "Vezetői készségfejlesztés"],
+  },
+  {
+    name: "Tanulás",
+    icon: <Sparkles className="h-4 w-4" />,
+    items: [
+      "Önismeret",
+      "Motiváció",
+      "Tanulási stratégiák",
+      "Nyelvi felkészítés",
+    ],
+  },
+  {
+    name: "Szakmai területek",
+    icon: <Award className="h-4 w-4" />,
+    items: [
+      "IT karrierutak",
+      "Mérnöki pályák",
+      "Gazdasági pályák",
+      "Pénzügyi karrier",
+    ],
+  },
+];
+
 const ExpertsListPage = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedSpecializations, setSelectedSpecializations] = useState([]);
   const [showFilters, setShowFilters] = useState(false);
   const [filteredExperts, setFilteredExperts] = useState(EXPERTS);
+  const [activeCategory, setActiveCategory] = useState(null);
+  const [hoveredExpertId, setHoveredExpertId] = useState(null);
 
   // Handle search and filter changes
   useEffect(() => {
@@ -171,6 +212,11 @@ const ExpertsListPage = () => {
     });
   };
 
+  const clearFilters = () => {
+    setSearchQuery("");
+    setSelectedSpecializations([]);
+  };
+
   // Generate star rating display
   const renderStars = (rating) => {
     return Array.from({ length: 5 }).map((_, index) => (
@@ -192,185 +238,371 @@ const ExpertsListPage = () => {
     navigate(`/szakerto/${id}`);
   };
 
+  // Animation variants
+  const cardVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: (i) => ({
+      opacity: 1,
+      y: 0,
+      transition: {
+        delay: i * 0.05,
+        duration: 0.5,
+        ease: "easeOut",
+      },
+    }),
+    hover: {
+      scale: 1.02,
+      boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1)",
+      transition: { duration: 0.2 },
+    },
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 py-16 px-4 sm:px-6 lg:px-8">
-      {/* Animated background blobs */}
+    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 py-8 px-4 sm:px-6 lg:px-8">
+      {/* Enhanced animated background blobs with more variety - made smaller */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-blob"></div>
-        <div className="absolute top-1/2 right-1/4 w-96 h-96 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-blob animation-delay-2000"></div>
-        <div className="absolute bottom-1/4 left-1/2 w-96 h-96 bg-pink-500 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-blob animation-delay-4000"></div>
+        <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-blob"></div>
+        <div className="absolute top-1/2 right-1/4 w-56 h-56 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
+        <div className="absolute bottom-1/4 left-1/2 w-64 h-64 bg-pink-500 rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-blob animation-delay-4000"></div>
+        <div className="absolute bottom-1/3 right-1/3 w-48 h-48 bg-indigo-500 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-3000"></div>
       </div>
 
-      <div className="container mx-auto max-w-6xl relative z-10 pt-16">
+      <div className="container mx-auto max-w-6xl relative z-10 pt-24">
+        {/* Added pt-24 above to account for the fixed header height */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="text-center mb-12"
+          transition={{ duration: 0.5, ease: "easeOut" }}
+          className="text-center mb-6"
         >
-          <h1 className="text-4xl sm:text-5xl font-bold text-white mb-4">
-            Szakértők
-          </h1>
-          <p className="text-xl text-purple-200 max-w-3xl mx-auto">
+          <motion.h1
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="text-3xl sm:text-4xl font-bold text-white mb-3 tracking-tight"
+          >
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-300 via-white to-purple-300">
+              Szakértőink
+            </span>
+          </motion.h1>
+
+          <motion.p
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="text-base text-purple-200 max-w-3xl mx-auto"
+          >
             Találj személyre szabott tanácsadást és támogatást pályaválasztási,
-            tanulási és karrierkérdésekben.
-          </p>
+            tanulási és karrierkérdésekben a legjobb szakértőinktől.
+          </motion.p>
         </motion.div>
 
-        {/* Search and Filters */}
+        {/* Search and Filters - made more compact */}
         <motion.div
-          initial={{ opacity: 0, y: 10 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-          className="bg-white/10 backdrop-blur-lg rounded-xl p-6 mb-8 border border-white/20"
+          transition={{ duration: 0.4, delay: 0.1 }}
+          className="bg-white/10 backdrop-blur-lg rounded-xl p-4 mb-6 border border-white/20 shadow-lg"
         >
-          <div className="flex flex-col md:flex-row gap-4 items-center mb-4">
+          <div className="flex flex-col md:flex-row gap-3 items-center mb-3">
             {/* Search input */}
             <div className="relative flex-grow">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Search className="h-5 w-5 text-purple-300" />
+                <Search className="h-4 w-4 text-purple-300" />
               </div>
               <input
                 type="text"
                 placeholder="Keresés név vagy szakterület alapján..."
-                className="block w-full bg-white/5 border border-white/20 rounded-lg pl-10 py-3 text-white placeholder-purple-300 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent"
+                className="block w-full bg-white/5 border border-white/20 rounded-lg pl-10 py-2.5 text-white placeholder-purple-300 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent transition-all duration-300"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery("")}
+                  className="absolute inset-y-0 right-0 pr-4 flex items-center text-purple-300 hover:text-white"
+                >
+                  ✕
+                </button>
+              )}
             </div>
 
             {/* Filter toggle button */}
-            <button
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
               onClick={() => setShowFilters(!showFilters)}
-              className="flex items-center gap-2 bg-white/10 hover:bg-white/15 text-white px-5 py-3 rounded-lg transition-colors border border-white/20"
+              className="flex items-center gap-2 bg-gradient-to-r from-purple-600/80 to-indigo-600/80 text-white px-4 py-2.5 rounded-lg transition-all duration-300 hover:from-purple-500 hover:to-indigo-500 shadow-md hover:shadow-lg border border-white/20"
             >
-              <Filter className="h-5 w-5" />
+              <Filter className="h-4 w-4" />
               Szűrők {showFilters ? "elrejtése" : "mutatása"}
-            </button>
+            </motion.button>
           </div>
 
-          {/* Filters */}
-          {showFilters && (
-            <div className="mt-4 pt-4 border-t border-white/10">
-              <h3 className="text-white font-medium mb-3">Szakterületek</h3>
-              <div className="flex flex-wrap gap-2">
-                {ALL_SPECIALIZATIONS.map((spec) => (
-                  <button
-                    key={spec}
-                    onClick={() => handleSpecializationToggle(spec)}
-                    className={`px-3 py-1.5 rounded-full text-sm transition-colors ${
-                      selectedSpecializations.includes(spec)
-                        ? "bg-purple-600 text-white"
-                        : "bg-white/10 text-purple-200 hover:bg-white/15"
-                    }`}
-                  >
-                    {spec}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
+          {/* Enhanced Filters */}
+          <AnimatePresence>
+            {showFilters && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.3 }}
+                className="overflow-hidden"
+              >
+                <div className="mt-3 pt-3 border-t border-white/10">
+                  <div className="flex justify-between items-center mb-3">
+                    <h3 className="text-white font-medium text-base">
+                      Szakterületek
+                    </h3>
+                    {selectedSpecializations.length > 0 && (
+                      <button
+                        onClick={clearFilters}
+                        className="text-xs text-purple-300 hover:text-white transition-colors"
+                      >
+                        Összes törlése
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Category-based filter UI - made more compact */}
+                  <div className="mb-3">
+                    <div className="flex flex-wrap gap-2 mb-3">
+                      {SPECIALIZATION_CATEGORIES.map((category) => (
+                        <button
+                          key={category.name}
+                          onClick={() =>
+                            setActiveCategory(
+                              activeCategory === category.name
+                                ? null
+                                : category.name
+                            )
+                          }
+                          className={`px-3 py-1.5 rounded-lg flex items-center gap-1.5 text-xs transition-all ${
+                            activeCategory === category.name
+                              ? "bg-purple-600 text-white"
+                              : "bg-white/10 text-purple-200 hover:bg-white/15"
+                          }`}
+                        >
+                          {category.icon}
+                          {category.name}
+                          <ChevronRight
+                            className={`h-3 w-3 transition-transform ${
+                              activeCategory === category.name
+                                ? "rotate-90"
+                                : ""
+                            }`}
+                          />
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto custom-scrollbar pr-2">
+                    {ALL_SPECIALIZATIONS.map((spec) => {
+                      // Only show all specs or those in active category
+                      const shouldShow =
+                        !activeCategory ||
+                        SPECIALIZATION_CATEGORIES.find(
+                          (cat) => cat.name === activeCategory
+                        )?.items.includes(spec);
+
+                      if (!shouldShow) return null;
+
+                      return (
+                        <motion.button
+                          key={spec}
+                          onClick={() => handleSpecializationToggle(spec)}
+                          whileHover={{ scale: 1.03 }}
+                          whileTap={{ scale: 0.97 }}
+                          className={`px-2.5 py-1 rounded-full text-xs transition-all ${
+                            selectedSpecializations.includes(spec)
+                              ? "bg-gradient-to-r from-purple-500 to-indigo-500 text-white shadow-md"
+                              : "bg-white/10 text-purple-200 hover:bg-white/15"
+                          }`}
+                        >
+                          {spec}
+                          {selectedSpecializations.includes(spec) && (
+                            <span className="ml-1">✓</span>
+                          )}
+                        </motion.button>
+                      );
+                    })}
+                  </div>
+
+                  {/* Result count */}
+                  <div className="mt-2 text-xs text-purple-200">
+                    {filteredExperts.length === 1
+                      ? "1 szakértő találat"
+                      : `${filteredExperts.length} szakértő találat`}
+
+                    {selectedSpecializations.length > 0 && (
+                      <span>
+                        {" "}
+                        ({selectedSpecializations.length} aktív szűrő)
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </motion.div>
 
         {/* Experts List */}
-        <div className="space-y-6">
-          {filteredExperts.length === 0 ? (
-            <div className="bg-white/10 backdrop-blur-lg rounded-xl p-8 text-center border border-white/20">
-              <h3 className="text-xl text-white mb-2">Nincs találat</h3>
-              <p className="text-purple-200">
-                Próbáld meg módosítani a keresési feltételeket a találatok
-                megjelenítéséhez.
-              </p>
-            </div>
-          ) : (
-            filteredExperts.map((expert, index) => (
+        <div className="space-y-3">
+          <AnimatePresence>
+            {filteredExperts.length === 0 ? (
               <motion.div
-                key={expert.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: index * 0.1 }}
-                className="bg-white/10 backdrop-blur-lg rounded-xl p-5 border border-white/20 hover:bg-white/15 transition-colors cursor-pointer"
-                onClick={() => handleViewExpert(expert.id)}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="bg-white/10 backdrop-blur-lg rounded-xl p-6 text-center border border-white/20 shadow-lg"
               >
-                <div className="md:flex items-center">
-                  {/* Expert photo */}
-                  <div className="md:w-1/6 flex justify-center mb-4 md:mb-0">
-                    <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-white/30">
-                      <img
-                        src={expert.photo || "/placeholder-expert.jpg"}
-                        alt={expert.name}
-                        className="w-full h-full object-cover"
-                        onError={(e) => {
-                          e.target.src = "/placeholder-expert.jpg";
-                        }}
-                      />
-                    </div>
-                  </div>
-
-                  {/* Expert info */}
-                  <div className="md:w-3/6 md:pl-4">
-                    <h2 className="text-xl font-semibold text-white">
-                      {expert.name}
-                    </h2>
-                    <p className="text-purple-300 mb-2">{expert.title}</p>
-
-                    <div className="flex items-center gap-4 text-sm text-purple-200 mb-3">
-                      <div className="flex items-center">
-                        <Clock className="h-4 w-4 mr-1" />
-                        {expert.experience}
-                      </div>
-                      <div className="flex items-center">
-                        <Users className="h-4 w-4 mr-1" />
-                        {expert.reviewCount} értékelés
-                      </div>
-                    </div>
-
-                    <div className="flex flex-wrap gap-2 mb-3 md:mb-0">
-                      {expert.specializations.slice(0, 3).map((spec, index) => (
-                        <span
-                          key={index}
-                          className="px-2 py-1 bg-purple-500/30 text-white rounded-full text-xs"
-                        >
-                          {spec}
-                        </span>
-                      ))}
-                      {expert.specializations.length > 3 && (
-                        <span className="px-2 py-1 bg-purple-500/20 text-white rounded-full text-xs">
-                          +{expert.specializations.length - 3} további
-                        </span>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Rating and price */}
-                  <div className="md:w-2/6 flex flex-col items-start md:items-end mt-4 md:mt-0">
-                    <div className="flex items-center mb-2">
-                      <div className="flex mr-2">
-                        {renderStars(expert.rating)}
-                      </div>
-                      <span className="text-white font-medium">
-                        {expert.rating}
-                      </span>
-                    </div>
-
-                    <p className="text-purple-200 text-sm mb-3">
-                      {expert.availability}
-                    </p>
-                    <p className="text-white font-medium">
-                      {expert.hourlyRate}
-                    </p>
-                  </div>
+                <div className="inline-flex justify-center items-center w-12 h-12 bg-purple-600/30 rounded-full mb-3">
+                  <Search className="h-6 w-6 text-purple-200" />
                 </div>
-
-                {/* Expert intro - only shown on mobile */}
-                <div className="mt-4 md:hidden">
-                  <p className="text-purple-100 text-sm line-clamp-2">
-                    {expert.introduction}
-                  </p>
-                </div>
+                <h3 className="text-xl text-white mb-2">Nincs találat</h3>
+                <p className="text-purple-200 text-sm">
+                  Próbáld meg módosítani a keresési feltételeket a találatok
+                  megjelenítéséhez.
+                </p>
+                <button
+                  onClick={clearFilters}
+                  className="mt-3 px-4 py-1.5 bg-purple-600/50 hover:bg-purple-600/70 text-white rounded-lg transition-colors text-sm"
+                >
+                  Szűrők törlése
+                </button>
               </motion.div>
-            ))
-          )}
+            ) : (
+              <div className="grid grid-cols-1 gap-3">
+                {filteredExperts.map((expert, index) => (
+                  <motion.div
+                    key={expert.id}
+                    custom={index}
+                    initial="hidden"
+                    animate="visible"
+                    variants={cardVariants}
+                    whileHover="hover"
+                    onClick={() => handleViewExpert(expert.id)}
+                    onMouseEnter={() => setHoveredExpertId(expert.id)}
+                    onMouseLeave={() => setHoveredExpertId(null)}
+                    className="bg-white/10 backdrop-blur-lg rounded-xl overflow-hidden border border-white/20 shadow-lg transition-all cursor-pointer relative group"
+                  >
+                    {/* Subtle hover effect overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-purple-600/0 via-purple-600/0 to-indigo-600/0 opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
+
+                    <div className="p-3">
+                      <div className="md:flex items-center">
+                        {/* Expert photo with enhanced styling - made smaller */}
+                        <div className="md:w-1/6 flex justify-center mb-3 md:mb-0">
+                          <motion.div
+                            className="w-16 h-16 rounded-full overflow-hidden border-2 border-white/30 relative shadow-md"
+                            whileHover={{ scale: 1.05 }}
+                          >
+                            <div className="absolute inset-0 bg-gradient-to-br from-purple-500/30 to-indigo-500/30 mix-blend-overlay"></div>
+                            <img
+                              src={expert.photo || "/placeholder-expert.jpg"}
+                              alt={expert.name}
+                              className="w-full h-full object-cover"
+                              onError={(e) => {
+                                e.target.src = "/placeholder-expert.jpg";
+                              }}
+                            />
+                          </motion.div>
+                        </div>
+
+                        {/* Expert info with better typography and spacing - made more compact */}
+                        <div className="md:w-3/6 md:pl-4">
+                          <h2 className="text-lg font-semibold text-white mb-0.5 group-hover:text-purple-200 transition-colors">
+                            {expert.name}
+                          </h2>
+                          <p className="text-purple-300 mb-1.5 text-sm">
+                            {expert.title}
+                          </p>
+
+                          <div className="flex flex-wrap items-center gap-2 text-xs text-purple-200 mb-2">
+                            <div className="flex items-center bg-white/5 px-2 py-0.5 rounded-full">
+                              <Clock className="h-3 w-3 mr-1 text-purple-300" />
+                              {expert.experience}
+                            </div>
+                            <div className="flex items-center bg-white/5 px-2 py-0.5 rounded-full">
+                              <Users className="h-3 w-3 mr-1 text-purple-300" />
+                              {expert.reviewCount} értékelés
+                            </div>
+                          </div>
+
+                          <div className="flex flex-wrap gap-1.5 mb-2 md:mb-0">
+                            {expert.specializations
+                              .slice(0, 3)
+                              .map((spec, index) => (
+                                <span
+                                  key={index}
+                                  className="px-2 py-0.5 bg-purple-500/20 text-white rounded-full text-xs backdrop-blur-md border border-white/10"
+                                >
+                                  {spec}
+                                </span>
+                              ))}
+                            {expert.specializations.length > 3 && (
+                              <span className="px-2 py-0.5 bg-white/10 text-purple-200 rounded-full text-xs">
+                                +{expert.specializations.length - 3}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Rating and price with enhanced visuals - more compact */}
+                        <div className="md:w-2/6 flex flex-col items-start md:items-end mt-2 md:mt-0 md:border-l border-white/10 md:pl-3">
+                          <div className="flex items-center mb-1.5 bg-white/5 px-2 py-1 rounded-lg">
+                            <div className="flex mr-1">
+                              {renderStars(expert.rating)}
+                            </div>
+                            <span className="text-white font-medium text-sm">
+                              {expert.rating}
+                            </span>
+                          </div>
+
+                          <p className="text-purple-300 text-xs mb-1.5 bg-white/5 px-2 py-1 rounded-lg inline-flex items-center">
+                            <Clock className="h-3 w-3 mr-1.5 text-purple-400" />
+                            {expert.availability.replace(
+                              "Következő szabad időpont: ",
+                              ""
+                            )}
+                          </p>
+
+                          <div className="flex items-center bg-gradient-to-r from-purple-600/30 to-indigo-600/30 px-2 py-1 rounded-lg border border-white/10">
+                            <p className="text-white font-medium text-sm">
+                              {expert.hourlyRate}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Expert intro with better formatting - more compact */}
+                      <div className="mt-2 pt-2 border-t border-white/10">
+                        <p className="text-purple-100 text-xs line-clamp-2 italic">
+                          "{expert.introduction}"
+                        </p>
+
+                        {/* View profile prompt */}
+                        <motion.div
+                          className="mt-1 flex justify-end"
+                          initial={{ opacity: 0.5 }}
+                          animate={{
+                            opacity: hoveredExpertId === expert.id ? 1 : 0.5,
+                          }}
+                        >
+                          <span className="text-purple-300 text-xs flex items-center">
+                            Profil megtekintése
+                            <ChevronRight className="h-3 w-3 ml-1" />
+                          </span>
+                        </motion.div>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
     </div>
