@@ -22,7 +22,8 @@ import PrivacyPolicy from "./components/PrivacyPolicy.jsx";
 // Pályaorientációs modul importálása
 import CareerOrientationModule from "./components/career/CareerOrientationModule.jsx";
 // Egyetemi oldal importálása
-import UniversitiesPage from "./components/universities/UniversitiesPage.jsx";
+import UniversitiesPage from "./components/universities/UniversitiesPage.jsx"; // Correct import
+import UniversityDetailPage from "./components/universities/UniversityDetailPage.jsx";
 // Szakértői oldalak importálása
 import ExpertsListPage from "./components/experts/ExpertsListPage.jsx";
 import ExpertProfilePage from "./components/experts/ExpertProfilePage.jsx";
@@ -115,7 +116,9 @@ function App() {
                 element={<CareerOrientationModule />}
               />
               {/* Egyetemi oldal útvonal */}
-              <Route path="/egyetemek" element={<UniversitiesPage />} />
+              <Route path="/egyetemek" element={<UniversitiesPage />} />{" "}
+              {/* Use the original page */}
+              <Route path="/egyetem/:id" element={<UniversityDetailPage />} />
               {/* Szakértői oldalak útvonalai */}
               <Route path="/szakerto-kereso" element={<ExpertsListPage />} />
               <Route path="/szakerto/:id" element={<ExpertProfilePage />} />

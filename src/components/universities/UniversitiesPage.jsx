@@ -26,7 +26,50 @@ const UNIVERSITIES = [
       "Magyarország legrégebbi, folyamatosan működő egyeteme, széles képzési palettával.",
     students: 26000,
     foundedYear: 1635,
-    faculties: 8,
+    faculties: [
+      {
+        name: "Állam- és Jogtudományi Kar (ÁJK)",
+        programs: ["Jogász", "Igazságügyi igazgatási"],
+      },
+      {
+        name: "Bölcsészettudományi Kar (BTK)",
+        programs: [
+          "Magyar",
+          "Történelem",
+          "Pszichológia",
+          "Anglisztika",
+          "Germanisztika",
+        ],
+      },
+      {
+        name: "Informatikai Kar (IK)",
+        programs: ["Programtervező informatikus", "Mérnökinformatikus"],
+      },
+      {
+        name: "Pedagógiai és Pszichológiai Kar (PPK)",
+        programs: ["Pszichológia", "Pedagógia", "Gyógypedagógia"],
+      },
+      {
+        name: "Társadalomtudományi Kar (TáTK)",
+        programs: ["Szociológia", "Szociális munka", "Nemzetközi tanulmányok"],
+      },
+      {
+        name: "Természettudományi Kar (TTK)",
+        programs: ["Biológia", "Fizika", "Kémia", "Matematika", "Földtudomány"],
+      },
+      {
+        name: "Gazdaságtudományi Kar (GTK)",
+        programs: [
+          "Gazdálkodási és menedzsment",
+          "Kereskedelem és marketing",
+          "Pénzügy és számvitel",
+        ],
+      },
+      {
+        name: "Bárczi Gusztáv Gyógypedagógiai Kar (BGGYK)",
+        programs: ["Gyógypedagógia"],
+      },
+    ],
     topPrograms: ["Pszichológia", "Jogász", "Programtervező informatikus"],
     internationalRanking: 650,
   },
@@ -42,7 +85,49 @@ const UNIVERSITIES = [
       "Hazánk első műszaki felsőoktatási intézménye, kiváló mérnöki és technológiai képzésekkel.",
     students: 21000,
     foundedYear: 1782,
-    faculties: 8,
+    faculties: [
+      {
+        name: "Építőmérnöki Kar (ÉMK)",
+        programs: ["Építőmérnök", "Infrastruktúra-építőmérnök"],
+      },
+      {
+        name: "Gépészmérnöki Kar (GPK)",
+        programs: [
+          "Gépészmérnök",
+          "Energetikai mérnök",
+          "Mechatronikai mérnök",
+        ],
+      },
+      { name: "Építészmérnöki Kar (ÉPK)", programs: ["Építészmérnök"] },
+      {
+        name: "Vegyészmérnöki és Biomérnöki Kar (VBK)",
+        programs: ["Vegyészmérnök", "Biomérnök", "Környezetmérnök"],
+      },
+      {
+        name: "Villamosmérnöki és Informatikai Kar (VIK)",
+        programs: [
+          "Villamosmérnök",
+          "Mérnökinformatikus",
+          "Üzemmérnök-informatikus",
+        ],
+      },
+      {
+        name: "Közlekedésmérnöki és Járműmérnöki Kar (KJK)",
+        programs: ["Közlekedésmérnök", "Járműmérnök", "Logisztikai mérnök"],
+      },
+      {
+        name: "Természettudományi Kar (TTK)",
+        programs: ["Matematika", "Fizika", "Alkalmazott matematikus"],
+      },
+      {
+        name: "Gazdaság- és Társadalomtudományi Kar (GTK)",
+        programs: [
+          "Műszaki menedzser",
+          "Kommunikáció és médiatudomány",
+          "Nemzetközi gazdálkodás",
+        ],
+      },
+    ],
     topPrograms: ["Építészmérnöki", "Villamosmérnöki", "Gépészmérnöki"],
     internationalRanking: 700,
   },
@@ -62,13 +147,70 @@ const UNIVERSITIES = [
       "Közgazdasági, gazdálkodási és társadalomtudományi képzések első számú hazai intézménye.",
     students: 10000,
     foundedYear: 1948,
-    faculties: 5,
+    faculties: [
+      {
+        name: "Gazdálkodástudományi Kar",
+        programs: [
+          "Gazdálkodási és menedzsment",
+          "Kereskedelem és marketing",
+          "Turizmus-vendéglátás",
+        ],
+      },
+      {
+        name: "Közgazdaságtudományi Kar",
+        programs: ["Alkalmazott közgazdaságtan", "Nemzetközi gazdálkodás"],
+      },
+      {
+        name: "Társadalomtudományi és Nemzetközi Kapcsolatok Kar",
+        programs: [
+          "Nemzetközi tanulmányok",
+          "Szociológia",
+          "Kommunikáció és médiatudomány",
+        ],
+      },
+    ],
     topPrograms: [
       "Gazdálkodás és menedzsment",
       "Nemzetközi gazdálkodás",
       "Pénzügy",
     ],
     internationalRanking: 750,
+  },
+  {
+    id: 7,
+    name: "Semmelweis Egyetem",
+    shortName: "SE",
+    logo: "/egyetemek/semmelweis.jpg",
+    location: "Budapest",
+    rating: 4.8,
+    fields: ["orvostudomány", "egészségtudomány", "gyógyszerészet"],
+    description:
+      "Magyarország legrégebbi orvosképző intézménye, kiemelkedő nemzetközi hírnévvel.",
+    students: 11000,
+    foundedYear: 1769,
+    faculties: [
+      {
+        name: "Általános Orvostudományi Kar (ÁOK)",
+        programs: ["Általános orvos"],
+      },
+      { name: "Fogorvostudományi Kar (FOK)", programs: ["Fogorvos"] },
+      { name: "Gyógyszerésztudományi Kar (GYTK)", programs: ["Gyógyszerész"] },
+      {
+        name: "Egészségtudományi Kar (ETK)",
+        programs: [
+          "Ápolás és betegellátás",
+          "Gyógytornász",
+          "Dietetikus",
+          "Mentőtiszt",
+        ],
+      },
+      {
+        name: "Egészségügyi Közszolgálati Kar (EKK)",
+        programs: ["Egészségügyi szervező"],
+      },
+    ],
+    topPrograms: ["Általános orvos", "Fogorvos", "Gyógyszerész"],
+    internationalRanking: 450,
   },
   {
     id: 4,
@@ -89,34 +231,12 @@ const UNIVERSITIES = [
       "Az ország egyik legrégebbi és legnagyobb hallgatói létszámmal rendelkező egyeteme.",
     students: 25000,
     foundedYear: 1538,
-    faculties: 14,
+    faculties: [],
     topPrograms: ["Általános orvos", "Állatorvos", "Gyógyszerész"],
     internationalRanking: 800,
   },
   {
-    id: 5,
-    name: "Szegedi Tudományegyetem",
-    shortName: "SZTE",
-    logo: "/egyetemek/szte.jpg",
-    location: "Szeged",
-    rating: 4.5,
-    fields: [
-      "orvostudomány",
-      "természettudomány",
-      "bölcsészettudomány",
-      "jog",
-      "informatika",
-    ],
-    description:
-      "Kiemelkedő kutatási és oktatási centrum, széles képzési kínálattal.",
-    students: 20000,
-    foundedYear: 1872,
-    faculties: 12,
-    topPrograms: ["Általános orvos", "Biológia", "Jogász"],
-    internationalRanking: 550,
-  },
-  {
-    id: 6,
+    id: 8,
     name: "Pécsi Tudományegyetem",
     shortName: "PTE",
     logo: "/egyetemek/pecsi.jpg",
@@ -124,79 +244,80 @@ const UNIVERSITIES = [
     rating: 4.3,
     fields: [
       "orvostudomány",
-      "művészet",
       "bölcsészettudomány",
+      "művészet",
+      "természettudomány",
+      "gazdaságtudomány",
       "jog",
-      "műszaki",
     ],
     description:
-      "Az ország első egyeteme, ma is kiemelkedő szerepet tölt be a hazai felsőoktatásban.",
-    students: 18000,
+      "A Pécsi Tudományegyetem Magyarország egyik legrégebbi egyeteme, amely széles képzési kínálattal és nemzetközi programokkal várja a hallgatókat.",
+    students: 20000,
     foundedYear: 1367,
-    faculties: 10,
-    topPrograms: ["Általános orvos", "Művészeti képzések", "Mérnöki szakok"],
-    internationalRanking: 700,
-  },
-  {
-    id: 7,
-    name: "Semmelweis Egyetem",
-    shortName: "SE",
-    logo: "/egyetemek/semmelweis.jpg",
-    location: "Budapest",
-    rating: 4.8,
-    fields: ["orvostudomány", "egészségtudomány", "gyógyszerészet"],
-    description:
-      "Magyarország legrégebbi orvosképző intézménye, kiemelkedő nemzetközi hírnévvel.",
-    students: 11000,
-    foundedYear: 1769,
-    faculties: 6,
-    topPrograms: ["Általános orvos", "Fogorvos", "Gyógyszerész"],
-    internationalRanking: 450,
-  },
-  {
-    id: 8,
-    name: "Óbudai Egyetem",
-    shortName: "ÓE",
-    logo: "/egyetemek/obuda.jpg",
-    location: "Budapest",
-    rating: 4.1,
-    fields: ["műszaki", "informatika", "gazdaságtudomány"],
-    description:
-      "Gyakorlatorientált műszaki és informatikai képzések széles választékát kínálja.",
-    students: 12000,
-    foundedYear: 1879,
-    faculties: 6,
-    topPrograms: [
-      "Mérnökinformatikus",
-      "Villamosmérnöki",
-      "Mechatronikai mérnök",
+    faculties: [
+      {
+        name: "Általános Orvostudományi Kar",
+        programs: ["Általános orvos", "Fogorvos", "Gyógyszerész"],
+      },
+      {
+        name: "Bölcsészettudományi Kar",
+        programs: ["Pszichológia", "Történelem", "Magyar", "Anglisztika"],
+      },
+      {
+        name: "Művészeti Kar",
+        programs: ["Képzőművészet", "Zeneművészet"],
+      },
+      {
+        name: "Természettudományi Kar",
+        programs: ["Biológia", "Fizika", "Kémia", "Matematika"],
+      },
+      {
+        name: "Közgazdaságtudományi Kar",
+        programs: ["Gazdálkodási és menedzsment", "Pénzügy", "Marketing"],
+      },
+      {
+        name: "Állam- és Jogtudományi Kar",
+        programs: ["Jogász", "Közigazgatási szervező"],
+      },
     ],
+    topPrograms: ["Általános orvos", "Pszichológia", "Képzőművészet"],
     internationalRanking: 800,
   },
   {
     id: 9,
-    name: "Pannon Egyetem",
-    shortName: "PE",
-    logo: "/egyetemek/pannon.jpg",
-    location: "Veszprém",
-    rating: 4.2,
+    name: "Szegedi Tudományegyetem",
+    shortName: "SZTE",
+    logo: "/egyetemek/szte.jpg",
+    location: "Szeged",
+    rating: 4.6,
     fields: [
-      "műszaki",
-      "gazdaságtudomány",
-      "informatika",
+      "orvostudomány",
+      "természettudomány",
       "bölcsészettudomány",
+      "informatika",
+      "jog",
     ],
     description:
-      "Erős regionális kapcsolatokkal rendelkező, dinamikusan fejlődő egyetem.",
-    students: 8000,
-    foundedYear: 1949,
-    faculties: 5,
-    topPrograms: [
-      "Vegyészmérnöki",
-      "Gazdaságinformatikus",
-      "Műszaki menedzser",
+      "A Tisza-parti város büszkesége, sokszínű képzési kínálattal és nemzetközi kapcsolatokkal.",
+    students: 21000,
+    foundedYear: 1872,
+    faculties: [
+      {
+        name: "Általános Orvostudományi Kar",
+        programs: ["Általános orvos", "Biotechnológus"],
+      },
+      {
+        name: "Természettudományi és Informatikai Kar",
+        programs: ["Informatika", "Biológia", "Fizika"],
+      },
+      {
+        name: "Bölcsészettudományi Kar",
+        programs: ["Pszichológia", "Anglisztika", "Történelem"],
+      },
+      { name: "Állam- és Jogtudományi Kar", programs: ["Jogász"] },
     ],
-    internationalRanking: 900,
+    topPrograms: ["Általános orvos", "Informatika", "Jogász"],
+    internationalRanking: 700,
   },
   {
     id: 10,
@@ -204,25 +325,94 @@ const UNIVERSITIES = [
     shortName: "SZE",
     logo: "/egyetemek/szécheny.jpg",
     location: "Győr",
-    rating: 4.3,
-    fields: [
-      "műszaki",
-      "jog",
-      "gazdaságtudomány",
-      "egészségtudomány",
-      "művészet",
-    ],
+    rating: 4.2,
+    fields: ["műszaki", "informatika", "gazdaságtudomány", "jog", "művészet"],
     description:
-      "Az iparral szorosan együttműködő, gyakorlatorientált képzéseket nyújtó intézmény.",
-    students: 12000,
+      "A győri egyetem műszaki és gazdasági képzései révén vált elismertté a nyugat-magyarországi régióban.",
+    students: 14000,
     foundedYear: 1968,
-    faculties: 9,
-    topPrograms: ["Járműmérnöki", "Építőmérnöki", "Logisztikai mérnök"],
+    faculties: [
+      {
+        name: "Műszaki Tudományi Kar",
+        programs: ["Gépészmérnök", "Villamosmérnök", "Járműmérnök"],
+      },
+      {
+        name: "Kautz Gyula Gazdaságtudományi Kar",
+        programs: ["Gazdálkodási és menedzsment", "Pénzügy és számvitel"],
+      },
+      { name: "Deák Ferenc Állam- és Jogtudományi Kar", programs: ["Jogász"] },
+      { name: "Művészeti Kar", programs: ["Tervezőgrafika", "Zene"] },
+    ],
+    topPrograms: ["Járműmérnök", "Gépészmérnök", "Gazdálkodás és menedzsment"],
     internationalRanking: 1000,
+  },
+  {
+    id: 11,
+    name: "Pannon Egyetem",
+    shortName: "PE",
+    logo: "/egyetemek/pannon.jpg",
+    location: "Veszprém",
+    rating: 4.1,
+    fields: ["műszaki", "természettudomány", "gazdaságtudomány", "informatika"],
+    description:
+      "A Balaton közelében elhelyezkedő, erősen műszaki orientált egyetem zöld innovációival is kiemelkedik.",
+    students: 8000,
+    foundedYear: 1949,
+    faculties: [
+      {
+        name: "Mérnöki Kar",
+        programs: ["Vegyészmérnök", "Környezettudományi mérnök"],
+      },
+      {
+        name: "Gazdaságtudományi Kar",
+        programs: ["Gazdálkodási és menedzsment", "Turizmus-vendéglátás"],
+      },
+      { name: "Informatikai Kar", programs: ["Programtervező informatikus"] },
+    ],
+    topPrograms: [
+      "Vegyészmérnök",
+      "Turizmus-vendéglátás",
+      "Programtervező informatikus",
+    ],
+    internationalRanking: 1200,
+  },
+  {
+    id: 12,
+    name: "Óbudai Egyetem",
+    shortName: "OE",
+    logo: "/egyetemek/obuda.jpg",
+    location: "Budapest",
+    rating: 4.0,
+    fields: ["műszaki", "informatika", "gazdaságtudomány"],
+    description:
+      "Gyakorlatorientált műszaki és informatikai képzések Budapest szívében.",
+    students: 11000,
+    foundedYear: 2000,
+    faculties: [
+      {
+        name: "Bánki Donát Gépész és Biztonságtechnikai Mérnöki Kar",
+        programs: ["Gépészmérnök"],
+      },
+      {
+        name: "Neumann János Informatikai Kar",
+        programs: ["Mérnökinformatikus"],
+      },
+      {
+        name: "Keleti Károly Gazdasági Kar",
+        programs: ["Gazdálkodási és menedzsment"],
+      },
+    ],
+    topPrograms: ["Gépészmérnök", "Mérnökinformatikus"],
+    internationalRanking: 1300,
   },
 ];
 
-// Available field options for filtering
+// Export the function to find a university by its numeric ID
+export const getUniversityById = (id) => {
+  const numericId = parseInt(id, 10);
+  return UNIVERSITIES.find((uni) => uni.id === numericId);
+};
+
 const FIELD_OPTIONS = [
   "természettudomány",
   "bölcsészettudomány",
@@ -240,7 +430,6 @@ const FIELD_OPTIONS = [
   "gyógyszerészet",
 ];
 
-// Available locations for filtering
 const LOCATION_OPTIONS = [
   "Budapest",
   "Debrecen",
@@ -313,7 +502,7 @@ const UniversitiesPage = () => {
   };
 
   const handleUniversityClick = (id) => {
-    navigate(`/egyetemek/${id}`);
+    navigate(`/egyetem/${id}`);
   };
 
   const toggleViewMode = () => {
